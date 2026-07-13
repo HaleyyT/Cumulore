@@ -1,0 +1,30 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Personal, private, and temporary working material
+.local/
+
+# Temporary outputs
+tmp/
+
+# Dependencies and builds
+node_modules/
+.next/
+dist/
+build/
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Editor and operating system
+.DS_Store
+.vscode/settings.json
+
+# Logs
+*.log
