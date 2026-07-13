@@ -16,9 +16,16 @@ docker compose ps
 docker compose exec postgres psql -U cumulore -d cumulore -c "CREATE EXTENSION IF NOT EXISTS vector; SELECT extname FROM pg_extension WHERE extname = 'vector';"
 ```
 
-`docker compose ps` reports both services healthy. MinIO exposes the S3-compatible endpoint at `S3_ENDPOINT` and its local console at `http://localhost:9001`; no production provider or credentials are involved. Stop services with `docker compose down`.
+`docker compose ps` reports both services healthy. PostgreSQL, the MinIO
+S3-compatible endpoint at `S3_ENDPOINT`, and the MinIO console at
+`http://localhost:9001` are published on `127.0.0.1` only; no production
+provider or credentials are involved. Stop services with
+`docker compose down`.
 
-If port 5432 is already occupied, run `POSTGRES_PORT=5433 docker compose up -d` and use port 5433 in local database clients.
+If port 5432 is already occupied, run
+`POSTGRES_PORT=5433 docker compose up -d` and use port 5433 in local database
+clients. Host-port overrides change only the loopback port and remain bound to
+`127.0.0.1`.
 
 Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, and `verify`. `contracts` validates the same deterministic JSON fixture with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
 

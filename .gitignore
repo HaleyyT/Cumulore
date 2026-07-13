@@ -11,6 +11,7 @@ tmp/
 
 # Dependencies and builds
 node_modules/
+.pnpm-store/
 .next/
 dist/
 build/
@@ -20,7 +21,9 @@ coverage/
 __pycache__/
 *.py[cod]
 .venv/
+.mypy_cache/
 .pytest_cache/
+.ruff_cache/
 
 # Editor and operating system
 .DS_Store

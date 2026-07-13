@@ -1,0 +1,36 @@
+{
+  "name": "cumulore",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=11.0.0"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "pnpm --filter @cumulore/schemas test",
+    "contracts": "pnpm --filter @cumulore/schemas test && python3 -m pytest services/worker/tests/test_contract_fixture.py",
+    "docs:check": "node scripts/check-doc-links.mjs",
+    "secrets:check": "node scripts/check-secrets.mjs",
+    "env:check": "node scripts/check-env.mjs",
+    "python:lint": "python3 -m ruff check services/worker",
+    "python:typecheck": "python3 -m mypy services/worker/src services/worker/tests",
+    "python:test": "python3 -m pytest services/worker/tests",
+    "verify": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm contracts && pnpm docs:check && pnpm secrets:check && pnpm env:check && pnpm python:lint && pnpm python:typecheck && pnpm python:test"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "@types/node": "22.19.1",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "eslint": "9.39.1",
+    "prettier": "3.6.2",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.46.3"
+  }
+}

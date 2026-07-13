@@ -1,0 +1,12 @@
+.local/
+docs/ARCHITECTURE.md
+docs/PRODUCT_BLUEPRINT.md
+docs/decisions/README.md
+node_modules/
+pnpm-lock.yaml
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+services/worker/.mypy_cache/
+services/worker/.pytest_cache/
+services/worker/.ruff_cache/

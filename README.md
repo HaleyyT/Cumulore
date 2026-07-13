@@ -18,3 +18,6 @@ Personal notes, temporary Codex transcripts, abandoned ideas, and scratch output
 belong under `.local/`, which is ignored. Credentials belong in `.env.local` for
 local development or in the deployment platform's secret manager, never in
 Markdown.
+
+For local setup, quality commands, dependency policy, infrastructure health
+checks, and logging conventions, see [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).

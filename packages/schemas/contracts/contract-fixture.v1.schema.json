@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.cumulore.local/contracts/contract-fixture.v1.schema.json",
+  "title": "Cumulore Contract Fixture v1",
+  "description": "A non-domain fixture proving cross-runtime JSON Schema compatibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "fixture_id", "issued_at", "metadata"],
+  "properties": {
+    "contract_version": { "const": 1 },
+    "fixture_id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{2,63}$" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["producer", "sequence"],
+      "properties": {
+        "producer": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "sequence": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}
