@@ -84,7 +84,9 @@ try {
       sourceId,
       "cumulore-text-1",
       { element_count: 1 },
-      [{ kind: "paragraph", text: "hello", locator: { line: 1 } }],
+      JSON.stringify([
+        { kind: "paragraph", text: "hello", locator: { line: 1 } },
+      ]),
     ],
   );
   assert.equal(recorded.record_source_extraction, true);
