@@ -343,7 +343,7 @@ try {
       [reclaimJob],
     ),
   );
-  assert.equal(
+  assert.deepEqual(
     (
       await pool.query(
         "SELECT outcome, safe_error_code FROM job_attempts WHERE job_id = $1",
@@ -402,7 +402,7 @@ try {
   assert.equal(retriedState.state, "pending");
   assert.equal(retriedState.retry_generation, 1);
   assert.equal(retriedState.generation_attempt_count, 0);
-  assert.equal(
+  assert.deepEqual(
     (
       await pool.query(
         "SELECT action, reason FROM job_actions WHERE job_id = $1 AND action = 'manual_retry'",
@@ -411,17 +411,17 @@ try {
     ).rows[0],
     { action: "manual_retry", reason: "operator review" },
   );
-  await assert.rejects(() =>
-    transaction(
-      pool,
-      "cumulore_web",
-      (client) =>
-        client.query("SELECT app.manual_retry_job($1, 'wrong workspace')", [
-          retryJob,
-        ]),
-      { userId: identity.userB, workspaceId: identity.workspaceB },
-    ),
+  const unauthorizedRetry = await transaction(
+    pool,
+    "cumulore_web",
+    (client) =>
+      client.query<{ manual_retry_job: boolean }>(
+        "SELECT app.manual_retry_job($1, 'wrong workspace')",
+        [retryJob],
+      ),
+    { userId: identity.userB, workspaceId: identity.workspaceB },
   );
+  assert.equal(unauthorizedRetry.rows[0]!.manual_retry_job, false);
 
   await reset();
   await pool.end();
