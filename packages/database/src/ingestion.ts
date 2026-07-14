@@ -5,7 +5,7 @@ import type { Pool } from "pg";
 import { ApplicationError } from "./errors.js";
 import { withActorTransaction, type ActorContext } from "./index.js";
 
-export type SourceFormat = "pdf" | "txt" | "pasted_text";
+export type SourceFormat = "pdf" | "txt" | "pasted_text" | "docx" | "pptx";
 
 export type UploadSession = {
   sourceId: string;
@@ -21,6 +21,12 @@ const CONTENT_TYPES: Record<SourceFormat, readonly string[]> = {
   pdf: ["application/pdf"],
   txt: ["text/plain", "text/plain; charset=utf-8"],
   pasted_text: ["text/x-cumulore-pasted"],
+  docx: [
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ],
+  pptx: [
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  ],
 };
 
 export type CreateUploadSessionInput = {

@@ -21,6 +21,22 @@ const valid = {
 };
 
 assert.doesNotThrow(() => validateUploadSessionInput(context, valid, now));
+for (const format of ["docx", "pptx"] as const) {
+  assert.doesNotThrow(() =>
+    validateUploadSessionInput(
+      context,
+      {
+        ...valid,
+        format,
+        contentType:
+          format === "docx"
+            ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            : "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      },
+      now,
+    ),
+  );
+}
 for (const input of [
   { ...valid, title: "   " },
   { ...valid, contentType: "application/pdf" },
