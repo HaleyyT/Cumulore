@@ -17,12 +17,6 @@ importers:
       '@types/pg':
         specifier: 8.15.5
         version: 8.15.5
-      ajv:
-        specifier: 8.17.1
-        version: 8.17.1
-      ajv-formats:
-        specifier: 3.0.1
-        version: 3.0.1(ajv@8.17.1)
       eslint:
         specifier: 9.39.1
         version: 9.39.1
@@ -66,7 +60,14 @@ importers:
 
   packages/database: {}
 
-  packages/schemas: {}
+  packages/schemas:
+    dependencies:
+      ajv:
+        specifier: 8.17.1
+        version: 8.17.1
+      ajv-formats:
+        specifier: 3.0.1
+        version: 3.0.1(ajv@8.17.1)
 
 packages:
 
