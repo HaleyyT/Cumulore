@@ -1,6 +1,8 @@
 # Milestone 2A — First Ingestion Vertical Slice
 
-**Status:** Implemented and awaiting review
+**Status:** Accepted at the local/private-alpha boundary
+
+**Accepted:** 2026-07-15
 
 This slice establishes the first authorized ingestion path for PDF, TXT, and
 pasted text. It deliberately stops before DOCX/PPTX, malware-provider

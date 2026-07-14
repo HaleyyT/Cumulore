@@ -1,8 +1,9 @@
 # Cumulore
 
 Cumulore is a source-grounded, self-updating learning workspace. The repository
-is currently in production-foundation planning; application code has not yet
-started.
+currently contains the private-alpha identity, tenancy, durable-processing, and
+first-ingestion foundations; the active milestone hardens their operational
+and performance evidence before more product capability is added.
 
 ## Start here
 
@@ -21,3 +22,7 @@ Markdown.
 
 For local setup, quality commands, dependency policy, infrastructure health
 checks, and logging conventions, see [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).
+Operational recovery and performance evidence are documented in
+[`docs/OPERATIONS.md`](docs/OPERATIONS.md) and
+[`docs/PERFORMANCE.md`](docs/PERFORMANCE.md); current trust boundaries are in
+[`docs/SECURITY.md`](docs/SECURITY.md).

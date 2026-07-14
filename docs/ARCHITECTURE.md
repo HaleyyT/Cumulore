@@ -415,8 +415,11 @@ decisions.
   idempotency, ownership, diffing, and citation validation.
 - Contract tests validate every event fixture in TypeScript and Python and
   reject incompatible schema changes.
-- Integration tests use real PostgreSQL with RLS and S3-compatible storage for
-  upload, queue, extraction, publication, retry, and deletion paths.
+- Integration tests use an isolated real PostgreSQL/pgvector container with RLS
+  for the implemented tenancy, queue, extraction, retry, and operational paths.
+  The current ingestion slice tests the local quarantine adapter; isolated
+  S3-compatible storage joins this suite only when the real storage adapter
+  exists.
 - Durable-processing integration tests cover concurrent dispatch and claims,
   duplicate delivery, crash boundaries, lease renewal/reclaim, stale-worker
   fencing, idempotency conflicts, cancellation races, handler-version draining,
@@ -443,12 +446,18 @@ decisions.
   conflicts, and deletion lag.
 - User-visible activity is product state, not inferred from logs.
 
+Milestone 2A-H implements the vendor-neutral field contract and a worker-only
+aggregate metrics function without selecting an exporter or backend. Detailed
+machine-specific performance results remain ignored local evidence. The
+operational and performance runbooks define query, connection, timeout,
+recovery, cardinality, and future-technology gates.
+
 ## 12. Environment model
 
 | Environment | Data and infrastructure |
 | --- | --- |
 | Local | Containerized PostgreSQL with pgvector and S3-compatible storage; deterministic fake identity, mail, and model adapters; `.env.local` only |
-| CI | Ephemeral database and object store per run; deterministic fake identity and model fixtures; no production credentials |
+| CI | Testcontainers-managed ephemeral PostgreSQL/pgvector per run; deterministic fake identity/model fixtures and local storage tests; no production credentials |
 | Development | Shared non-production account/project using synthetic or explicitly approved test data |
 | Staging | Production-shaped, separate Australia-region Auth0 tenant, account/project, database, bucket, keys, quotas, and model credentials; no copied production documents |
 | Production | Dedicated Australia-region Auth0 tenant, account/project, least-privilege roles, managed secrets, encryption, backups, restore tests, alerts, and access audit |

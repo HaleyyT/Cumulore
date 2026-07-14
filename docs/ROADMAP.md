@@ -1,8 +1,8 @@
 # Cumulore Private-Alpha Roadmap
 
-**Status:** Proposed for final implementation-readiness review
+**Status:** Active
 
-**Last updated:** 2026-07-13
+**Last updated:** 2026-07-15
 
 Milestones are ordered by dependency. A milestone begins only when its listed
 readiness gates are closed. Provider decisions are deferred until the first
@@ -106,6 +106,40 @@ extraction and visible terminal status.
   files.
 - Every supported input reaches `succeeded`, `action_required`,
   `failed_terminal`, or `cancelled` without duplicate downstream records.
+
+## Milestone 2A-H: Operational foundation and performance baseline
+
+### Outcome
+
+Prove that the accepted first ingestion and durable-processing foundations are
+reproducible, tenant-safe, observable, and measurable before adding formats or
+production providers.
+
+### Deliverables
+
+- Query ownership, transaction, tenant-predicate, cardinality, and index
+  catalogue for the implemented application surface.
+- Migration-owned aggregate operational metrics and documented connection,
+  timeout, slow-query, and recovery policies.
+- A development-only Testcontainers PostgreSQL/pgvector harness that runs fresh
+  migrations, TypeScript/Python integration suites, and worker smoke through the
+  same command locally and in CI.
+- Runtime upload validation, safe typed errors, and a fail-closed origin policy
+  for future state-changing browser handlers.
+- Redacted vendor-neutral structured logs, correlation propagation fields, and
+  a deterministic synthetic performance-baseline command.
+
+### Readiness and exit gates
+
+- Milestone 2A is accepted at its local/private-alpha boundary; non-local
+  storage and malware-provider selection remain deferred until deployment.
+- `pnpm verify` and `pnpm test:integration:isolated` pass from a clean install.
+- Performance evidence uses synthetic data and ignored local output; timing
+  thresholds are reviewed on a documented reference environment, not enforced
+  as flaky shared-CI wall-clock assertions.
+- No DOCX/PPTX, production storage, OpenTelemetry backend, Redis, broker, Kafka,
+  cloud provider, Spring service, or product feature is introduced.
+- **Milestone 2A-H must be reviewed and accepted before Milestone 2B begins.**
 
 ## Milestone 2B: Remaining ingestion formats
 
