@@ -1,5 +1,4 @@
 import pytest
-
 from cumulore_worker.external_provider import (
     DeterministicFakeProvider,
     NonRepeatableFakeProvider,
