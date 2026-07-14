@@ -1,6 +1,14 @@
 import { Pool, type PoolClient } from "pg";
 
 export {
+  createRetrievalScopeSnapshot,
+  searchSourceChunks,
+  type RetrievalResult,
+  type RetrievalScopeMode,
+  type RetrievedChunk,
+} from "./retrieval.js";
+
+export {
   createUploadSession,
   finalizeUpload,
   MAX_UPLOAD_BYTES,
