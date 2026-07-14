@@ -234,12 +234,20 @@ try {
        FROM pg_proc p
        JOIN pg_namespace n ON n.oid = p.pronamespace
        WHERE n.nspname = 'app'
-         AND p.proname IN ('dispatch_outbox', 'claim_jobs', 'renew_job_lease', 'complete_job', 'fail_job')`,
+         AND p.proname IN (
+           'renew_job_lease',
+           'complete_job',
+           'fail_job',
+           'reclaim_expired_jobs',
+           'request_job_cancellation',
+           'acknowledge_job_cancellation',
+           'manual_retry_job'
+         )`,
     );
     assert.deepEqual(
       prematureFunctions.rows,
       [],
-      "later-slice behavior functions do not exist",
+      "Slice 1C.3 transition functions do not exist",
     );
   } finally {
     inspection.release();
