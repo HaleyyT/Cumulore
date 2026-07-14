@@ -20,6 +20,8 @@
     "test:integration:durable-idempotency": "tsx packages/database/tests/durable-idempotency.integration.ts",
     "test:integration:durable": "pnpm test:integration:durable-schema && pnpm test:integration:durable-dispatch-claim && pnpm test:integration:durable-transitions && pnpm test:integration:durable-idempotency",
     "test:integration": "pnpm test:integration:tenancy && pnpm test:integration:durable",
+    "python:test:integration": "python3 -m pytest services/worker/tests",
+    "worker:smoke": "python3 -m cumulore_worker all --once",
     "db:migrate": "tsx packages/database/src/migrate.ts",
     "contracts": "pnpm --filter @cumulore/schemas test && python3 -m pytest services/worker/tests/test_contract_fixture.py",
     "docs:check": "node scripts/check-doc-links.mjs",

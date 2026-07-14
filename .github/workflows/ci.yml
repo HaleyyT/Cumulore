@@ -36,3 +36,6 @@ jobs:
       - run: pnpm db:migrate && pnpm test:integration
         env:
           DATABASE_URL: postgresql://cumulore:cumulore_local_only@localhost:5432/cumulore
+      - run: python3 -m cumulore_worker all --once
+        env:
+          DATABASE_URL: postgresql://cumulore:cumulore_local_only@localhost:5432/cumulore
