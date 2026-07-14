@@ -164,10 +164,20 @@ document remains planned; ADR-0002 records the controlling tenancy decision.
 ### 5.1 Transactional model
 
 A command writes domain state and an append-only outbox event in the same
-transaction. A dispatcher creates one job per registered handler, with an
-unversioned `handler_name`, a numeric `handler_version`, and a unique constraint
-on `(event_id, handler_name, handler_version)`. Workers claim due jobs with a
-short lease and `FOR UPDATE SKIP LOCKED`.
+transaction. A dispatcher selects a bounded, deterministically ordered batch
+with `FOR UPDATE SKIP LOCKED`, creates every applicable handler job, and records
+dispatch completion in one short transaction with no external calls. Jobs use
+an unversioned `handler_name`, numeric `handler_version`, and uniqueness on
+`(event_id, handler_name, handler_version)`.
+
+Workers claim due jobs through the narrow PostgreSQL claim function defined by
+ADR-0003. The function uses database time, orders eligible work
+deterministically, claims at most 10 jobs, creates immutable attempts, and
+increments a lease generation. The default lease is 60 seconds with a
+20-second heartbeat. Completion and effects are fenced by job, attempt, worker,
+state, and lease generation. Handler execution never holds an open database
+transaction, and every processing transaction sets the claimed workspace
+locally under the worker role's forced RLS policies.
 
 PostgreSQL is sufficient for private-alpha volume and avoids operating Redis or
 a broker. Queue depth, claim latency, database CPU, and lock time are measured.
@@ -177,14 +187,16 @@ escape hatch.
 
 ### 5.2 Event envelope
 
-Every contract in `packages/schemas` uses a versioned envelope:
+Every event contract in `packages/schemas` uses an immutable versioned
+envelope. Producers validate before writing; consumers validate before handling
+and declare the versions they support:
 
 ```json
 {
   "event_id": "uuid",
   "event_type": "source.upload.finalized",
   "schema_version": 1,
-  "occurred_at": "RFC3339 timestamp",
+  "occurred_at": "UTC RFC3339 timestamp",
   "workspace_id": "uuid",
   "actor": { "type": "user", "id": "uuid" },
   "correlation_id": "uuid",
@@ -193,25 +205,43 @@ Every contract in `packages/schemas` uses a versioned envelope:
 }
 ```
 
-Events contain identifiers and non-sensitive control metadata, never source
-text, prompts, tokens, signed URLs, or credentials.
+Workspace-owned events require `workspace_id`; approved account-level or global
+operational events may use null. Actor types are `user`, `system`, and `worker`;
+user and worker actors require an ID. Events contain identifiers and
+non-sensitive control metadata, never source text, prompts, tokens, signed URLs,
+or credentials.
 
 ### 5.3 Idempotency
 
-- Public mutating endpoints require an `Idempotency-Key` for operations that a
-  client may retry, especially upload initiation/finalization and proposal
-  publication.
-- Endpoint responses are stored against `(actor_id, route, key)` with a request
-  hash; reusing a key for a different request is rejected.
-- Job effects use a deterministic key derived from operation, input version,
-  parser/model/prompt/config versions, and destination.
-- Each handler writes its result and marks completion in one transaction when
-  possible. External calls record an attempt before invocation and reconcile
-  uncertain outcomes without blindly repeating destructive work.
-- Retries use exponential backoff with jitter, a maximum attempt count, and a
-  terminal dead-letter state visible to the user when action is possible.
-- Manual retry creates a new attempt linked to the failed job; it does not erase
-  history.
+- Public mutating endpoints that a client may retry require an
+  `Idempotency-Key` scoped by workspace when applicable, actor, route or
+  operation, and key. Records contain a canonical request hash, status, safe
+  response or reference, and expiry; completed records default to 24-hour
+  retention. Matching requests replay or report in-progress, while a different
+  hash conflicts.
+- For database-only commands, idempotency state, domain mutation, outbox event,
+  and completed response commit atomically.
+- Job effects use a unique key containing workspace, operation, destination,
+  input version, handler version, and configuration version. A database-only
+  effect, attempt completion, and job success commit in one fenced transaction.
+- External operations persist a stable provider idempotency key before calling.
+  Unknown results require reconciliation; operations without provider
+  idempotency or reconciliation cannot retry automatically. Milestone 1C uses a
+  deterministic fake provider only.
+- Automatic attempts use full-jitter backoff from 5 seconds to a 15-minute cap,
+  with at most 5 attempts per retry generation and 10 lifetime attempts. Lease
+  and retry timing use PostgreSQL time.
+- Manual retry requeues the same dead-letter job, increments
+  `retry_generation`, preserves the handler version, records actor/reason/time,
+  and creates an attempt only when claimed.
+- Jobs move only through `pending`, `running`, `retry_wait`, `succeeded`,
+  `dead_letter`, and `cancelled`. Running cancellation is cooperative and fenced;
+  success committed before cancellation remains final, while cancellation
+  committed first rejects later completion.
+
+ADR-0003 defines the complete transition, fencing, external-operation,
+retention, and cleanup rules. It is accepted as implementation authority for
+Milestone 1C.
 
 ### 5.4 Initial event contracts
 
@@ -387,6 +417,11 @@ decisions.
   reject incompatible schema changes.
 - Integration tests use real PostgreSQL with RLS and S3-compatible storage for
   upload, queue, extraction, publication, retry, and deletion paths.
+- Durable-processing integration tests cover concurrent dispatch and claims,
+  duplicate delivery, crash boundaries, lease renewal/reclaim, stale-worker
+  fencing, idempotency conflicts, cancellation races, handler-version draining,
+  manual retry, fake-provider reconciliation, retention cleanup, and
+  cross-workspace denial under forced RLS.
 - A cross-tenant matrix attempts read/write/search/download access with valid,
   missing, and mismatched IDs.
 - Browser journeys cover upload, status, review, edit/lock, later update,
@@ -466,7 +501,7 @@ the named gate:
 
 Milestone 1A requires no external provider selection. Auth0 is selected for
 Milestone 1B by ADR-0009, and ADR-0002 is accepted for tenancy implementation.
-ADR-0003 remains Proposed and must be accepted before Milestone 1C.
+ADR-0003 is accepted for Milestone 1C.
 Milestones 1A-1C do not need to invent a service split, tenant model, queue,
 version model, folder scope, or contract strategy while coding. The ordered
 delivery gates are defined in `docs/ROADMAP.md`.

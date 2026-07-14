@@ -68,18 +68,21 @@ private source files.
 ### Deliverables
 
 - Transactional outbox events and versioned language-neutral event schemas.
-- Dispatcher, jobs, leases, attempts, bounded retries, cancellation, and
-  dead-letter state.
+- Atomic bounded dispatch; fenced PostgreSQL claims; jobs, leases, attempts,
+  bounded retries, cooperative cancellation, and dead-letter state.
 - Endpoint and handler-effect idempotency records.
-- A synthetic event-to-worker-to-terminal-state path and operational metrics.
+- A synthetic event-to-worker-to-terminal-state path, deterministic fake
+  external provider, retention cleanup, and operational metrics.
 
 ### Readiness and exit gates
 
-- **ADR-0003 must be reviewed and accepted before Milestone 1C
-  implementation.**
+- **ADR-0003 is accepted for Milestone 1C implementation.**
 - No model or production-hosting provider is required.
-- Duplicate delivery, lease expiry, retry exhaustion, manual retry, and worker
-  interruption are covered by integration tests.
+- Real-PostgreSQL integration tests cover concurrent dispatch/claim, duplicate
+  delivery, crash boundaries, renewal, lease expiry/reclaim, stale-worker
+  fencing, endpoint and effect idempotency, cancellation races, handler-version
+  draining, retry exhaustion, manual retry, forced-RLS isolation, fake-provider
+  reconciliation, and referentially safe cleanup.
 
 ## Milestone 2A: First ingestion vertical slice
 

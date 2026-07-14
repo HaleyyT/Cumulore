@@ -1,4 +1,4 @@
-# Current Milestone: Milestone 1B — Identity and Tenancy
+# Current Milestone: Milestone 1C — Durable Processing Foundation
 
 **Status:** Approved for implementation
 
@@ -6,41 +6,24 @@
 
 ## Goal
 
-Establish authenticated account scope and enforce workspace isolation before
-private domain data is introduced.
+Prove retry-safe durable processing with synthetic work before private source
+files or product automation are introduced.
 
 ## In scope
 
-- Account-level users and external identities, keyed by OIDC issuer and
-  subject beside Cumulore-owned internal user IDs.
-- Auth0 Universal Login integration through a Cumulore-owned adapter, using
-  Auth0's supported server-side OIDC flow and session mechanism.
-- Workspaces, owner/member memberships, folders, and folder closure.
-- Web, worker, migration, and break-glass database roles.
-- Explicit workspace-scoped repositories, forced RLS, and cross-tenant tests.
-- A deterministic fake identity-provider adapter for local and CI testing.
+- Transactional outbox events, versioned contracts, bounded dispatch, jobs,
+  leases, attempts, retries, cooperative cancellation, and dead letters.
+- Endpoint and handler-effect idempotency.
+- A deterministic synthetic worker and fake external provider, real PostgreSQL
+  RLS integration tests, retention cleanup, and operational metrics.
 
 ## Out of scope
 
-- Social identity connections and any use of Auth0 Organizations, roles,
-  `app_metadata`, or `user_metadata` as Cumulore authorization state.
-- Manual OAuth/OIDC protocol handling, committed Auth0 credentials, and an
-  application session table without a demonstrated need.
-- Product domain behaviour, upload processing, retrieval, AI functionality,
-  outbox events, jobs, retries, and idempotency implementation.
+- Milestone 2A and all ingestion, uploads, extraction, storage-provider,
+  retrieval, model, note-generation, artifact, and product UI work.
+- Any real model, external processing, or production-hosting provider.
 
-## Readiness gates
+## Readiness gate
 
-- ADR-0002 is accepted for PostgreSQL tenancy, RLS, and runtime roles.
-- ADR-0009 is accepted for Auth0 Public Cloud in the Australia region.
-- Milestone 1C remains excluded. ADR-0003 remains Proposed and is its
-  readiness gate; no durable-processing implementation may begin until it is
-  accepted.
-
-## Completion criteria
-
-- Authorized account and workspace operations succeed through the selected
-  identity adapter.
-- The complete cross-tenant matrix is denied by both application checks and
-  PostgreSQL policies.
-- Local and CI identity tests remain deterministic and do not contact Auth0.
+ADR-0003 is accepted. `action-required` remains a product-visible outcome
+backed by dead-letter or unresolved-operation state, not a job state.
