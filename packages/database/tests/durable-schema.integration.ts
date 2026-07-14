@@ -235,15 +235,15 @@ try {
        JOIN pg_namespace n ON n.oid = p.pronamespace
        WHERE n.nspname = 'app'
          AND p.proname IN (
-           'complete_job_with_effect',
-           'prepare_external_operation',
-           'claim_reconciliation'
+           'dispatcher_once',
+           'executor_once',
+           'maintenance_once'
          )`,
     );
     assert.deepEqual(
       prematureFunctions.rows,
       [],
-      "Slice 1C.4 idempotency and external-operation functions do not exist",
+      "Slice 1C.5 worker-runtime functions do not exist",
     );
   } finally {
     inspection.release();
