@@ -1,8 +1,10 @@
 # Milestone 2A-H — Operational Foundation and Performance Baseline
 
-**Status:** Implemented and awaiting review
+**Status:** Accepted at the local/private-alpha boundary
 
 **Approved:** 2026-07-15
+
+**Accepted:** 2026-07-15
 
 This bounded hardening milestone sits between the first ingestion slice and
 DOCX/PPTX support. It improves proof, security, and operability without adding
