@@ -3,6 +3,9 @@ import { Pool, type PoolClient } from "pg";
 export {
   createUploadSession,
   finalizeUpload,
+  MAX_UPLOAD_BYTES,
+  validateUploadSessionInput,
+  type CreateUploadSessionInput,
   type SourceFormat,
   type UploadSession,
 } from "./ingestion.js";
@@ -24,6 +27,13 @@ export {
   runIdempotentCommand,
   type IdempotentCommandResult,
 } from "./idempotency.js";
+export { ApplicationError, type ApplicationErrorCode } from "./errors.js";
+export {
+  createOperationalLogRecord,
+  emitOperationalLog,
+  type OperationalLog,
+  type OperationalLogRecord,
+} from "./observability.js";
 
 export type WorkspaceRole = "owner" | "member";
 
@@ -41,7 +51,13 @@ export type ExternalIdentity = {
 export type Workspace = { id: string; name: string };
 
 export function createPool(connectionString: string): Pool {
-  return new Pool({ connectionString });
+  return new Pool({
+    connectionString,
+    max: 10,
+    connectionTimeoutMillis: 5_000,
+    idleTimeoutMillis: 30_000,
+    application_name: "cumulore",
+  });
 }
 
 export async function withActorTransaction<T>(

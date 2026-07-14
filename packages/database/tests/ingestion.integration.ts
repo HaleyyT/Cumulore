@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 import type { QueryResultRow } from "pg";
 
 import {
@@ -62,6 +63,7 @@ try {
     },
   );
   assert.match(first.quarantineKey, new RegExp(`^quarantine/${workspace}/`));
+  const correlationId = randomUUID();
   const sourceId = await finalizeUpload(
     pool,
     { userId: user, workspaceId: workspace },
@@ -69,8 +71,19 @@ try {
       uploadSessionId: first.uploadSessionId,
       byteSize: 12,
       sha256: Buffer.alloc(32, 7),
+      correlationId,
     },
   );
+  const finalizedEvent = await pool.query<{
+    correlation_id: string;
+    causation_id: string | null;
+  }>(
+    "SELECT correlation_id, causation_id FROM outbox_events WHERE workspace_id = $1 AND event_type = 'source.upload.finalized' AND payload->>'source_id' = $2",
+    [workspace, sourceId],
+  );
+  assert.deepEqual(finalizedEvent.rows, [
+    { correlation_id: correlationId, causation_id: null },
+  ]);
   const state = await workerCall<{ record_source_validation: string }>(
     workspace,
     "SELECT app.record_source_validation($1, $2) AS record_source_validation",

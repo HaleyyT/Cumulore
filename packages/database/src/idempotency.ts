@@ -6,6 +6,7 @@ import {
   createSyntheticOperationAndEvent,
   type CreateSyntheticOperationInput,
 } from "./durable-processing.js";
+import { ApplicationError } from "./errors.js";
 import type { ActorContext } from "./index.js";
 
 export type IdempotentCommandResult<TResponse> =
@@ -13,9 +14,12 @@ export type IdempotentCommandResult<TResponse> =
   | { kind: "replayed"; response: TResponse }
   | { kind: "in_progress" };
 
-export class IdempotencyConflictError extends Error {
+export class IdempotencyConflictError extends ApplicationError {
   constructor() {
-    super("The idempotency key was already used with a different request");
+    super(
+      "idempotency_conflict",
+      "The idempotency key was already used with a different request",
+    );
     this.name = "IdempotencyConflictError";
   }
 }

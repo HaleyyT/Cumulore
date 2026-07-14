@@ -18,9 +18,18 @@ try {
   await client.query(
     "CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())",
   );
-  const files = (await readdir(migrationsDirectory))
+  const allFiles = (await readdir(migrationsDirectory))
     .filter((file) => file.endsWith(".sql"))
     .sort();
+  const migrationTarget = process.env.MIGRATION_TARGET;
+  const targetIndex = migrationTarget
+    ? allFiles.indexOf(migrationTarget)
+    : allFiles.length - 1;
+  if (migrationTarget && targetIndex < 0)
+    throw new Error(
+      `MIGRATION_TARGET does not name a migration: ${migrationTarget}`,
+    );
+  const files = allFiles.slice(0, targetIndex + 1);
   for (const file of files) {
     const applied = await client.query(
       "SELECT 1 FROM schema_migrations WHERE name = $1",

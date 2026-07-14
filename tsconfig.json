@@ -10,5 +10,5 @@
     "strict": true,
     "target": "ES2023"
   },
-  "include": ["apps/**/*.ts", "packages/**/*.ts"]
+  "include": ["apps/**/*.ts", "packages/**/*.ts", "scripts/**/*.mts"]
 }
