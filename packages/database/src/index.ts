@@ -8,6 +8,15 @@ export {
   type CreateSyntheticOperationInput,
   type SyntheticOperationScenario,
 } from "./durable-processing.js";
+export {
+  canonicalRequestHash,
+  IdempotencyConflictError,
+  manualRetryJob,
+  requestJobCancellation,
+  requestSyntheticOperation,
+  runIdempotentCommand,
+  type IdempotentCommandResult,
+} from "./idempotency.js";
 
 export type WorkspaceRole = "owner" | "member";
 

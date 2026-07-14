@@ -6,8 +6,8 @@
 accepted before the next slice begins. A slice must not absorb work assigned to
 a later slice.
 
-**Current gate:** Slice 1C.1 and Slice 1C.2 are accepted for implementation
-handoff. Slice 1C.3 has been implemented and is awaiting review and acceptance.
+**Current gate:** Slices 1C.1–1C.3 are accepted for implementation handoff.
+Slice 1C.4 has been implemented and is awaiting review and acceptance.
 
 ## Purpose
 
