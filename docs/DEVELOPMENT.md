@@ -29,7 +29,14 @@ If port 5432 is already occupied, run
 clients. Host-port overrides change only the loopback port and remain bound to
 `127.0.0.1`.
 
-Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `db:migrate`, `test:integration:tenancy`, `test:integration:durable-schema`, `test:integration`, and `verify`. `contracts` validates the same deterministic JSON fixtures with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
+Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `db:migrate`, `test:integration:tenancy`, `test:integration:durable-schema`, `test:integration:durable-dispatch-claim`, `test:integration:durable`, `test:integration`, and `verify`. `contracts` validates the same deterministic JSON fixtures with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
+
+Milestone 1C database functions are applied by migrations and exercised only
+through integration tests until the worker runtime arrives in Slice 1C.5. The
+web-side synthetic producer accepts an existing actor transaction, so the
+synthetic operation and validated outbox event commit or roll back together.
+Only `cumulore_worker` may execute the bounded cross-workspace dispatch and
+claim functions; neither function performs handler work or external calls.
 
 Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set `IDENTITY_PROVIDER=auth0` only in a deployed secret environment with the official Auth0 SDK configuration, including `AUTH0_ISSUER_BASE_URL`; do not commit those values. The application owns internal user IDs and workspace authorization; Auth0 issuer plus subject identifies an external identity, while email remains mutable profile data.
 

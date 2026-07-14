@@ -58,7 +58,11 @@ importers:
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.17)
 
-  packages/database: {}
+  packages/database:
+    dependencies:
+      '@cumulore/schemas':
+        specifier: workspace:*
+        version: link:../schemas
 
   packages/schemas:
     dependencies:

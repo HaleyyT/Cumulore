@@ -6,8 +6,8 @@
 accepted before the next slice begins. A slice must not absorb work assigned to
 a later slice.
 
-**Current gate:** Slice 1C.1 has been implemented and is awaiting review and
-acceptance. Slice 1C.2 has not begun.
+**Current gate:** Slice 1C.1 is accepted. Slice 1C.2 has been implemented and is
+awaiting review and acceptance. Slice 1C.3 has not begun.
 
 ## Purpose
 
