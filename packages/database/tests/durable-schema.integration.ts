@@ -235,19 +235,15 @@ try {
        JOIN pg_namespace n ON n.oid = p.pronamespace
        WHERE n.nspname = 'app'
          AND p.proname IN (
-           'renew_job_lease',
-           'complete_job',
-           'fail_job',
-           'reclaim_expired_jobs',
-           'request_job_cancellation',
-           'acknowledge_job_cancellation',
-           'manual_retry_job'
+           'complete_job_with_effect',
+           'prepare_external_operation',
+           'claim_reconciliation'
          )`,
     );
     assert.deepEqual(
       prematureFunctions.rows,
       [],
-      "Slice 1C.3 transition functions do not exist",
+      "Slice 1C.4 idempotency and external-operation functions do not exist",
     );
   } finally {
     inspection.release();
