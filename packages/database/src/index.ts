@@ -1,6 +1,13 @@
 import { Pool, type PoolClient } from "pg";
 
 export {
+  createUploadSession,
+  finalizeUpload,
+  type SourceFormat,
+  type UploadSession,
+} from "./ingestion.js";
+
+export {
   appendOutboxEvent,
   createSyntheticOperationAndEvent,
   syntheticOperationScenarios,

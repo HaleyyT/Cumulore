@@ -1,25 +1,25 @@
-# Current Milestone: Milestone 1C — Durable Processing Foundation
+# Current Milestone: Milestone 2A — First Ingestion Vertical Slice
 
-**Status:** Approved for implementation
+**Status:** Implemented and awaiting review
 
 **Approved:** 2026-07-14
 
 ## Goal
 
-Prove retry-safe durable processing with synthetic work before private source
-files or product automation are introduced.
+Process authorized PDF, TXT, and pasted-text content through quarantine,
+validation, exact duplicate detection, deterministic extraction, and visible
+terminal state without introducing external providers.
 
 ## In scope
 
-- Transactional outbox events, versioned contracts, bounded dispatch, jobs,
-  leases, attempts, retries, cooperative cancellation, and dead letters.
-- Endpoint and handler-effect idempotency.
-- A deterministic synthetic worker and fake external provider, real PostgreSQL
-  RLS integration tests, retention cleanup, and operational metrics.
+- Workspace-scoped upload sessions and immutable quarantine keys.
+- PDF, TXT, and pasted-text validation, exact duplicate detection, and
+  deterministic normalized extraction.
+- Visible terminal source states and real PostgreSQL RLS integration tests.
 
 ## Out of scope
 
-- Milestone 2A and all ingestion, uploads, extraction, storage-provider,
+- DOCX/PPTX ingestion, deployed object storage, malware-provider integration,
   retrieval, model, note-generation, artifact, and product UI work.
 - Any real model, external processing, or production-hosting provider.
 
