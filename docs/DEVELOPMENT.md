@@ -29,7 +29,7 @@ If port 5432 is already occupied, run
 clients. Host-port overrides change only the loopback port and remain bound to
 `127.0.0.1`.
 
-Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `db:migrate`, `test:integration:tenancy`, `test:integration:durable-schema`, `test:integration:durable-dispatch-claim`, `test:integration:durable-transitions`, `test:integration:durable-idempotency`, `test:integration:durable`, `test:integration`, and `verify`. `contracts` validates the same deterministic JSON fixtures with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
+Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `python:test:integration`, `db:migrate`, `test:integration:tenancy`, `test:integration:durable-schema`, `test:integration:durable-dispatch-claim`, `test:integration:durable-transitions`, `test:integration:durable-idempotency`, `test:integration:durable`, `test:integration`, `worker:smoke`, and `verify`. `contracts` validates the same deterministic JSON fixtures with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
 
 Milestone 1C database functions are applied by migrations and exercised only
 through integration tests until the worker runtime arrives in Slice 1C.5. The
@@ -43,6 +43,12 @@ record safe action history and never accept source content or provider calls.
 Slice 1C.4 stores only canonical, bounded, non-sensitive command responses;
 the fake provider is deterministic and has no network or production-provider
 dependency.
+Slice 1C.5 exposes `dispatcher`, `executor`, `maintenance`, and `all` worker
+roles through `python -m cumulore_worker ...`; `--once` is the deterministic
+smoke mode. The runtime uses separate PostgreSQL transactions for claiming and
+work, and maintenance performs bounded reclaim, reconciliation claiming, and
+retention cleanup. Unsupported synthetic provider scenarios are dead-lettered
+with a safe error code until a future worker slice supplies provider execution.
 
 Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set `IDENTITY_PROVIDER=auth0` only in a deployed secret environment with the official Auth0 SDK configuration, including `AUTH0_ISSUER_BASE_URL`; do not commit those values. The application owns internal user IDs and workspace authorization; Auth0 issuer plus subject identifies an external identity, while email remains mutable profile data.
 
