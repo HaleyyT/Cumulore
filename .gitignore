@@ -13,6 +13,7 @@ tmp/
 node_modules/
 .pnpm-store/
 .next/
+apps/web/.next/
 dist/
 build/
 coverage/

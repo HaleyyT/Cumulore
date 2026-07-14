@@ -1,68 +1,46 @@
-# Current Milestone: Milestone 1A — Repository Foundation
+# Current Milestone: Milestone 1B — Identity and Tenancy
 
 **Status:** Approved for implementation
 
-**Approved:** 2026-07-13
+**Approved:** 2026-07-14
 
 ## Goal
 
-Create the smallest repeatable TypeScript and Python repository foundation
-needed by later milestones without implementing product behaviour or selecting
-external production providers prematurely.
+Establish authenticated account scope and enforce workspace isolation before
+private domain data is introduced.
 
 ## In scope
 
-- Establish repository workspace and quality-tooling conventions.
-- Define root commands for formatting, linting, type checking, unit tests,
-  contract checks, and documentation checks.
-- Configure strict TypeScript and typed Python quality baselines.
-- Establish the location and compatibility rules for versioned,
-  language-neutral contract schemas and cross-language fixtures.
-- Define local-development interfaces for PostgreSQL with pgvector and
-  S3-compatible object storage.
-- Establish CI expectations, structured-log redaction rules, and correlation-ID
-  conventions.
-- Record every selected dependency's purpose, license, maintenance status, and
-  justification before adding it.
+- Account-level users and external identities, keyed by OIDC issuer and
+  subject beside Cumulore-owned internal user IDs.
+- Auth0 Universal Login integration through a Cumulore-owned adapter, using
+  Auth0's supported server-side OIDC flow and session mechanism.
+- Workspaces, owner/member memberships, folders, and folder closure.
+- Web, worker, migration, and break-glass database roles.
+- Explicit workspace-scoped repositories, forced RLS, and cross-tenant tests.
+- A deterministic fake identity-provider adapter for local and CI testing.
 
 ## Out of scope
 
-- Product domain behaviour, user interfaces, upload flows, extraction, search,
-  generation, and artifact workflows.
-- Identity, sessions, workspaces, memberships, folders, RLS policies, and
-  runtime database roles; these begin in Milestone 1B.
-- Outbox events, job tables, dispatch, workers, retries, and idempotency
-  implementation; these begin in Milestone 1C.
-- External identity, model, object-storage, telemetry, or production-hosting
-  provider selection.
-- Deployed infrastructure, production data, billing, or staging rollout.
+- Social identity connections and any use of Auth0 Organizations, roles,
+  `app_metadata`, or `user_metadata` as Cumulore authorization state.
+- Manual OAuth/OIDC protocol handling, committed Auth0 credentials, and an
+  application session table without a demonstrated need.
+- Product domain behaviour, upload processing, retrieval, AI functionality,
+  outbox events, jobs, retries, and idempotency implementation.
 
-## Readiness gates retained for later milestones
+## Readiness gates
 
-- ADR-0002 remains Proposed and must be reviewed and accepted before Milestone
-  1B implementation.
-- ADR-0003 remains Proposed and must be reviewed and accepted before Milestone
-  1C implementation.
-- OIDC selection is deferred to Milestone 1B.
-- Deployed object-storage, malware-scanner, and upload-limit selections are
-  deferred to Milestone 2A.
-- Embedding and model providers are deferred to Milestone 3.
-- Production hosting, region, telemetry backend, retention, and recovery policy
-  are deferred until Milestone 6 before staging.
+- ADR-0002 is accepted for PostgreSQL tenancy, RLS, and runtime roles.
+- ADR-0009 is accepted for Auth0 Public Cloud in the Australia region.
+- Milestone 1C remains excluded. ADR-0003 remains Proposed and is its
+  readiness gate; no durable-processing implementation may begin until it is
+  accepted.
 
 ## Completion criteria
 
-- Local setup and every documented root quality command are reproducible from a
-  clean checkout.
-- TypeScript and Python quality checks run through the agreed root interface.
-- One language-neutral contract fixture validates consistently in TypeScript
-  and Python without defining a product event prematurely.
-- CI runs the same formatting, lint, type, test, contract, documentation, and
-  secret checks used locally.
-- Local PostgreSQL/pgvector and S3-compatible interfaces are documented and do
-  not require production credentials.
-- Logging guidance excludes source content, prompts, credentials, signed URLs,
-  tokens, cookies, and unnecessary identifiers.
-- No product domain, Milestone 1B, or Milestone 1C behaviour is introduced.
-- The final Milestone 1A diff contains only the approved repository-foundation
-  scope and reports every check actually run.
+- Authorized account and workspace operations succeed through the selected
+  identity adapter.
+- The complete cross-tenant matrix is denied by both application checks and
+  PostgreSQL policies.
+- Local and CI identity tests remain deterministic and do not contact Auth0.

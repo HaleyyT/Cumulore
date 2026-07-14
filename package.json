@@ -12,7 +12,9 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "pnpm --filter @cumulore/schemas test",
+    "test": "pnpm --filter @cumulore/schemas test && pnpm --filter @cumulore/web test",
+    "test:integration": "tsx packages/database/tests/tenancy.integration.ts",
+    "db:migrate": "tsx packages/database/src/migrate.ts",
     "contracts": "pnpm --filter @cumulore/schemas test && python3 -m pytest services/worker/tests/test_contract_fixture.py",
     "docs:check": "node scripts/check-doc-links.mjs",
     "secrets:check": "node scripts/check-secrets.mjs",
@@ -25,10 +27,12 @@
   "devDependencies": {
     "@eslint/js": "9.39.1",
     "@types/node": "22.19.1",
+    "@types/pg": "8.15.5",
     "ajv": "8.17.1",
     "ajv-formats": "3.0.1",
     "eslint": "9.39.1",
     "prettier": "3.6.2",
+    "pg": "8.16.3",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
     "typescript-eslint": "8.46.3"

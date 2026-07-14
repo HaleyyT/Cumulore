@@ -1,10 +1,9 @@
 # ADR-0002: PostgreSQL Tenancy, RLS, and Runtime Roles
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-07-13
+- **Accepted:** 2026-07-14
 - **Decision owners:** Product and engineering
-- **Readiness gate:** Must be reviewed and accepted before Milestone 1B
-  implementation
 
 ## Context
 
@@ -17,9 +16,11 @@ identity records do not naturally belong to a workspace.
 
 ### Data scopes
 
-`users`, `external_identities`, and `sessions` are account-level tables. They do
-not contain `workspace_id` and are accessed only through authenticated-account
-application services and narrow database grants.
+`users` and `external_identities` are account-level tables. They do not contain
+`workspace_id` and are accessed only through authenticated-account application
+services and narrow database grants. The initial Auth0 integration uses its
+supported secure server-side session mechanism; it does not add an application
+database session table without a separately approved need.
 
 Every workspace-owned domain table contains a non-null `workspace_id`.
 `workspace_members` connects an account-level `user` to a `workspace` and is

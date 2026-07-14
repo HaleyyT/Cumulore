@@ -137,9 +137,11 @@ a non-null `workspace_id`. Relationships between workspace-owned tables use
 `(workspace_id, id)` composite foreign keys so an incorrect application query
 cannot connect records across workspaces.
 
-`users`, `external_identities`, and `sessions` are account-level and do not
-carry `workspace_id`. `workspace_members` connects an account-level `user` to a
-`workspace` and is the authorization boundary between the two scopes.
+`users` and `external_identities` are account-level and do not carry
+`workspace_id`. The initial Auth0 integration uses its supported secure
+server-side session mechanism rather than an application session table.
+`workspace_members` connects an account-level `user` to a `workspace` and is
+the authorization boundary between the two scopes.
 
 Application repositories require a `WorkspaceContext`; accepting a bare record
 ID is an API design error. Each transaction sets authenticated actor and
@@ -344,10 +346,19 @@ that document and its ADR are approved.
 
 ## 10. Authentication, authorization, and deletion
 
-- Use a managed OpenID Connect provider. Store the provider issuer and subject
-  beside an internal user ID; never make provider IDs tenant keys.
-- Sessions use secure, HTTP-only, same-site cookies. Route handlers derive the
-  actor server-side; clients never assert workspace membership.
+- Use Auth0 Public Cloud in the Australia region for staging and production,
+  through a Cumulore-owned identity-provider adapter using the official
+  Auth0-supported Next.js SDK. Store the OIDC issuer and subject beside an
+  internal user ID; never make provider IDs tenant keys or use email as the
+  permanent external identity key. ADR-0009 is the controlling decision.
+- Use Auth0 Universal Login with the database email/password connection for
+  the private alpha. Social connections are deferred and must not change the
+  internal identity model. Auth0 Organizations, roles, `app_metadata`, and
+  `user_metadata` are not authorization sources of truth.
+- Sessions use the supported secure server-side integration mechanism with
+  secure, HTTP-only, same-site cookies. Route handlers derive the actor
+  server-side; clients never assert workspace membership. Do not add an
+  application session table without a demonstrated need.
 - Workspace roles are `owner` and `member` in the alpha. Destructive workspace
   and membership operations require `owner`.
 - Download URLs are issued only after authorization and expire quickly.
@@ -360,11 +371,10 @@ that document and its ADR are approved.
 - Account deletion is separate. A sole owner must delete the workspace or
   transfer ownership before their identity record can be purged.
 
-The production OIDC vendor must be selected in Milestone 1B before
-authentication integration. Retention durations and any recovery grace period
-must be approved before deletion implementation in Milestone 6. The APIs and
-data model do not depend on a specific vendor. The detailed security document
-remains planned; ADR-0007 will capture the final deletion and identity
+Local development and CI use a deterministic fake identity-provider adapter
+and do not contact Auth0. Retention durations and any recovery grace period
+must be approved before deletion implementation in Milestone 6. The detailed
+security document remains planned; ADR-0007 will capture the final deletion
 decisions.
 
 ## 11. Testing and observability foundation
@@ -402,11 +412,11 @@ decisions.
 
 | Environment | Data and infrastructure |
 | --- | --- |
-| Local | Containerized PostgreSQL with pgvector and S3-compatible storage; fake mail/model adapters; `.env.local` only |
-| CI | Ephemeral database and object store per run; deterministic model fixtures; no production credentials |
+| Local | Containerized PostgreSQL with pgvector and S3-compatible storage; deterministic fake identity, mail, and model adapters; `.env.local` only |
+| CI | Ephemeral database and object store per run; deterministic fake identity and model fixtures; no production credentials |
 | Development | Shared non-production account/project using synthetic or explicitly approved test data |
-| Staging | Production-shaped, separate account/project, OIDC tenant, database, bucket, keys, quotas, and model credentials; no copied production documents |
-| Production | Dedicated account/project and region, least-privilege roles, managed secrets, encryption, backups, restore tests, alerts, and access audit |
+| Staging | Production-shaped, separate Australia-region Auth0 tenant, account/project, database, bucket, keys, quotas, and model credentials; no copied production documents |
+| Production | Dedicated Australia-region Auth0 tenant, account/project, least-privilege roles, managed secrets, encryption, backups, restore tests, alerts, and access audit |
 
 Build one immutable web application artifact and one immutable worker
 application artifact, using a container artifact where the selected host
@@ -442,7 +452,6 @@ the named gate:
 
 | Decision | Default/recommendation | Required by |
 | --- | --- | --- |
-| OIDC vendor | Managed standards-compliant OIDC; evaluate regional and privacy terms | Milestone 1B, before authentication integration |
 | Deployed object storage | Private S3-compatible service behind the storage adapter | Milestone 2A, before non-local ingestion |
 | Upload limits | Start with format-specific limits based on extraction/load tests, not marketing promises | Milestone 2A, before upload acceptance |
 | Malware scanner | Isolated scanner with signature updates and fail-closed quarantine | Milestone 2A, before file validation |
@@ -455,9 +464,9 @@ the named gate:
 | Auto-apply policy | Proposal-only for existing blocks | Reconsider after alpha safety data |
 | Pricing and billing | Outside private-alpha foundation | Public beta planning |
 
-Milestone 1A requires no external provider selection. Foundational
-implementation decisions are otherwise resolved by this plan, subject to
-accepting ADR-0002 before Milestone 1B and ADR-0003 before Milestone 1C.
+Milestone 1A requires no external provider selection. Auth0 is selected for
+Milestone 1B by ADR-0009, and ADR-0002 is accepted for tenancy implementation.
+ADR-0003 remains Proposed and must be accepted before Milestone 1C.
 Milestones 1A-1C do not need to invent a service split, tenant model, queue,
 version model, folder scope, or contract strategy while coding. The ordered
 delivery gates are defined in `docs/ROADMAP.md`.

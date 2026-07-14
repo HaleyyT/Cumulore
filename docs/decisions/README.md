@@ -10,14 +10,15 @@ is accepted.
 | ADR | Status | Decision |
 | --- | --- | --- |
 | [ADR-0001](ADR-0001-application-architecture.md) | Accepted | Application architecture and deployment shape |
-| [ADR-0002](ADR-0002-postgresql-tenancy-rls-and-runtime-roles.md) | Proposed | PostgreSQL tenancy, RLS, and runtime roles |
+| [ADR-0002](ADR-0002-postgresql-tenancy-rls-and-runtime-roles.md) | Accepted | PostgreSQL tenancy, RLS, and runtime roles |
 | [ADR-0003](ADR-0003-durable-events-jobs-retries-and-idempotency.md) | Proposed | Durable events, jobs, retries, and idempotency |
 | ADR-0004 | To create | Artifact blocks, ownership, proposals, and versioning |
 | ADR-0005 | To create | Folder inheritance and immutable source-scope snapshots |
 | ADR-0006 | To create | Retrieval, chunking, and citation provenance |
 | ADR-0007 | To create | Authentication, authorization, export, and deletion |
 | ADR-0008 | To create | Environment isolation and production deployment provider |
+| [ADR-0009](ADR-0009-auth0-identity-provider.md) | Accepted | Auth0 identity provider and identity boundary |
 
-ADR-0002 and ADR-0003 must be accepted before their affected implementation
-begins. Each later ADR should likewise be accepted before its affected
-milestone.
+ADR-0002 is accepted for Milestone 1B. ADR-0003 must be accepted before
+Milestone 1C implementation begins. Each later ADR should likewise be accepted
+before its affected milestone.

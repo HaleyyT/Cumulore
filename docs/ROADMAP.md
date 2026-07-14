@@ -42,16 +42,19 @@ private domain data is introduced.
 
 ### Deliverables
 
-- Account-level users, external identities, and sessions.
+- Account-level users and external identities, with the selected integration's
+  supported secure server-side session mechanism; no application session table
+  without a demonstrated need.
 - Workspaces, workspace members, folders, and folder closure.
 - Web, worker, migration, and break-glass database roles.
 - Explicit workspace-scoped repositories, forced RLS, and cross-tenant tests.
 
 ### Readiness and exit gates
 
-- **ADR-0002 must be reviewed and accepted before Milestone 1B
-  implementation.**
-- Select the managed OIDC provider before authentication integration.
+- **ADR-0002 and ADR-0009 are accepted for Milestone 1B implementation.**
+- Auth0 Public Cloud in the Australia region is the managed OIDC provider;
+  Auth0 Universal Login and the database email/password connection are the
+  private-alpha starting point.
 - Authorized account/workspace operations succeed and the complete
   cross-tenant matrix is denied by application checks and PostgreSQL policies.
 
