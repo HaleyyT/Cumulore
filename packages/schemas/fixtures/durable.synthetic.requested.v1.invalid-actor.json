@@ -1,0 +1,13 @@
+{
+  "event_id": "10000000-0000-4000-8000-000000000002",
+  "event_type": "durable.synthetic.requested",
+  "schema_version": 1,
+  "occurred_at": "2026-07-14T05:00:00Z",
+  "workspace_id": "20000000-0000-4000-8000-000000000001",
+  "actor": { "type": "user", "id": null },
+  "correlation_id": "40000000-0000-4000-8000-000000000001",
+  "causation_id": null,
+  "payload": {
+    "synthetic_operation_id": "50000000-0000-4000-8000-000000000001"
+  }
+}

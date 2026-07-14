@@ -29,7 +29,14 @@ If port 5432 is already occupied, run
 clients. Host-port overrides change only the loopback port and remain bound to
 `127.0.0.1`.
 
-Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `db:migrate`, `test:integration`, and `verify`. `contracts` validates the same deterministic JSON fixture with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
+Root commands are `format`, `format:check`, `lint`, `typecheck`, `test`, `contracts`, `docs:check`, `secrets:check`, `env:check`, `python:lint`, `python:typecheck`, `python:test`, `db:migrate`, `test:integration:tenancy`, `test:integration:durable-schema`, `test:integration:durable-dispatch-claim`, `test:integration:durable`, `test:integration`, and `verify`. `contracts` validates the same deterministic JSON fixtures with Ajv in TypeScript and `jsonschema` in Python. Contracts are in `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`; incompatible changes need a new versioned filename.
+
+Milestone 1C database functions are applied by migrations and exercised only
+through integration tests until the worker runtime arrives in Slice 1C.5. The
+web-side synthetic producer accepts an existing actor transaction, so the
+synthetic operation and validated outbox event commit or roll back together.
+Only `cumulore_worker` may execute the bounded cross-workspace dispatch and
+claim functions; neither function performs handler work or external calls.
 
 Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set `IDENTITY_PROVIDER=auth0` only in a deployed secret environment with the official Auth0 SDK configuration, including `AUTH0_ISSUER_BASE_URL`; do not commit those values. The application owns internal user IDs and workspace authorization; Auth0 issuer plus subject identifies an external identity, while email remains mutable profile data.
 
@@ -37,7 +44,7 @@ Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set
 
 | Dependency                                                                  | License               | Maintenance               | Purpose and justification                                                                                      |
 | --------------------------------------------------------------------------- | --------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Ajv 8.17.1 / ajv-formats 3.0.1                                              | MIT                   | Active                    | Strict JSON Schema Draft 2020-12 validation in TypeScript.                                                     |
+| Ajv 8.17.1 / ajv-formats 3.0.1                                              | MIT                   | Active                    | Production TypeScript validation of immutable JSON Schema Draft 2020-12 event contracts.                       |
 | TypeScript 5.9.3                                                            | Apache-2.0            | Active                    | Strict TypeScript checking.                                                                                    |
 | ESLint 9.39.1 / typescript-eslint 8.46.3                                    | MIT                   | Active                    | TypeScript lint baseline.                                                                                      |
 | Prettier 3.6.2                                                              | MIT                   | Active                    | Deterministic formatting.                                                                                      |
@@ -49,7 +56,7 @@ Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set
 | Next 15.5.6 / React 19.1.1                                                  | MIT                   | Next 15.5.6 is deprecated | Minimal server runtime for the public authentication boundary; review the supported upgrade before production. |
 | @auth0/nextjs-auth0 4.13.0                                                  | MIT                   | Active                    | Official Auth0-supported Next.js integration behind Cumulore's adapter.                                        |
 
-No dependency here is a production provider or product runtime dependency. Pinned versions make local and CI tooling repeatable; review updates for license and maintenance status.
+No dependency here selects a production provider. Ajv, PostgreSQL access, Next, React, and Auth0 are product runtime dependencies; the remaining tools are development-only. Pinned versions make local and CI tooling repeatable; review updates for license and maintenance status.
 
 ## Logging conventions
 

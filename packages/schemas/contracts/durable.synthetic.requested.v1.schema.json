@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.cumulore.local/events/durable.synthetic.requested.v1.schema.json",
+  "title": "durable.synthetic.requested schema version 1",
+  "description": "Workspace-scoped request for deterministic Milestone 1C synthetic work.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "event_type",
+    "schema_version",
+    "occurred_at",
+    "workspace_id",
+    "actor",
+    "correlation_id",
+    "causation_id",
+    "payload"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid" },
+    "event_type": { "const": "durable.synthetic.requested" },
+    "schema_version": { "const": 1 },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "workspace_id": { "type": "string", "format": "uuid" },
+    "actor": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "id"],
+          "properties": {
+            "type": { "const": "user" },
+            "id": { "type": "string", "format": "uuid" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "id"],
+          "properties": {
+            "type": { "const": "worker" },
+            "id": { "type": "string", "minLength": 1, "maxLength": 120 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "id"],
+          "properties": {
+            "type": { "const": "system" },
+            "id": { "type": "null" }
+          }
+        }
+      ]
+    },
+    "correlation_id": { "type": "string", "format": "uuid" },
+    "causation_id": {
+      "type": ["string", "null"],
+      "format": "uuid"
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["synthetic_operation_id"],
+      "properties": {
+        "synthetic_operation_id": { "type": "string", "format": "uuid" }
+      }
+    }
+  }
+}

@@ -1,5 +1,14 @@
 import { Pool, type PoolClient } from "pg";
 
+export {
+  appendOutboxEvent,
+  createSyntheticOperationAndEvent,
+  syntheticOperationScenarios,
+  type CreatedSyntheticOperation,
+  type CreateSyntheticOperationInput,
+  type SyntheticOperationScenario,
+} from "./durable-processing.js";
+
 export type WorkspaceRole = "owner" | "member";
 
 export type ActorContext = {
