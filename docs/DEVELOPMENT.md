@@ -81,6 +81,11 @@ adapter before non-local ingestion is enabled. Unsupported, malformed, empty,
 or over-sized content reaches an actionable failure rather than an empty
 success.
 
+Milestone 2B extends the same contract to DOCX and PPTX. The deterministic
+worker reader preserves headings, paragraphs, tables, and slide/page locators,
+and rejects malformed, encrypted, oversized, or empty Office Open XML files
+with safe actionable errors. See `specs/milestone-2b-remaining-ingestion-formats.md`.
+
 Milestone 2A-H adds the development-only isolated PostgreSQL harness, bounded
 upload/origin checks, aggregate operational metrics, redacted structured logs,
 and the synthetic performance command. See `docs/SECURITY.md`,

@@ -139,13 +139,15 @@ production providers.
   as flaky shared-CI wall-clock assertions.
 - No DOCX/PPTX, production storage, OpenTelemetry backend, Redis, broker, Kafka,
   cloud provider, Spring service, or product feature is introduced.
-- **Milestone 2A-H must be reviewed and accepted before Milestone 2B begins.**
+- **Milestone 2A-H is accepted at the local/private-alpha boundary.**
 
 ## Milestone 2B: Remaining ingestion formats
 
 Add DOCX and PPTX through the same extraction, locator, quality, error, and
 idempotency contracts established in Milestone 2A. All four file formats are
-required before private-alpha ingestion is complete.
+required before private-alpha ingestion is complete. The implementation is
+tracked in `specs/milestone-2b-remaining-ingestion-formats.md` and is awaiting
+review after its clean-room verification.
 
 ## Milestone 3: Retrieval and citations
 
