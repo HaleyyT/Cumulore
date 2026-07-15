@@ -86,11 +86,12 @@ worker reader preserves headings, paragraphs, tables, and slide/page locators,
 and rejects malformed, encrypted, oversized, or empty Office Open XML files
 with safe actionable errors. See `specs/milestone-2b-remaining-ingestion-formats.md`.
 
-Milestone 3's first retrieval slice creates heading-aware source chunks,
+Milestone 3 creates heading-aware source chunks,
 materializes direct or descendant folder scopes, and performs PostgreSQL
 full-text search with source-version and locator provenance. A no-match query
-returns `insufficient_evidence`; embeddings, reranking, and model calls remain
-deferred pending their privacy, cost, and evaluation gate.
+returns `insufficient_evidence`; deterministic reranking and a grounded-answer
+contract now operate on authorized results, while model calls remain deferred
+pending their privacy, cost, and evaluation gate.
 
 Milestone 2A-H adds the development-only isolated PostgreSQL harness, bounded
 upload/origin checks, aggregate operational metrics, redacted structured logs,

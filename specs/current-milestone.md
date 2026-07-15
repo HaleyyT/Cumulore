@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First three slices implemented and awaiting review
+**Status:** First six slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -20,11 +20,16 @@ without selecting a production external embedding or model provider.
    provenance and an insufficient-evidence response.
 4. **Hybrid and citations:** versioned vector records, deterministic test
    embeddings, hybrid ranking, and exact chunk/locator citation validation.
+5. **Reranking:** deterministic heading, token-coverage, and phrase-aware
+   reranking over only the already authorized candidate set.
+6. **Answer boundary:** a grounded-answer envelope that carries claims and
+   citations, and converts insufficient or rejected evidence into visible safe
+   statuses without invoking or publishing through a model provider.
 
 ## Explicit exclusions
 
 - No production S3 adapter, malware provider, upload route, product UI, model,
-  embedding provider, reranking, or question-answer generation.
+  embedding provider, or question-answer generation provider.
 - No OpenTelemetry SDK/backend, Redis, broker, Kafka, AWS service, Spring Boot,
   ORM, or logging framework.
 

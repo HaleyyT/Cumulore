@@ -153,9 +153,11 @@ review after its clean-room verification.
 
 Add structure-aware chunks, PostgreSQL full-text search, pgvector embeddings,
 folder-filtered hybrid retrieval, scope snapshots, cited question answering,
-and insufficient-evidence behaviour. The first retrieval slice is implemented
-in `specs/milestone-3-retrieval-citations.md`; embedding/model providers remain
-blocked on privacy, cost, and evaluation review.
+and insufficient-evidence behaviour. The first six reviewable retrieval slices
+are implemented in `specs/milestone-3-retrieval-citations.md`, including
+deterministic candidate reranking and a grounded-answer contract;
+embedding/model providers remain blocked on privacy, cost, and evaluation
+review.
 
 ## Milestone 4: Source notes and recipes
 
