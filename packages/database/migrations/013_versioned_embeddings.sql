@@ -7,7 +7,7 @@ CREATE TABLE source_chunk_embeddings (
   embedding vector(8) NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (workspace_id, chunk_id, embedding_model),
-  FOREIGN KEY (workspace_id, chunk_id) REFERENCES source_chunks(workspace_id, id) ON DELETE CASCADE
+  FOREIGN KEY (chunk_id) REFERENCES source_chunks(id) ON DELETE CASCADE
 );
 
 CREATE INDEX source_chunk_embeddings_cosine_idx ON source_chunk_embeddings
