@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
+import { createAnswerProposal } from "../src/proposals.js";
 import { rerankRetrievedChunks } from "../src/reranking.js";
+import { assessClaimSupport } from "../src/support.js";
 
 const chunks = [
   {
@@ -33,27 +35,59 @@ assert.equal(
 assert.deepEqual(rerankRetrievedChunks([], "anything"), []);
 
 assert.deepEqual(
+  assessClaimSupport(
+    {
+      text: "Retention policy review timing",
+      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+    },
+    chunks,
+  ),
+  { status: "supported", coverage: 1 },
+);
+assert.deepEqual(
+  assessClaimSupport(
+    {
+      text: "The policy is reviewed annually",
+      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+    },
+    chunks,
+  ),
+  { status: "insufficient_evidence", coverage: 1 / 3 },
+);
+
+const grounded = buildGroundedAnswer(
+  "Retention policy review timing.",
+  [
+    {
+      text: "Retention policy review timing",
+      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+    },
+  ],
+  chunks,
+);
+assert.deepEqual(grounded, {
+  status: "grounded",
+  answerText: "Retention policy review timing.",
+  claims: [
+    {
+      text: "Retention policy review timing",
+      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+    },
+  ],
+  citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+});
+assert.equal(
   buildGroundedAnswer(
     "The policy is reviewed annually.",
     [
       {
-        text: "The policy is reviewed annually.",
+        text: "The policy is reviewed annually",
         citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
       },
     ],
     chunks,
-  ),
-  {
-    status: "grounded",
-    answerText: "The policy is reviewed annually.",
-    claims: [
-      {
-        text: "The policy is reviewed annually.",
-        citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
-      },
-    ],
-    citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
-  },
+  ).status,
+  "insufficient_evidence",
 );
 assert.equal(
   buildGroundedAnswer(
@@ -67,4 +101,18 @@ assert.equal(
   buildGroundedAnswer("No evidence", [], chunks).status,
   "insufficient_evidence",
 );
-console.log("Reranking and grounded answer tests passed.");
+
+const proposal = createAnswerProposal({
+  proposalId: "proposal-1",
+  version: 1,
+  scopeSnapshotId: "snapshot-1",
+  sourceVersionIds: ["version-1"],
+  answer: grounded,
+});
+assert.equal(proposal.status, "ready_for_review");
+assert.equal(proposal.contentHash.length, 64);
+assert.throws(
+  () => createAnswerProposal({ ...proposal, version: 0 }),
+  /positive integer/,
+);
+console.log("Reranking, support, and proposal tests passed.");
