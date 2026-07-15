@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "test": "tsx tests/ingestion-validation.test.ts && tsx tests/observability.test.ts"
+    "test": "tsx tests/ingestion-validation.test.ts && tsx tests/observability.test.ts && tsx tests/citations.test.ts"
   },
   "dependencies": {
     "@cumulore/schemas": "workspace:*"

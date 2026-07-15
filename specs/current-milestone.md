@@ -1,14 +1,14 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First slice implemented and awaiting review
+**Status:** First three slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
 ## Goal
 
-Add structure-aware chunks, folder-scoped PostgreSQL retrieval, provenance
-fields, and explicit insufficient-evidence behavior without selecting an
-external embedding or model provider.
+Add structure-aware chunks, folder-scoped PostgreSQL retrieval, versioned
+hybrid ranking, provenance fields, and explicit insufficient-evidence behavior
+without selecting a production external embedding or model provider.
 
 ## Reviewable slices
 
@@ -18,6 +18,8 @@ external embedding or model provider.
    retrieval.
 3. **Retrieval:** indexed PostgreSQL full-text search with authorized result
    provenance and an insufficient-evidence response.
+4. **Hybrid and citations:** versioned vector records, deterministic test
+   embeddings, hybrid ranking, and exact chunk/locator citation validation.
 
 ## Explicit exclusions
 
