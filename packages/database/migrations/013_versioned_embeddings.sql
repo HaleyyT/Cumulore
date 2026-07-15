@@ -64,7 +64,8 @@ LANGUAGE sql SECURITY DEFINER SET search_path = pg_catalog, public, app AS $$
   SELECT id, source_id, source_version_id, text_content, structural_type, locator, heading_path,
     keyword_rank, semantic_rank, (0.5 * greatest(keyword_rank, 0) + 0.5 * greatest(semantic_rank, 0))
   FROM candidates
-  ORDER BY combined_rank DESC, source_version_id, id
+  ORDER BY (0.5 * greatest(keyword_rank, 0) + 0.5 * greatest(semantic_rank, 0)) DESC,
+    source_version_id, id
   LIMIT least(greatest(p_limit, 1), 50);
 $$;
 
