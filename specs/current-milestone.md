@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First six slices implemented and awaiting review
+**Status:** First eight slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -25,6 +25,11 @@ without selecting a production external embedding or model provider.
 6. **Answer boundary:** a grounded-answer envelope that carries claims and
    citations, and converts insufficient or rejected evidence into visible safe
    statuses without invoking or publishing through a model provider.
+7. **Claim support:** deterministic lexical support scoring over the cited
+   authorized chunks, with conservative insufficient-evidence handling.
+8. **Review proposal:** a versioned, content-hashed answer proposal envelope
+   that records the retrieval snapshot and source versions, while remaining
+   review-only and unable to publish over user content.
 
 ## Explicit exclusions
 

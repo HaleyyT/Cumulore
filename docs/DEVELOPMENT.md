@@ -90,7 +90,8 @@ Milestone 3 creates heading-aware source chunks,
 materializes direct or descendant folder scopes, and performs PostgreSQL
 full-text search with source-version and locator provenance. A no-match query
 returns `insufficient_evidence`; deterministic reranking and a grounded-answer
-contract now operate on authorized results, while model calls remain deferred
+contract now operate on authorized results. Claim support scoring and a
+versioned review proposal preserve provenance without publication, while model calls remain deferred
 pending their privacy, cost, and evaluation gate.
 
 Milestone 2A-H adds the development-only isolated PostgreSQL harness, bounded

@@ -11,6 +11,14 @@ export { buildGroundedAnswer, type GroundedAnswer } from "./answer.js";
 
 export { rerankRetrievedChunks, type RerankedChunk } from "./reranking.js";
 
+export { assessClaimSupport, type ClaimSupport } from "./support.js";
+
+export {
+  createAnswerProposal,
+  type AnswerProposal,
+  type CreateAnswerProposalInput,
+} from "./proposals.js";
+
 export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
