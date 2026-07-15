@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First six retrieval slices implemented and awaiting review
+**Status:** First eight retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -28,10 +28,14 @@ provider privacy, cost, and evaluation gate.
 - The grounded-answer envelope carries validated claims and flattened citation
   references; rejected or empty evidence produces a visible safe status rather
   than answer prose.
+- Claim support scoring checks meaningful claim terms against the cited chunks;
+  low coverage is insufficient evidence rather than an invented conclusion.
+- Answer proposals are versioned and content-hashed with their scope snapshot
+  and source versions, and are marked ready for review without publication.
 
 ## Deferred boundary
 
 Question-answer generation, citation publication, and production embedding/model
-provider selection remain later slices of Milestone 3. The current answer
-envelope is a contract boundary only; it does not call a model or publish a
-workspace artifact.
+provider selection remain later slices of Milestone 3. The current proposal is
+a contract boundary only; it does not call a model, persist an artifact, or
+overwrite user-managed content.
