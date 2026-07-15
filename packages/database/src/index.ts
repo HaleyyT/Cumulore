@@ -1,8 +1,16 @@
 import { Pool, type PoolClient } from "pg";
 
 export {
+  validateCitations,
+  type CitationInput,
+  type ClaimInput,
+  type CitationValidation,
+} from "./citations.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
+  searchSourceChunksHybrid,
   type RetrievalResult,
   type RetrievalScopeMode,
   type RetrievedChunk,

@@ -10,6 +10,7 @@ import {
   finalizeUpload,
   provisionIdentity,
   searchSourceChunks,
+  searchSourceChunksHybrid,
 } from "../src/index.js";
 
 const connectionString = process.env.DATABASE_URL;
@@ -129,6 +130,35 @@ try {
       reason: "no_authorized_match",
     },
   );
+  const chunk = await pool.query<{ id: string }>(
+    "SELECT id FROM source_chunks WHERE source_version_id = $1",
+    [upload.sourceVersionId],
+  );
+  await workerCall(
+    workspace,
+    "SELECT app.record_source_chunk_embeddings($1, $2, $3)",
+    [
+      sourceId,
+      "synthetic-hash-8-v1",
+      JSON.stringify([
+        {
+          chunk_id: chunk.rows[0]!.id,
+          embedding: "[1,0,0,0,0,0,0,0]",
+        },
+      ]),
+    ],
+  );
+  const hybrid = await searchSourceChunksHybrid(
+    pool,
+    context,
+    snapshot,
+    "retrieval evidence",
+    [1, 0, 0, 0, 0, 0, 0, 0],
+    "synthetic-hash-8-v1",
+  );
+  assert.equal(hybrid.kind, "evidence");
+  if (hybrid.kind === "evidence")
+    assert.ok((hybrid.chunks[0]!.combinedRank ?? 0) > 0);
   console.log("PostgreSQL retrieval integration tests passed.");
 } finally {
   await pool.end();
