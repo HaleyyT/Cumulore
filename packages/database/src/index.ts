@@ -7,6 +7,10 @@ export {
   type CitationValidation,
 } from "./citations.js";
 
+export { buildGroundedAnswer, type GroundedAnswer } from "./answer.js";
+
+export { rerankRetrievedChunks, type RerankedChunk } from "./reranking.js";
+
 export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
