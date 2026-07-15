@@ -1,11 +1,13 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First slice implemented and awaiting review
+**Status:** First three retrieval slices implemented and awaiting review
 
-This first slice adds deterministic structure-aware chunks, PostgreSQL
-full-text retrieval, folder-scoped snapshots, and an explicit insufficient-
-evidence result. Semantic embeddings, reranking, and external model calls
-remain deferred until the provider privacy, cost, and evaluation gate.
+The first three slices add deterministic structure-aware chunks, PostgreSQL
+full-text retrieval, versioned synthetic embeddings, hybrid ranking,
+folder-scoped snapshots, provenance-backed citation validation, and an explicit
+insufficient-evidence result. Production embedding/model providers, reranking,
+and external model calls remain deferred until the provider privacy, cost, and
+evaluation gate.
 
 ## Guarantees
 
@@ -18,9 +20,11 @@ remain deferred until the provider privacy, cost, and evaluation gate.
 - Keyword search is deterministic and indexed with PostgreSQL `tsvector`.
 - No authorized match returns `insufficient_evidence`; it never fabricates an
   answer or decorative citation.
+- Hybrid ranking is version-aware and uses a deterministic local adapter only
+  for tests; no private content leaves the application.
+- Citation validation accepts only retrieved chunk IDs with exact locators.
 
 ## Deferred boundary
 
-`pgvector` columns, embedding adapters, reranking, question-answer generation,
-claim validation, and citation publication are later slices of Milestone 3.
-No model or embedding provider is selected by this implementation.
+Reranking, question-answer generation, citation publication, and production
+embedding/model provider selection remain later slices of Milestone 3.
