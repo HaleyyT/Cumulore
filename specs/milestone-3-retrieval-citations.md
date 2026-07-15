@@ -1,13 +1,13 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First three retrieval slices implemented and awaiting review
+**Status:** First six retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
-folder-scoped snapshots, provenance-backed citation validation, and an explicit
-insufficient-evidence result. Production embedding/model providers, reranking,
-and external model calls remain deferred until the provider privacy, cost, and
-evaluation gate.
+folder-scoped snapshots, provenance-backed citation validation, a deterministic
+candidate reranker, and an explicit grounded-answer boundary. Production
+embedding/model providers and external model calls remain deferred until the
+provider privacy, cost, and evaluation gate.
 
 ## Guarantees
 
@@ -23,8 +23,15 @@ evaluation gate.
 - Hybrid ranking is version-aware and uses a deterministic local adapter only
   for tests; no private content leaves the application.
 - Citation validation accepts only retrieved chunk IDs with exact locators.
+- Reranking is deterministic and can only reorder the authorized candidates
+  already returned by scoped retrieval.
+- The grounded-answer envelope carries validated claims and flattened citation
+  references; rejected or empty evidence produces a visible safe status rather
+  than answer prose.
 
 ## Deferred boundary
 
-Reranking, question-answer generation, citation publication, and production
-embedding/model provider selection remain later slices of Milestone 3.
+Question-answer generation, citation publication, and production embedding/model
+provider selection remain later slices of Milestone 3. The current answer
+envelope is a contract boundary only; it does not call a model or publish a
+workspace artifact.
