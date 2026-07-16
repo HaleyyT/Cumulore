@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { buildGroundedAnswer } from "../src/answer.js";
 import { evaluateGroundedAnswer } from "../src/evaluation.js";
 import { createPublicationIntent } from "../src/intent.js";
+import { resolvePublicationIntent } from "../src/intent-resolution.js";
 import { createAnswerProposal } from "../src/proposals.js";
 import { evaluatePublicationEligibility } from "../src/publication.js";
 import { evaluatePublicationReadiness } from "../src/readiness.js";
@@ -184,6 +185,18 @@ const intent = createPublicationIntent({
 });
 assert.equal(intent.resultingArtifactVersion, 5);
 assert.equal(intent.intentHash.length, 64);
+assert.deepEqual(resolvePublicationIntent(intent, 4), {
+  status: "ready_to_apply",
+  intentId: "intent-1",
+  artifactId: "artifact-1",
+  resultingArtifactVersion: 5,
+});
+assert.deepEqual(resolvePublicationIntent(intent, 3), {
+  status: "conflict",
+  intentId: "intent-1",
+  expectedArtifactVersion: 4,
+  actualArtifactVersion: 3,
+});
 assert.throws(
   () =>
     createPublicationIntent({
