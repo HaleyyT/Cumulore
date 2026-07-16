@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First fifteen retrieval slices implemented and awaiting review
+**Status:** First sixteen retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -49,6 +49,8 @@ provider privacy, cost, and evaluation gate.
   application and returns a visible conflict without persistence.
 - A ready publication command carries provenance, actor, version fence, and a
   deterministic idempotency key; command construction performs no write.
+- Publication outcomes preserve only command identity and safe operational
+  status/error metadata; answer text and private source content are excluded.
 
 ## Deferred boundary
 
