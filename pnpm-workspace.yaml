@@ -8,3 +8,6 @@ allowBuilds:
   protobufjs: false
   sharp: true
   ssh2: false
+
+overrides:
+  postcss: ">=8.5.19"
