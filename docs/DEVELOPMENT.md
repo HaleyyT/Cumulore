@@ -68,10 +68,14 @@ the fake provider is deterministic and has no network or production-provider
 dependency.
 Slice 1C.5 exposes `dispatcher`, `executor`, `maintenance`, and `all` worker
 roles through `python -m cumulore_worker ...`; `--once` is the deterministic
-smoke mode. The runtime uses separate PostgreSQL transactions for claiming and
-work, and maintenance performs bounded reclaim, reconciliation claiming, and
+single-role mode. `pnpm worker:smoke` creates a synthetic operation, dispatches
+and executes it through separately started roles, then verifies the terminal
+attempt and idempotent database effect. The runtime uses separate PostgreSQL
+transactions for claiming and work, validates the migration-owned handler
+registry before polling, renews 60-second leases every 20 seconds, and permits
+45 seconds for graceful shutdown. Maintenance performs bounded reclaim and
 retention cleanup. Unsupported synthetic provider scenarios are dead-lettered
-with a safe error code until a future worker slice supplies provider execution.
+with a safe error code until a reviewed provider execution slice exists.
 
 Milestone 2A provides workspace-scoped PDF/TXT/pasted-text upload sessions with
 immutable quarantine keys, finalize events, exact hash duplicate detection,
@@ -104,20 +108,21 @@ Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set
 
 ## Dependency policy
 
-| Dependency                                                                  | License               | Maintenance               | Purpose and justification                                                                                                                                |
-| --------------------------------------------------------------------------- | --------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ajv 8.17.1 / ajv-formats 3.0.1                                              | MIT                   | Active                    | Production TypeScript validation of immutable JSON Schema Draft 2020-12 event contracts.                                                                 |
-| TypeScript 5.9.3                                                            | Apache-2.0            | Active                    | Strict TypeScript checking.                                                                                                                              |
-| ESLint 9.39.1 / typescript-eslint 8.46.3                                    | MIT                   | Active                    | TypeScript lint baseline.                                                                                                                                |
-| Prettier 3.6.2                                                              | MIT                   | Active                    | Deterministic formatting.                                                                                                                                |
-| tsx 4.20.6                                                                  | MIT                   | Active                    | Runs the small TypeScript contract test without a build system.                                                                                          |
-| jsonschema 4.25.1                                                           | MIT                   | Active                    | Draft 2020-12 validation in Python.                                                                                                                      |
-| Ruff 0.14.3 / mypy 1.18.2 / pytest 8.4.2 / types-jsonschema 4.25.1.20251009 | MIT                   | Active                    | Python linting, type checking, tests, and JSON Schema type stubs.                                                                                        |
-| PostgreSQL pgvector image / MinIO image                                     | PostgreSQL / AGPL-3.0 | Active                    | Local-only database/vector and S3-compatible interfaces.                                                                                                 |
-| pg 8.16.3 / @types/pg 8.15.5                                                | MIT                   | Active                    | PostgreSQL transactions, migrations, and typed tenancy repositories.                                                                                     |
-| Next 15.5.6 / React 19.1.1                                                  | MIT                   | Next 15.5.6 is deprecated | Minimal server runtime for the public authentication boundary; review the supported upgrade before production.                                           |
-| @auth0/nextjs-auth0 4.13.0                                                  | MIT                   | Active                    | Official Auth0-supported Next.js integration behind Cumulore's adapter.                                                                                  |
-| @testcontainers/postgresql 12.0.4                                           | MIT                   | Active                    | Development-only lifecycle for an isolated pgvector database shared by local and CI integration commands; Compose alone cannot supply per-run isolation. |
+| Dependency                                                                  | License               | Maintenance | Purpose and justification                                                                                                                                |
+| --------------------------------------------------------------------------- | --------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ajv 8.20.0 / ajv-formats 3.0.1                                              | MIT                   | Active      | Production TypeScript validation of immutable JSON Schema Draft 2020-12 event contracts.                                                                 |
+| TypeScript 5.9.3                                                            | Apache-2.0            | Active      | Strict TypeScript checking.                                                                                                                              |
+| ESLint 9.39.1 / typescript-eslint 8.46.3                                    | MIT                   | Active      | TypeScript lint baseline.                                                                                                                                |
+| Prettier 3.6.2                                                              | MIT                   | Active      | Deterministic formatting.                                                                                                                                |
+| tsx 4.20.6                                                                  | MIT                   | Active      | Runs the small TypeScript contract test without a build system.                                                                                          |
+| jsonschema 4.25.1                                                           | MIT                   | Active      | Draft 2020-12 validation in Python.                                                                                                                      |
+| pypdf 6.14.2                                                                | BSD-3-Clause          | Active      | Production PDF page parsing with real page boundaries; the previous regular-expression fixture parser could generate false citation pages.               |
+| Ruff 0.14.3 / mypy 1.18.2 / pytest 9.0.3 / types-jsonschema 4.25.1.20251009 | MIT                   | Active      | Python linting, type checking, tests, and JSON Schema type stubs.                                                                                        |
+| PostgreSQL pgvector image / MinIO image                                     | PostgreSQL / AGPL-3.0 | Active      | Local-only database/vector and S3-compatible interfaces.                                                                                                 |
+| pg 8.22.0 / @types/pg 8.20.0                                                | MIT                   | Active      | PostgreSQL transactions, migrations, and typed tenancy repositories.                                                                                     |
+| Next 16.2.10 / React 19.2.7                                                 | MIT                   | Active      | Supported server runtime for the public authentication boundary and credential-free production build.                                                    |
+| @auth0/nextjs-auth0 4.25.0                                                  | MIT                   | Active      | Official Auth0-supported Next.js integration behind Cumulore's lazy, fail-closed adapter.                                                                |
+| @testcontainers/postgresql 12.0.4                                           | MIT                   | Active      | Development-only lifecycle for an isolated pgvector database shared by local and CI integration commands; Compose alone cannot supply per-run isolation. |
 
 No dependency here selects a production provider. Ajv, PostgreSQL access,
 Next, React, and Auth0 are product runtime dependencies; the remaining tools
