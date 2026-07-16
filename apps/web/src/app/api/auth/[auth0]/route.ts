@@ -1,5 +1,13 @@
-import { Auth0Client } from "@auth0/nextjs-auth0/server";
+import type { NextRequest } from "next/server";
+import type { Auth0Client } from "@auth0/nextjs-auth0/server";
+import { createAuth0Client } from "../../../../modules/identity/auth0-config";
 
-const auth0 = new Auth0Client();
+let client: Auth0Client | undefined;
 
-export const GET = auth0.middleware;
+function getClient(): Auth0Client {
+  return (client ??= createAuth0Client());
+}
+
+export function GET(request: NextRequest) {
+  return getClient().middleware(request);
+}

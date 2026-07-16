@@ -98,7 +98,15 @@ try {
       "cumulore-text-1",
       { element_count: 1 },
       JSON.stringify([
-        { kind: "paragraph", text: "hello", locator: { line: 1 } },
+        {
+          kind: "paragraph",
+          text: "hello",
+          locator: {
+            locator_version: 1,
+            format: "txt",
+            segments: [{ kind: "line", index: 1 }],
+          },
+        },
       ]),
     ],
   );

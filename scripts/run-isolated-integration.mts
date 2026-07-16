@@ -107,12 +107,7 @@ try {
     ["-m", "pytest", "services/worker/tests"],
     environment,
   );
-  await runStep(
-    "worker smoke mode",
-    "python3",
-    ["-m", "cumulore_worker", "all", "--once"],
-    environment,
-  );
+  await runStep("worker smoke mode", "pnpm", ["worker:smoke"], environment);
   console.log("\n[isolated integration] all checks passed");
 } finally {
   await postgres.stop();

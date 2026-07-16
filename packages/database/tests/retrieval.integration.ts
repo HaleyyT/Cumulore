@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import type { QueryResultRow } from "pg";
 
 import {
+  addWorkspaceMember,
   createFolder,
   createPool,
   createRetrievalScopeSnapshot,
@@ -85,7 +86,11 @@ try {
         {
           kind: "paragraph",
           text: "PostgreSQL retrieval evidence",
-          locator: { line: 1 },
+          locator: {
+            locator_version: 1,
+            format: "txt",
+            segments: [{ kind: "line", index: 1 }],
+          },
         },
       ]),
     ],
@@ -99,7 +104,11 @@ try {
         {
           kind: "paragraph",
           text: "PostgreSQL retrieval evidence",
-          locator: { line: 1 },
+          locator: {
+            locator_version: 1,
+            format: "txt",
+            segments: [{ kind: "line", index: 1 }],
+          },
           heading_path: ["Evidence"],
         },
       ]),
@@ -122,7 +131,9 @@ try {
   );
   assert.equal(evidence.kind, "evidence");
   if (evidence.kind === "evidence")
-    assert.equal(evidence.chunks[0]!.locator.line, 1);
+    assert.deepEqual(evidence.chunks[0]!.locator.segments, [
+      { kind: "line", index: 1 },
+    ]);
   assert.deepEqual(
     await searchSourceChunks(pool, context, snapshot, "not present"),
     {
@@ -159,6 +170,82 @@ try {
   assert.equal(hybrid.kind, "evidence");
   if (hybrid.kind === "evidence")
     assert.ok((hybrid.chunks[0]!.combinedRank ?? 0) > 0);
+  const hybridDefinition = await pool.query<{ definition: string }>(
+    "SELECT pg_get_functiondef('app.search_source_chunks_hybrid(uuid,text,vector,text,integer)'::regprocedure) AS definition",
+  );
+  assert.match(hybridDefinition.rows[0]!.definition, /keyword_candidates/);
+  assert.match(hybridDefinition.rows[0]!.definition, /semantic_candidates/);
+  assert.equal(
+    (hybridDefinition.rows[0]!.definition.match(/LIMIT 50/g) ?? []).length,
+    2,
+    "keyword and semantic candidate sets are independently bounded to 50",
+  );
+
+  const otherUser = await provisionIdentity(pool, {
+    issuer: "https://fake.identity.local/",
+    subject: `retrieval-other-${Date.now()}`,
+  });
+  await addWorkspaceMember(
+    pool,
+    { userId: user, workspaceId: workspace },
+    otherUser,
+    "member",
+  );
+  const otherContext = { userId: otherUser, workspaceId: workspace };
+  assert.deepEqual(
+    await searchSourceChunks(
+      pool,
+      otherContext,
+      snapshot,
+      "retrieval evidence",
+    ),
+    { kind: "insufficient_evidence", reason: "no_authorized_match" },
+    "a same-workspace member cannot search another actor's snapshot",
+  );
+  assert.deepEqual(
+    await searchSourceChunksHybrid(
+      pool,
+      otherContext,
+      snapshot,
+      "retrieval evidence",
+      [1, 0, 0, 0, 0, 0, 0, 0],
+      "synthetic-hash-8-v1",
+    ),
+    { kind: "insufficient_evidence", reason: "no_authorized_match" },
+    "hybrid search enforces snapshot ownership inside the security-definer function",
+  );
+
+  const foreignUser = await provisionIdentity(pool, {
+    issuer: "https://fake.identity.local/",
+    subject: `retrieval-foreign-${Date.now()}`,
+  });
+  const foreignWorkspace = await createWorkspace(
+    pool,
+    foreignUser,
+    "Foreign retrieval workspace",
+  );
+  const migration = await pool.connect();
+  try {
+    await migration.query("BEGIN");
+    await migration.query("SET LOCAL ROLE cumulore_migration");
+    await assert.rejects(
+      () =>
+        migration.query(
+          "INSERT INTO source_chunk_embeddings (workspace_id, chunk_id, embedding_model, embedding) VALUES ($1, $2, $3, $4::vector)",
+          [
+            foreignWorkspace,
+            chunk.rows[0]!.id,
+            "synthetic-cross-tenant-v1",
+            "[1,0,0,0,0,0,0,0]",
+          ],
+        ),
+      /source_chunk_embeddings_workspace_chunk_fkey/,
+      "the database rejects an embedding that references another workspace's chunk",
+    );
+    await migration.query("ROLLBACK");
+  } finally {
+    migration.release();
+  }
   console.log("PostgreSQL retrieval integration tests passed.");
 } finally {
   await pool.end();

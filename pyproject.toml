@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling>=1.27.0"]
+requires = ["hatchling==1.31.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -9,14 +9,21 @@ description = "Cumulore's non-public worker foundation."
 readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "UNLICENSED" }
-dependencies = ["psycopg[binary]==3.3.4", "jsonschema==4.25.1"]
+dependencies = [
+  "psycopg[binary]==3.3.4",
+  "jsonschema==4.25.1",
+  "pypdf==6.14.2",
+]
 
 [project.optional-dependencies]
 dev = [
   "mypy==1.18.2",
-  "pytest==8.4.2",
+  "pytest==9.0.3",
   "ruff==0.14.3",
   "types-jsonschema==4.25.1.20251009",
+  "hatchling==1.31.0",
+  "pip-audit==2.10.1",
+  "pip-tools==7.5.3",
 ]
 
 [tool.hatch.build.targets.wheel]

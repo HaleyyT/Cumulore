@@ -39,10 +39,14 @@ arrival rate and handler duration.
 ## Migration failure
 
 1. Stop application rollout; do not edit `schema_migrations` manually.
-2. Confirm the failed migration transaction rolled back and capture its safe
-   migration name/error class without credentials or private rows.
-3. Correct with a forward migration. Never down-migrate durable history.
-4. Re-run the isolated integration command from an empty database and the
+2. Confirm the failed migration transaction rolled back. The migration runner
+   holds a database-scoped advisory lock and verifies the SHA-256 checksum and
+   byte size of every applied migration; a mismatch is a release blocker, not
+   a reason to rewrite migration history.
+3. Capture the safe migration name/error class without credentials or private
+   rows.
+4. Correct with a forward migration. Never down-migrate durable history.
+5. Re-run the isolated integration command from an empty database and the
    supported previous schema state before retrying deployment.
 
 ## Database saturation or lock waits

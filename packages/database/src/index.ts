@@ -220,37 +220,10 @@ export async function createFolder(
 ): Promise<string> {
   return withActorTransaction(pool, context, async (client) => {
     const folder = await client.query<{ id: string }>(
-      "INSERT INTO folders (workspace_id, name, parent_id) VALUES ($1, $2, $3) RETURNING id",
-      [context.workspaceId, name, parentId ?? null],
+      "SELECT app.create_folder($1, $2) AS id",
+      [name, parentId ?? null],
     );
-    const folderId = folder.rows[0]!.id;
-    await client.query(
-      "INSERT INTO folder_closure (workspace_id, ancestor_id, descendant_id, depth) VALUES ($1, $2, $2, 0)",
-      [context.workspaceId, folderId],
-    );
-    if (parentId) {
-      const ancestors = await client.query<{
-        ancestor_id: string;
-        depth: number;
-      }>(
-        "SELECT ancestor_id, depth FROM folder_closure WHERE workspace_id = $1 AND descendant_id = $2",
-        [context.workspaceId, parentId],
-      );
-      if (ancestors.rows.length === 0)
-        throw new Error("Parent folder is not in the workspace");
-      for (const ancestor of ancestors.rows) {
-        await client.query(
-          "INSERT INTO folder_closure (workspace_id, ancestor_id, descendant_id, depth) VALUES ($1, $2, $3, $4)",
-          [
-            context.workspaceId,
-            ancestor.ancestor_id,
-            folderId,
-            ancestor.depth + 1,
-          ],
-        );
-      }
-    }
-    return folderId;
+    return folder.rows[0]!.id;
   });
 }
 

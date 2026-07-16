@@ -22,7 +22,7 @@ export type GroundedAnswer =
  * Unsupported or malformed claims are replaced by a safe visible status.
  */
 export function buildGroundedAnswer(
-  answerText: string,
+  _answerText: string,
   claims: ClaimInput[],
   retrievedChunks: RetrievedChunk[],
 ): GroundedAnswer {
@@ -66,7 +66,11 @@ export function buildGroundedAnswer(
   }
   return {
     status: "grounded",
-    answerText,
+    answerText: validation.claims
+      .map((claim) => claim.text.trim().replace(/[.!?]+$/, ""))
+      .filter(Boolean)
+      .map((claim) => `${claim}.`)
+      .join(" "),
     claims: validation.claims,
     citations: validation.claims.flatMap((claim) => claim.citations),
   };

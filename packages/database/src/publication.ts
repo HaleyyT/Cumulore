@@ -1,4 +1,7 @@
-import type { AnswerProposal } from "./proposals.js";
+import {
+  computeProposalContentHash,
+  type AnswerProposal,
+} from "./proposals.js";
 import type { ProposalReviewDecision } from "./review.js";
 
 export type PublicationEligibility =
@@ -13,6 +16,7 @@ export type PublicationEligibility =
       reason:
         | "proposal_not_grounded"
         | "proposal_not_approved"
+        | "proposal_content_hash_invalid"
         | "review_does_not_match_proposal";
     };
 
@@ -29,6 +33,9 @@ export function evaluatePublicationEligibility(
     proposal.answer.status !== "grounded"
   ) {
     return { status: "blocked", reason: "proposal_not_grounded" };
+  }
+  if (computeProposalContentHash(proposal) !== proposal.contentHash) {
+    return { status: "blocked", reason: "proposal_content_hash_invalid" };
   }
   if (decision.decision !== "approved") {
     return { status: "blocked", reason: "proposal_not_approved" };
