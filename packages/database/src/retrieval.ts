@@ -10,7 +10,7 @@ export type RetrievedChunk = {
   sourceVersionId: string;
   textContent: string;
   structuralType: string;
-  locator: Record<string, string | number>;
+  locator: Record<string, unknown>;
   headingPath: string[];
   rank: number;
   keywordRank?: number;
