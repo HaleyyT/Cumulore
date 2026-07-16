@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First ten slices implemented and awaiting review
+**Status:** First eleven slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -34,6 +34,8 @@ without selecting a production external embedding or model provider.
    preserves proposal version and content hash; it cannot publish content.
 10. **Publication gate:** deterministic eligibility checks require a grounded
     proposal and a matching approval before any future ownership-aware write.
+11. **Evaluation report:** deterministic, content-redacted quality metrics for
+    grounded answers, with non-grounded answers explicitly not evaluable.
 
 ## Explicit exclusions
 

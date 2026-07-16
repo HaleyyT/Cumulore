@@ -26,6 +26,8 @@ export {
   type PublicationEligibility,
 } from "./publication.js";
 
+export { evaluateGroundedAnswer, type AnswerEvaluation } from "./evaluation.js";
+
 export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
