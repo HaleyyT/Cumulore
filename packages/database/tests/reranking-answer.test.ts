@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
+import { evaluateGroundedAnswer } from "../src/evaluation.js";
 import { createAnswerProposal } from "../src/proposals.js";
 import { evaluatePublicationEligibility } from "../src/publication.js";
 import { rerankRetrievedChunks } from "../src/reranking.js";
@@ -133,6 +134,21 @@ assert.deepEqual(
     contentHash: "changed",
   }),
   { status: "blocked", reason: "review_does_not_match_proposal" },
+);
+assert.deepEqual(evaluateGroundedAnswer(grounded, chunks), {
+  status: "evaluated",
+  evaluatorVersion: "lexical-support-v1",
+  claimCount: 1,
+  citationCount: 1,
+  supportCoverage: 1,
+  passed: true,
+});
+assert.deepEqual(
+  evaluateGroundedAnswer(
+    buildGroundedAnswer("No evidence", [], chunks),
+    chunks,
+  ),
+  { status: "not_evaluable", reason: "answer_not_grounded" },
 );
 assert.throws(
   () => reviewAnswerProposal(proposal, "reviewer-1", "rejected"),
