@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First eleven slices implemented and awaiting review
+**Status:** First twelve slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -36,6 +36,8 @@ without selecting a production external embedding or model provider.
     proposal and a matching approval before any future ownership-aware write.
 11. **Evaluation report:** deterministic, content-redacted quality metrics for
     grounded answers, with non-grounded answers explicitly not evaluable.
+12. **Publication readiness:** approval and evaluation gates are combined into
+    a deterministic readiness result without performing a write.
 
 ## Explicit exclusions
 

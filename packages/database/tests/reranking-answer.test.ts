@@ -4,6 +4,7 @@ import { buildGroundedAnswer } from "../src/answer.js";
 import { evaluateGroundedAnswer } from "../src/evaluation.js";
 import { createAnswerProposal } from "../src/proposals.js";
 import { evaluatePublicationEligibility } from "../src/publication.js";
+import { evaluatePublicationReadiness } from "../src/readiness.js";
 import { rerankRetrievedChunks } from "../src/reranking.js";
 import { reviewAnswerProposal } from "../src/review.js";
 import { assessClaimSupport } from "../src/support.js";
@@ -149,6 +150,24 @@ assert.deepEqual(
     chunks,
   ),
   { status: "not_evaluable", reason: "answer_not_grounded" },
+);
+assert.deepEqual(
+  evaluatePublicationReadiness(
+    evaluatePublicationEligibility(proposal, approval),
+    evaluateGroundedAnswer(grounded, chunks),
+  ),
+  {
+    status: "ready",
+    proposalId: "proposal-1",
+    contentHash: proposal.contentHash,
+  },
+);
+assert.deepEqual(
+  evaluatePublicationReadiness(
+    evaluatePublicationEligibility(proposal, approval),
+    { status: "not_evaluable", reason: "answer_not_grounded" },
+  ),
+  { status: "blocked", reason: "evaluation_failed" },
 );
 assert.throws(
   () => reviewAnswerProposal(proposal, "reviewer-1", "rejected"),
