@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
 import { createAnswerProposal } from "../src/proposals.js";
+import { evaluatePublicationEligibility } from "../src/publication.js";
 import { rerankRetrievedChunks } from "../src/reranking.js";
 import { reviewAnswerProposal } from "../src/review.js";
 import { assessClaimSupport } from "../src/support.js";
@@ -119,6 +120,20 @@ assert.deepEqual(reviewAnswerProposal(proposal, "reviewer-1", "approved"), {
   reviewerId: "reviewer-1",
   decision: "approved",
 });
+const approval = reviewAnswerProposal(proposal, "reviewer-1", "approved");
+assert.deepEqual(evaluatePublicationEligibility(proposal, approval), {
+  status: "eligible",
+  proposalId: "proposal-1",
+  proposalVersion: 1,
+  contentHash: proposal.contentHash,
+});
+assert.deepEqual(
+  evaluatePublicationEligibility(proposal, {
+    ...approval,
+    contentHash: "changed",
+  }),
+  { status: "blocked", reason: "review_does_not_match_proposal" },
+);
 assert.throws(
   () => reviewAnswerProposal(proposal, "reviewer-1", "rejected"),
   /require a reason/,
