@@ -2,7 +2,12 @@ import type { AnswerEvaluation } from "./evaluation.js";
 import type { PublicationEligibility } from "./publication.js";
 
 export type PublicationReadiness =
-  | { status: "ready"; proposalId: string; contentHash: string }
+  | {
+      status: "ready";
+      proposalId: string;
+      proposalVersion: number;
+      contentHash: string;
+    }
   | {
       status: "blocked";
       reason: "publication_not_eligible" | "evaluation_failed";
@@ -22,6 +27,7 @@ export function evaluatePublicationReadiness(
   return {
     status: "ready",
     proposalId: eligibility.proposalId,
+    proposalVersion: eligibility.proposalVersion,
     contentHash: eligibility.contentHash,
   };
 }

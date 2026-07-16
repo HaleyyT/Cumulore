@@ -34,6 +34,12 @@ export {
 } from "./readiness.js";
 
 export {
+  createPublicationIntent,
+  type CreatePublicationIntentInput,
+  type PublicationIntent,
+} from "./intent.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
 import { evaluateGroundedAnswer } from "../src/evaluation.js";
+import { createPublicationIntent } from "../src/intent.js";
 import { createAnswerProposal } from "../src/proposals.js";
 import { evaluatePublicationEligibility } from "../src/publication.js";
 import { evaluatePublicationReadiness } from "../src/readiness.js";
@@ -159,6 +160,7 @@ assert.deepEqual(
   {
     status: "ready",
     proposalId: "proposal-1",
+    proposalVersion: 1,
     contentHash: proposal.contentHash,
   },
 );
@@ -168,6 +170,30 @@ assert.deepEqual(
     { status: "not_evaluable", reason: "answer_not_grounded" },
   ),
   { status: "blocked", reason: "evaluation_failed" },
+);
+const readiness = evaluatePublicationReadiness(
+  evaluatePublicationEligibility(proposal, approval),
+  evaluateGroundedAnswer(grounded, chunks),
+);
+const intent = createPublicationIntent({
+  intentId: "intent-1",
+  readiness,
+  targetArtifactId: "artifact-1",
+  expectedArtifactVersion: 4,
+  actorId: "user-1",
+});
+assert.equal(intent.resultingArtifactVersion, 5);
+assert.equal(intent.intentHash.length, 64);
+assert.throws(
+  () =>
+    createPublicationIntent({
+      intentId: "intent-2",
+      readiness: { status: "blocked", reason: "evaluation_failed" },
+      targetArtifactId: "artifact-1",
+      expectedArtifactVersion: 4,
+      actorId: "user-1",
+    }),
+  /requires readiness/,
 );
 assert.throws(
   () => reviewAnswerProposal(proposal, "reviewer-1", "rejected"),
