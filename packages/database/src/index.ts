@@ -40,6 +40,11 @@ export {
 } from "./intent.js";
 
 export {
+  resolvePublicationIntent,
+  type PublicationIntentResolution,
+} from "./intent-resolution.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,

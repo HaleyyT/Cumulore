@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First thirteen retrieval slices implemented and awaiting review
+**Status:** First fourteen retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -45,6 +45,8 @@ provider privacy, cost, and evaluation gate.
 - Publication intents carry proposal provenance, actor identity, and an
   expected artifact version; a future writer can reject stale intents instead
   of overwriting user-managed content.
+- Intent resolution compares the expected and actual artifact versions before
+  application and returns a visible conflict without persistence.
 
 ## Deferred boundary
 
