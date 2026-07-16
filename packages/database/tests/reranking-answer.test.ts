@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { buildGroundedAnswer } from "../src/answer.js";
 import { createAnswerProposal } from "../src/proposals.js";
 import { rerankRetrievedChunks } from "../src/reranking.js";
+import { reviewAnswerProposal } from "../src/review.js";
 import { assessClaimSupport } from "../src/support.js";
 
 const chunks = [
@@ -111,6 +112,17 @@ const proposal = createAnswerProposal({
 });
 assert.equal(proposal.status, "ready_for_review");
 assert.equal(proposal.contentHash.length, 64);
+assert.deepEqual(reviewAnswerProposal(proposal, "reviewer-1", "approved"), {
+  proposalId: "proposal-1",
+  proposalVersion: 1,
+  contentHash: proposal.contentHash,
+  reviewerId: "reviewer-1",
+  decision: "approved",
+});
+assert.throws(
+  () => reviewAnswerProposal(proposal, "reviewer-1", "rejected"),
+  /require a reason/,
+);
 assert.throws(
   () => createAnswerProposal({ ...proposal, version: 0 }),
   /positive integer/,

@@ -19,6 +19,8 @@ export {
   type CreateAnswerProposalInput,
 } from "./proposals.js";
 
+export { reviewAnswerProposal, type ProposalReviewDecision } from "./review.js";
+
 export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,

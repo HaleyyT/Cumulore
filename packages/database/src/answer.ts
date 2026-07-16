@@ -70,10 +70,4 @@ export function buildGroundedAnswer(
     claims: validation.claims,
     citations: validation.claims.flatMap((claim) => claim.citations),
   };
-  return {
-    status: "rejected",
-    answerText: "The answer could not be grounded in the authorized sources.",
-    claims: [],
-    citations: [],
-  };
 }

@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First eight retrieval slices implemented and awaiting review
+**Status:** First nine retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -32,10 +32,13 @@ provider privacy, cost, and evaluation gate.
   low coverage is insufficient evidence rather than an invented conclusion.
 - Answer proposals are versioned and content-hashed with their scope snapshot
   and source versions, and are marked ready for review without publication.
+- Review decisions preserve the proposal version and content hash; only
+  grounded proposals can be reviewed, and rejection requires an explanation.
 
 ## Deferred boundary
 
 Question-answer generation, citation publication, and production embedding/model
-provider selection remain later slices of Milestone 3. The current proposal is
+provider selection remain later slices of Milestone 3. The current proposal and
+review decision are
 a contract boundary only; it does not call a model, persist an artifact, or
 overwrite user-managed content.

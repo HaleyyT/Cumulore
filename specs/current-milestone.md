@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First eight slices implemented and awaiting review
+**Status:** First nine slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -30,6 +30,8 @@ without selecting a production external embedding or model provider.
 8. **Review proposal:** a versioned, content-hashed answer proposal envelope
    that records the retrieval snapshot and source versions, while remaining
    review-only and unable to publish over user content.
+9. **Review decision:** an immutable approval/rejection decision contract that
+   preserves proposal version and content hash; it cannot publish content.
 
 ## Explicit exclusions
 
