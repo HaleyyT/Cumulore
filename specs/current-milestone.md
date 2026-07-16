@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First fourteen slices implemented and awaiting review
+**Status:** First fifteen slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -42,6 +42,8 @@ without selecting a production external embedding or model provider.
     command records the expected artifact version before any future write.
 14. **Intent resolution:** deterministic version-fence resolution returns a
     ready-to-apply result or an explicit conflict without opening a write path.
+15. **Publication command:** a matching ready intent produces a deterministic,
+    idempotency-keyed command without performing the artifact write.
 
 ## Explicit exclusions
 

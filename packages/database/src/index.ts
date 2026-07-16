@@ -45,6 +45,11 @@ export {
 } from "./intent-resolution.js";
 
 export {
+  createPublicationCommand,
+  type PublicationCommand,
+} from "./command.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,
