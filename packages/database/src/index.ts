@@ -29,6 +29,11 @@ export {
 export { evaluateGroundedAnswer, type AnswerEvaluation } from "./evaluation.js";
 
 export {
+  evaluatePublicationReadiness,
+  type PublicationReadiness,
+} from "./readiness.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,

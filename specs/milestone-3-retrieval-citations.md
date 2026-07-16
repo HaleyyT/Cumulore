@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First eleven retrieval slices implemented and awaiting review
+**Status:** First twelve retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -40,6 +40,8 @@ provider privacy, cost, and evaluation gate.
 - Evaluation reports use a versioned deterministic lexical-support evaluator,
   record counts and coverage only, and never include answer text or private
   source content in the report.
+- Publication readiness requires both exact approval eligibility and a passing
+  evaluation; blocked reasons are explicit and no persistence occurs.
 
 ## Deferred boundary
 
