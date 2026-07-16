@@ -1,8 +1,31 @@
-# Current Milestone: Milestone 3 — Retrieval and Citations
+# Current Milestone: Reliability Remediation — P0 Feature Freeze
 
-**Status:** First sixteen slices implemented and awaiting review
+**Status:** Reliability corrections implemented through the bounded retrieval
+hardening slice; review required
 
-**Approved:** 2026-07-15
+**Scope:** P0 dependency, tenancy, durable-retention, worker, provenance,
+grounding, migration-safety, and retrieval-boundary corrections
+
+The previously implemented Milestone 3 work remains implemented and awaiting
+review. This transition does not accept Milestone 1C.5, Milestone 2B, or
+Milestone 3, and it does not authorize any later product milestone.
+
+## Reliability remediation exit gate
+
+- The private reliability plan and audit evidence remain ignored by Git.
+- Dependency, build, Python reproducibility, CI, fresh/upgrade migration,
+  tenancy, retention, worker-smoke, provenance, grounding, and bounded-retrieval
+  checks pass.
+- No critical or high production dependency advisories remain.
+- No real provider, product UI, upload route, or publication write path is
+  enabled.
+- The complete remediation diff is explicitly reviewed before any commit or
+  publication.
+
+## Previously implemented milestone — awaiting review
+
+The following Milestone 3 scope is preserved as historical implementation
+context. It is not accepted by this milestone transition.
 
 ## Goal
 
