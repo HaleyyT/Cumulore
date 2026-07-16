@@ -1,4 +1,7 @@
-import type { AnswerProposal } from "./proposals.js";
+import {
+  computeProposalContentHash,
+  type AnswerProposal,
+} from "./proposals.js";
 
 export type ProposalReviewDecision = {
   proposalId: string;
@@ -18,6 +21,9 @@ export function reviewAnswerProposal(
 ): ProposalReviewDecision {
   if (proposal.status !== "ready_for_review") {
     throw new Error("Only grounded proposals can be reviewed");
+  }
+  if (computeProposalContentHash(proposal) !== proposal.contentHash) {
+    throw new Error("Proposal content hash does not match its content");
   }
   if (!reviewerId.trim()) throw new Error("Reviewer is required");
   if (decision === "rejected" && !reason?.trim()) {

@@ -13,6 +13,12 @@ import { rerankRetrievedChunks } from "../src/reranking.js";
 import { reviewAnswerProposal } from "../src/review.js";
 import { assessClaimSupport } from "../src/support.js";
 
+const pageLocator = (page: number) => ({
+  locator_version: 1,
+  format: "pdf",
+  segments: [{ kind: "page", index: page }],
+});
+
 const chunks = [
   {
     chunkId: "chunk-b",
@@ -20,7 +26,7 @@ const chunks = [
     sourceVersionId: "version-1",
     textContent: "The retention policy is documented here.",
     structuralType: "paragraph",
-    locator: { page: 3 },
+    locator: pageLocator(3),
     headingPath: ["Other"],
     rank: 0.9,
   },
@@ -30,7 +36,7 @@ const chunks = [
     sourceVersionId: "version-1",
     textContent: "Retention policy details and review timing.",
     structuralType: "paragraph",
-    locator: { page: 2 },
+    locator: pageLocator(2),
     headingPath: ["Retention Policy"],
     rank: 0.8,
   },
@@ -46,7 +52,7 @@ assert.deepEqual(
   assessClaimSupport(
     {
       text: "Retention policy review timing",
-      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+      citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
     },
     chunks,
   ),
@@ -55,8 +61,24 @@ assert.deepEqual(
 assert.deepEqual(
   assessClaimSupport(
     {
+      text: "Retention is not 300 days",
+      citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
+    },
+    [
+      {
+        ...chunks[1]!,
+        textContent: "Retention is 30 days",
+      },
+    ],
+  ),
+  { status: "insufficient_evidence", coverage: 0 },
+  "lexical overlap cannot hide negation or numeric contradictions",
+);
+assert.deepEqual(
+  assessClaimSupport(
+    {
       text: "The policy is reviewed annually",
-      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+      citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
     },
     chunks,
   ),
@@ -68,7 +90,7 @@ const grounded = buildGroundedAnswer(
   [
     {
       text: "Retention policy review timing",
-      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+      citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
     },
   ],
   chunks,
@@ -79,18 +101,32 @@ assert.deepEqual(grounded, {
   claims: [
     {
       text: "Retention policy review timing",
-      citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+      citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
     },
   ],
-  citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+  citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
 });
+assert.equal(
+  buildGroundedAnswer(
+    "Retention policy review timing. The moon is made of cheese.",
+    [
+      {
+        text: "Retention policy review timing",
+        citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
+      },
+    ],
+    chunks,
+  ).answerText,
+  "Retention policy review timing.",
+  "user-visible prose is rendered only from validated claims",
+);
 assert.equal(
   buildGroundedAnswer(
     "The policy is reviewed annually.",
     [
       {
         text: "The policy is reviewed annually",
-        citations: [{ chunkId: "chunk-a", locator: { page: 2 } }],
+        citations: [{ chunkId: "chunk-a", locator: pageLocator(2) }],
       },
     ],
     chunks,
@@ -119,6 +155,19 @@ const proposal = createAnswerProposal({
 });
 assert.equal(proposal.status, "ready_for_review");
 assert.equal(proposal.contentHash.length, 64);
+Object.assign(grounded, { answerText: "mutated input" });
+assert.equal(
+  proposal.answer.answerText,
+  "Retention policy review timing.",
+  "proposal creation clones caller-owned answer data",
+);
+assert.throws(
+  () => {
+    proposal.sourceVersionIds.push("version-2");
+  },
+  /read only|not extensible|object is not extensible/i,
+  "proposal envelopes are deeply frozen",
+);
 assert.deepEqual(reviewAnswerProposal(proposal, "reviewer-1", "approved"), {
   proposalId: "proposal-1",
   proposalVersion: 1,
@@ -140,33 +189,80 @@ assert.deepEqual(
   }),
   { status: "blocked", reason: "review_does_not_match_proposal" },
 );
-assert.deepEqual(evaluateGroundedAnswer(grounded, chunks), {
+const tamperedProposal = { ...proposal, scopeSnapshotId: "snapshot-tampered" };
+assert.deepEqual(
+  evaluatePublicationEligibility(tamperedProposal, approval),
+  { status: "blocked", reason: "proposal_content_hash_invalid" },
+  "publication recomputes the content hash at the trust boundary",
+);
+assert.deepEqual(evaluateGroundedAnswer(tamperedProposal, chunks), {
+  status: "not_evaluable",
+  reason: "proposal_content_hash_invalid",
+});
+assert.deepEqual(evaluateGroundedAnswer(proposal, chunks), {
   status: "evaluated",
-  evaluatorVersion: "lexical-support-v1",
+  proposalId: "proposal-1",
+  proposalVersion: 1,
+  contentHash: proposal.contentHash,
+  scopeSnapshotId: "snapshot-1",
+  sourceVersionIds: ["version-1"],
+  evaluatorVersion: "lexical-diagnostic-v2",
+  policyVersion: "publication-grounding-v1",
   claimCount: 1,
   citationCount: 1,
   supportCoverage: 1,
-  passed: true,
+  diagnosticPassed: true,
+  qualifiedForPublication: false,
 });
-assert.deepEqual(
-  evaluateGroundedAnswer(
-    buildGroundedAnswer("No evidence", [], chunks),
-    chunks,
-  ),
-  { status: "not_evaluable", reason: "answer_not_grounded" },
-);
+const blockedProposal = createAnswerProposal({
+  proposalId: "proposal-blocked",
+  version: 1,
+  scopeSnapshotId: "snapshot-1",
+  sourceVersionIds: ["version-1"],
+  answer: buildGroundedAnswer("No evidence", [], chunks),
+});
+assert.deepEqual(evaluateGroundedAnswer(blockedProposal, chunks), {
+  status: "not_evaluable",
+  reason: "answer_not_grounded",
+});
 assert.deepEqual(
   evaluatePublicationReadiness(
     evaluatePublicationEligibility(proposal, approval),
-    evaluateGroundedAnswer(grounded, chunks),
+    evaluateGroundedAnswer(proposal, chunks),
   ),
-  {
-    status: "ready",
-    proposalId: "proposal-1",
-    proposalVersion: 1,
-    contentHash: proposal.contentHash,
-  },
+  { status: "blocked", reason: "evaluation_not_qualified" },
 );
+const otherProposal = createAnswerProposal({
+  proposalId: "proposal-2",
+  version: 1,
+  scopeSnapshotId: "snapshot-2",
+  sourceVersionIds: ["version-1"],
+  answer: proposal.answer,
+});
+const otherEvaluation = evaluateGroundedAnswer(otherProposal, chunks);
+assert.equal(otherEvaluation.status, "evaluated");
+if (otherEvaluation.status === "evaluated") {
+  assert.deepEqual(
+    evaluatePublicationReadiness(
+      evaluatePublicationEligibility(proposal, approval),
+      otherEvaluation,
+    ),
+    { status: "blocked", reason: "evaluation_does_not_match_proposal" },
+    "evaluation evidence cannot be reused across proposals",
+  );
+  assert.deepEqual(
+    evaluatePublicationReadiness(
+      evaluatePublicationEligibility(otherProposal, {
+        ...approval,
+        proposalId: otherProposal.proposalId,
+        contentHash: otherProposal.contentHash,
+      }),
+      { ...otherEvaluation, qualifiedForPublication: true },
+    ),
+    { status: "blocked", reason: "evaluation_not_qualified" },
+    "a caller cannot promote the lexical diagnostic into a qualified evaluator",
+  );
+}
 assert.deepEqual(
   evaluatePublicationReadiness(
     evaluatePublicationEligibility(proposal, approval),
@@ -174,10 +270,12 @@ assert.deepEqual(
   ),
   { status: "blocked", reason: "evaluation_failed" },
 );
-const readiness = evaluatePublicationReadiness(
-  evaluatePublicationEligibility(proposal, approval),
-  evaluateGroundedAnswer(grounded, chunks),
-);
+const readiness = {
+  status: "ready" as const,
+  proposalId: proposal.proposalId,
+  proposalVersion: proposal.version,
+  contentHash: proposal.contentHash,
+};
 const intent = createPublicationIntent({
   intentId: "intent-1",
   readiness,

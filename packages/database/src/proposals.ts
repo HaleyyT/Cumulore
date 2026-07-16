@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 
 import type { GroundedAnswer } from "./answer.js";
+import { canonicalJson, immutableJsonClone } from "./integrity.js";
 
 export type AnswerProposal = {
   proposalId: string;
@@ -17,6 +18,24 @@ export type CreateAnswerProposalInput = Omit<
   "contentHash" | "status"
 >;
 
+export function computeProposalContentHash(
+  proposal: Pick<
+    AnswerProposal,
+    "answer" | "scopeSnapshotId" | "sourceVersionIds" | "version"
+  >,
+): string {
+  return createHash("sha256")
+    .update(
+      canonicalJson({
+        answer: proposal.answer,
+        scopeSnapshotId: proposal.scopeSnapshotId,
+        sourceVersionIds: proposal.sourceVersionIds,
+        version: proposal.version,
+      }),
+    )
+    .digest("hex");
+}
+
 /** Creates an immutable review envelope; persistence/publication is separate. */
 export function createAnswerProposal(
   input: CreateAnswerProposalInput,
@@ -27,19 +46,14 @@ export function createAnswerProposal(
   if (input.sourceVersionIds.length === 0) {
     throw new Error("Proposal requires source versions");
   }
-  const contentHash = createHash("sha256")
-    .update(
-      JSON.stringify({
-        answer: input.answer,
-        scopeSnapshotId: input.scopeSnapshotId,
-        sourceVersionIds: input.sourceVersionIds,
-        version: input.version,
-      }),
-    )
-    .digest("hex");
-  return {
-    ...input,
+  const immutableInput = immutableJsonClone(input);
+  const contentHash = computeProposalContentHash(immutableInput);
+  return immutableJsonClone({
+    ...immutableInput,
     contentHash,
-    status: input.answer.status === "grounded" ? "ready_for_review" : "blocked",
-  };
+    status:
+      immutableInput.answer.status === "grounded"
+        ? "ready_for_review"
+        : "blocked",
+  });
 }
