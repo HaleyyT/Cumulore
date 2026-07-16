@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
+import { createPublicationCommand } from "../src/command.js";
 import { evaluateGroundedAnswer } from "../src/evaluation.js";
 import { createPublicationIntent } from "../src/intent.js";
 import { resolvePublicationIntent } from "../src/intent-resolution.js";
@@ -197,6 +198,15 @@ assert.deepEqual(resolvePublicationIntent(intent, 3), {
   expectedArtifactVersion: 4,
   actualArtifactVersion: 3,
 });
+const resolution = resolvePublicationIntent(intent, 4);
+const command = createPublicationCommand(intent, resolution);
+assert.equal(command.commandId, "publish:intent-1");
+assert.equal(command.idempotencyKey.length, 64);
+assert.equal(command.status, "ready");
+assert.throws(
+  () => createPublicationCommand(intent, resolvePublicationIntent(intent, 3)),
+  /matching ready intent/,
+);
 assert.throws(
   () =>
     createPublicationIntent({
