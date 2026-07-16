@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First twelve slices implemented and awaiting review
+**Status:** First thirteen slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -38,6 +38,8 @@ without selecting a production external embedding or model provider.
     grounded answers, with non-grounded answers explicitly not evaluable.
 12. **Publication readiness:** approval and evaluation gates are combined into
     a deterministic readiness result without performing a write.
+13. **Publication intent:** an immutable, hashed optimistic-concurrency
+    command records the expected artifact version before any future write.
 
 ## Explicit exclusions
 

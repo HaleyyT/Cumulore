@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First twelve retrieval slices implemented and awaiting review
+**Status:** First thirteen retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -42,6 +42,9 @@ provider privacy, cost, and evaluation gate.
   source content in the report.
 - Publication readiness requires both exact approval eligibility and a passing
   evaluation; blocked reasons are explicit and no persistence occurs.
+- Publication intents carry proposal provenance, actor identity, and an
+  expected artifact version; a future writer can reject stale intents instead
+  of overwriting user-managed content.
 
 ## Deferred boundary
 
