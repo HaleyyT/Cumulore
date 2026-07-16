@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 
 import { buildGroundedAnswer } from "../src/answer.js";
 import { createPublicationCommand } from "../src/command.js";
+import { createPublicationOutcome } from "../src/outcome.js";
 import { evaluateGroundedAnswer } from "../src/evaluation.js";
 import { createPublicationIntent } from "../src/intent.js";
 import { resolvePublicationIntent } from "../src/intent-resolution.js";
@@ -206,6 +207,34 @@ assert.equal(command.status, "ready");
 assert.throws(
   () => createPublicationCommand(intent, resolvePublicationIntent(intent, 3)),
   /matching ready intent/,
+);
+assert.deepEqual(
+  createPublicationOutcome(command, {
+    status: "applied",
+    artifactVersion: 5,
+  }),
+  {
+    status: "applied",
+    artifactVersion: 5,
+    commandId: command.commandId,
+    idempotencyKey: command.idempotencyKey,
+  },
+);
+const failedOutcome = createPublicationOutcome(command, {
+  status: "failed",
+  errorCode: "transient",
+});
+assert.equal(failedOutcome.status, "failed");
+if (failedOutcome.status === "failed") {
+  assert.equal(failedOutcome.errorCode, "transient");
+}
+assert.throws(
+  () =>
+    createPublicationOutcome(command, {
+      status: "conflict",
+      actualArtifactVersion: 4,
+    }),
+  /changed version/,
 );
 assert.throws(
   () =>

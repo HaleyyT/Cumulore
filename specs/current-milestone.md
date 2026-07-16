@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First fifteen slices implemented and awaiting review
+**Status:** First sixteen slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -44,6 +44,8 @@ without selecting a production external embedding or model provider.
     ready-to-apply result or an explicit conflict without opening a write path.
 15. **Publication command:** a matching ready intent produces a deterministic,
     idempotency-keyed command without performing the artifact write.
+16. **Publication outcome:** redacted applied, duplicate, conflict, and safe
+    failure outcomes preserve command identity without logging content.
 
 ## Explicit exclusions
 

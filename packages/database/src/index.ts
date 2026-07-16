@@ -50,6 +50,12 @@ export {
 } from "./command.js";
 
 export {
+  createPublicationOutcome,
+  type PublicationOutcome,
+  type PublicationOutcomeInput,
+} from "./outcome.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,
