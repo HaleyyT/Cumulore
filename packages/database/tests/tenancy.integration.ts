@@ -57,6 +57,39 @@ try {
     userB,
     "member",
   );
+  const memberClient = await pool.connect();
+  try {
+    await memberClient.query("BEGIN");
+    await memberClient.query("SET LOCAL ROLE cumulore_web");
+    await memberClient.query("SELECT set_config('app.user_id', $1, true)", [
+      userB,
+    ]);
+    await memberClient.query(
+      "SELECT set_config('app.workspace_id', $1, true)",
+      [workspaceA],
+    );
+    const memberships = await memberClient.query<{ user_id: string }>(
+      "SELECT user_id FROM workspace_members WHERE workspace_id = $1",
+      [workspaceA],
+    );
+    assert.deepEqual(
+      memberships.rows,
+      [{ user_id: userB }],
+      "members can read only their own membership row",
+    );
+    await assert.rejects(
+      () =>
+        memberClient.query(
+          "INSERT INTO folders (workspace_id, name) VALUES ($1, 'Bypass')",
+          [workspaceA],
+        ),
+      /permission denied/,
+      "web callers cannot bypass the folder mutation function",
+    );
+    await memberClient.query("ROLLBACK");
+  } finally {
+    memberClient.release();
+  }
   assert.deepEqual(
     await getWorkspace(pool, { userId: userA, workspaceId: workspaceA }),
     { id: workspaceA, name: "Workspace A" },
