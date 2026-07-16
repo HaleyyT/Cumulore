@@ -1,6 +1,6 @@
 # Milestone 3 — Retrieval and Citations
 
-**Status:** First nine retrieval slices implemented and awaiting review
+**Status:** First ten retrieval slices implemented and awaiting review
 
 The first three slices add deterministic structure-aware chunks, PostgreSQL
 full-text retrieval, versioned synthetic embeddings, hybrid ranking,
@@ -34,6 +34,9 @@ provider privacy, cost, and evaluation gate.
   and source versions, and are marked ready for review without publication.
 - Review decisions preserve the proposal version and content hash; only
   grounded proposals can be reviewed, and rejection requires an explanation.
+- Publication eligibility requires grounded status, approval, and exact
+  proposal ID/version/content-hash agreement; eligibility itself performs no
+  write.
 
 ## Deferred boundary
 

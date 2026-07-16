@@ -22,6 +22,11 @@ export {
 export { reviewAnswerProposal, type ProposalReviewDecision } from "./review.js";
 
 export {
+  evaluatePublicationEligibility,
+  type PublicationEligibility,
+} from "./publication.js";
+
+export {
   createRetrievalScopeSnapshot,
   searchSourceChunks,
   searchSourceChunksHybrid,

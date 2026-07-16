@@ -1,6 +1,6 @@
 # Current Milestone: Milestone 3 — Retrieval and Citations
 
-**Status:** First nine slices implemented and awaiting review
+**Status:** First ten slices implemented and awaiting review
 
 **Approved:** 2026-07-15
 
@@ -32,6 +32,8 @@ without selecting a production external embedding or model provider.
    review-only and unable to publish over user content.
 9. **Review decision:** an immutable approval/rejection decision contract that
    preserves proposal version and content hash; it cannot publish content.
+10. **Publication gate:** deterministic eligibility checks require a grounded
+    proposal and a matching approval before any future ownership-aware write.
 
 ## Explicit exclusions
 

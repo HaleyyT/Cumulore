@@ -153,11 +153,12 @@ review after its clean-room verification.
 
 Add structure-aware chunks, PostgreSQL full-text search, pgvector embeddings,
 folder-filtered hybrid retrieval, scope snapshots, cited question answering,
-and insufficient-evidence behaviour. The first nine reviewable retrieval slices
+and insufficient-evidence behaviour. The first ten reviewable retrieval slices
 are implemented in `specs/milestone-3-retrieval-citations.md`, including
 deterministic candidate reranking, claim support scoring, and a versioned
 grounded-answer proposal contract;
-and an immutable review decision contract;
+and an immutable review decision contract, plus a deterministic
+publication-eligibility gate;
 embedding/model providers remain blocked on privacy, cost, and evaluation
 review.
 
