@@ -5,13 +5,13 @@ the production Cumulore roadmap or its current milestone.
 
 ## Overall progress: 20%
 
-The accepted plan has five reviewable slices. Q1 is being completed now; the
-percentage reflects one working slice in a five-slice plan, not a claim that
-later safety or release gates are complete.
+The accepted plan has five reviewable slices. Q1 is complete; the percentage
+reflects one accepted slice in a five-slice plan, not a claim that later safety
+or release gates are complete.
 
 | Slice                         | Status      | What it means in plain English                                                                                                               |
 | ----------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q1 — deterministic foundation | In progress | A learner can play a built-in quest without AI, network access, or credentials. The app, not generated content, controls scoring and combat. |
+| Q1 — deterministic foundation | Complete    | A learner can play a built-in quest without AI, network access, or credentials. The app, not generated content, controls scoring and combat. |
 | Q2 — source grounding         | Not started | Prove every explanation is tied to supplied source text and that difficulty rules are honest.                                                |
 | Q3 — protected Live AI        | Not started | Add the single server route and OpenAI boundary only after deterministic validation is solid.                                                |
 | Q4 — experience polish        | Not started | Improve the full journey, mobile layout, accessibility details, and safe failures.                                                           |
@@ -26,9 +26,8 @@ later safety or release gates are complete.
   be retried from their fixed initial state.
 - A small, keyboard-operable quest page with a persistent **Deterministic
   Demo** label and evidence excerpt after each answer.
-- A versioned schema fixture and tests (next in Q1) so generated educational
-  content cannot sneak in health, damage, score, animation, or other game
-  mechanics.
+- A versioned schema fixture and tests so generated educational content cannot
+  sneak in health, damage, score, animation, or other game mechanics.
 
 ## Remember the boundary
 
