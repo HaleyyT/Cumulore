@@ -6,9 +6,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Cumulore",
   icons: {
-    icon: "/designs/cumulore.png",
-    shortcut: "/designs/cumulore.png",
-    apple: "/designs/cumulore.png",
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
