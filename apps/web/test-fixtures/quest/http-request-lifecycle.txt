@@ -1,0 +1,1 @@
+A client resolves a domain name, opens a connection, sends a request, and receives a response. Each step has a distinct purpose in the HTTP request lifecycle.
