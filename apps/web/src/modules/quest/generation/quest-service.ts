@@ -15,14 +15,22 @@ export class QuestService {
     sourceText: string;
     difficulty: Difficulty;
   }): Promise<QuestServiceResult> {
+    const validate = (quest: unknown) =>
+      validateQuestSemantics(
+        quest as never,
+        segmentSource(input.sourceText),
+        input.difficulty,
+      );
     const quest = await this.provider.generate(input);
-    const validation = validateQuestSemantics(
-      quest as never,
-      segmentSource(input.sourceText),
-      input.difficulty,
-    );
-    return validation.ok
-      ? { ok: true, quest }
+    const validation = validate(quest);
+    if (validation.ok) return { ok: true, quest };
+    if (!this.provider.repair) return { ok: false, code: "GENERATION_INVALID" };
+    const repaired = await this.provider.repair({
+      ...input,
+      validationCode: validation.code,
+    });
+    return validate(repaired).ok
+      ? { ok: true, quest: repaired }
       : { ok: false, code: "GENERATION_INVALID" };
   }
 }

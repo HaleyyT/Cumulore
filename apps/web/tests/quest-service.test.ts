@@ -31,4 +31,21 @@ assert.equal(
   ).ok,
   false,
 );
+let repairs = 0;
+assert.equal(
+  (
+    await new QuestService({
+      async generate() {
+        return invalid;
+      },
+      async repair(input) {
+        repairs += 1;
+        assert.equal(input.validationCode, "EXCERPT_MISMATCH");
+        return validQuest;
+      },
+    }).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" })
+  ).ok,
+  true,
+);
+assert.equal(repairs, 1, "one sanitized repair is permitted");
 console.log("Quest service validation boundary passed.");
