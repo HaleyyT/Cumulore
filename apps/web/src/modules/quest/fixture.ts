@@ -63,7 +63,7 @@ function stage(focus: Focus, index: number) {
   return {
     id: `stage-${focus}`,
     focus,
-    misconception: "Learning is strongest when it feels easy.",
+    misconception: "Make it easy - Turn friction into fluency.",
     questions: questions.map((base) => ({
       ...base,
       id: `${base.id}-${index}`,
