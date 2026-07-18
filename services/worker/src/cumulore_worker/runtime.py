@@ -397,7 +397,11 @@ async def _run_external_synthetic(
 
     if latest and latest["state"] == "succeeded":
         completed = await _complete_job_from_external_operation(config, job, logical_operation_id)
-        return ("succeeded", None) if completed else ("failed", "stale_lease_fence")
+        if completed:
+            return "succeeded", None
+        if await _acknowledge_cancellation(config, job):
+            return "cancelled", None
+        return "failed", "stale_lease_fence"
 
     if latest and latest["state"] in {"prepared", "in_flight", "unknown"}:
         failed = await _fail_job(config, job, "external_outcome_pending", retryable=True)
@@ -451,8 +455,14 @@ async def _run_external_synthetic(
         return "failed", "stale_lease_fence"
 
     if result.outcome == "succeeded":
+        # The cancellation check above wins if it committed before fenced job
+        # completion. The provider result remains durable audit evidence.
         completed = await _complete_job_from_external_operation(config, job, logical_operation_id)
-        return ("succeeded", None) if completed else ("failed", "stale_lease_fence")
+        if completed:
+            return "succeeded", None
+        if await _acknowledge_cancellation(config, job):
+            return "cancelled", None
+        return "failed", "stale_lease_fence"
 
     if await _acknowledge_cancellation(config, job):
         return "cancelled", None

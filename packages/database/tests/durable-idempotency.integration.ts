@@ -43,13 +43,17 @@ async function tx<T>(
   }
 }
 
-async function createJob(userId: string, workspaceId: string): Promise<string> {
+async function createJob(
+  userId: string,
+  workspaceId: string,
+  scenario: "database_effect" | "external_success" = "database_effect",
+): Promise<string> {
   const result = await requestSyntheticOperation(
     pool,
     { userId, workspaceId },
     randomUUID(),
     {
-      scenario: "database_effect",
+      scenario,
       inputVersion: 1,
       configurationVersion: 1,
       correlationId: randomUUID(),
@@ -528,7 +532,11 @@ try {
     "succeeded",
   );
 
-  const cancelledAfterExternalLogicalId = await createJob(userId, workspaceId);
+  const cancelledAfterExternalLogicalId = await createJob(
+    userId,
+    workspaceId,
+    "external_success",
+  );
   await tx("cumulore_worker", (client) =>
     client.query("SELECT app.dispatch_outbox(10)"),
   );
@@ -575,17 +583,7 @@ try {
       ),
     { workspaceId },
   );
-  const cancellationRequested = await tx(
-    "cumulore_web",
-    (client) =>
-      client.query<{ request_job_cancellation: boolean }>(
-        "SELECT app.request_job_cancellation($1)",
-        [cancelledAfterExternalJob.job_id],
-      ),
-    { userId, workspaceId },
-  );
-  assert.equal(cancellationRequested.rows[0]!.request_job_cancellation, true);
-  const completionAfterCancellation = await tx(
+  const completionBeforeCancellation = await tx(
     "cumulore_worker",
     (client) =>
       client.query<{ complete_job_from_external_operation: boolean }>(
@@ -601,10 +599,23 @@ try {
     { workspaceId },
   );
   assert.equal(
-    completionAfterCancellation.rows[0]!
-      .complete_job_from_external_operation,
+    completionBeforeCancellation.rows[0]!.complete_job_from_external_operation,
     true,
-    "a confirmed external success remains final after a later cancellation request",
+    "fenced job success commits before the competing cancellation",
+  );
+  const cancellationAfterSuccess = await tx(
+    "cumulore_web",
+    (client) =>
+      client.query<{ request_job_cancellation: boolean }>(
+        "SELECT app.request_job_cancellation($1)",
+        [cancelledAfterExternalJob.job_id],
+      ),
+    { userId, workspaceId },
+  );
+  assert.equal(
+    cancellationAfterSuccess.rows[0]!.request_job_cancellation,
+    false,
+    "a later cancellation cannot reverse terminal success",
   );
   assert.deepEqual(
     (
@@ -613,7 +624,115 @@ try {
         [cancelledAfterExternalJob.job_id],
       )
     ).rows,
-    [{ state: "succeeded", cancellation_requested: true }],
+    [{ state: "succeeded", cancellation_requested: false }],
+  );
+
+  const cancelledBeforeExternalLogicalId = await createJob(
+    userId,
+    workspaceId,
+    "external_success",
+  );
+  await tx("cumulore_worker", (client) =>
+    client.query("SELECT app.dispatch_outbox(10)"),
+  );
+  const cancelledBeforeExternalClaim = await tx(
+    "cumulore_worker",
+    (client) =>
+      client.query<DurableClaim>(
+        "SELECT job_id, attempt_id, lease_generation FROM app.claim_jobs($1,1,60)",
+        ["cancellation-first-worker"],
+      ),
+    { workspaceId },
+  );
+  const cancelledBeforeExternalJob = cancelledBeforeExternalClaim.rows[0]!;
+  const cancelledBeforeExternalOperation = await prepareExternalOperation(
+    workspaceId,
+    "cancellation-first-worker",
+    cancelledBeforeExternalLogicalId,
+    cancelledBeforeExternalJob,
+  );
+  await tx(
+    "cumulore_worker",
+    (client) =>
+      client.query("SELECT app.mark_external_in_flight($1,$2,$3,$4,$5)", [
+        cancelledBeforeExternalOperation,
+        cancelledBeforeExternalJob.job_id,
+        cancelledBeforeExternalJob.attempt_id,
+        "cancellation-first-worker",
+        cancelledBeforeExternalJob.lease_generation,
+      ]),
+    { workspaceId },
+  );
+  const cancellationWon = await tx(
+    "cumulore_web",
+    (client) =>
+      client.query<{ request_job_cancellation: boolean }>(
+        "SELECT app.request_job_cancellation($1)",
+        [cancelledBeforeExternalJob.job_id],
+      ),
+    { userId, workspaceId },
+  );
+  assert.equal(cancellationWon.rows[0]!.request_job_cancellation, true);
+  await tx(
+    "cumulore_worker",
+    (client) =>
+      client.query(
+        "SELECT app.record_external_result($1,$2,$3,$4,$5,'succeeded','provider-after-cancel',NULL)",
+        [
+          cancelledBeforeExternalOperation,
+          cancelledBeforeExternalJob.job_id,
+          cancelledBeforeExternalJob.attempt_id,
+          "cancellation-first-worker",
+          cancelledBeforeExternalJob.lease_generation,
+        ],
+      ),
+    { workspaceId },
+  );
+  const completionLostRace = await tx(
+    "cumulore_worker",
+    (client) =>
+      client.query<{ complete_job_from_external_operation: boolean }>(
+        "SELECT app.complete_job_from_external_operation($1,$2,$3,$4,$5)",
+        [
+          cancelledBeforeExternalJob.job_id,
+          cancelledBeforeExternalJob.attempt_id,
+          "cancellation-first-worker",
+          cancelledBeforeExternalJob.lease_generation,
+          cancelledBeforeExternalLogicalId,
+        ],
+      ),
+    { workspaceId },
+  );
+  assert.equal(
+    completionLostRace.rows[0]!.complete_job_from_external_operation,
+    false,
+    "external completion cannot overtake an earlier committed cancellation",
+  );
+  const cancellationAcknowledged = await tx(
+    "cumulore_worker",
+    (client) =>
+      client.query<{ acknowledge_job_cancellation: boolean }>(
+        "SELECT app.acknowledge_job_cancellation($1,$2,$3,$4)",
+        [
+          cancelledBeforeExternalJob.job_id,
+          cancelledBeforeExternalJob.attempt_id,
+          "cancellation-first-worker",
+          cancelledBeforeExternalJob.lease_generation,
+        ],
+      ),
+    { workspaceId },
+  );
+  assert.equal(
+    cancellationAcknowledged.rows[0]!.acknowledge_job_cancellation,
+    true,
+  );
+  assert.equal(
+    (
+      await pool.query("SELECT state FROM jobs WHERE id = $1", [
+        cancelledBeforeExternalJob.job_id,
+      ])
+    ).rows[0].state,
+    "cancelled",
   );
 
   const preparedCrash = await createAndClaimJob(

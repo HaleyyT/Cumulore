@@ -50,7 +50,11 @@ arrival rate and handler duration.
 4. Resume the job only after reconciliation records confirmed success or
    confirmed failure. A confirmed success completes through the matching
    logical-operation fence without invoking the provider again.
-5. A provider without idempotency or reconciliation support must enter an
+5. Once fenced terminal job success commits, a later cancellation request
+   cannot reverse it. If cancellation commits before job completion, it wins
+   the job transition; any already-confirmed provider effect remains retained
+   as audit evidence rather than being erased or invoked again.
+6. A provider without idempotency or reconciliation support must enter an
    actionable dead letter; never implement a blind retry. The current runtime
    exercises this policy only with a deterministic fake provider.
 
