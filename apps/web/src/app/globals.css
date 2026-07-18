@@ -206,21 +206,40 @@ button:disabled {
     linear-gradient(
       90deg,
       #000 0%,
-      rgba(0, 0, 0, 0.98) 24%,
-      rgba(0, 0, 0, 0.72) 52%,
-      rgba(0, 0, 0, 0.88) 100%
+      rgba(0, 0, 0, 0.95) 24%,
+      rgba(0, 0, 0, 0.58) 52%,
+      rgba(0, 0, 0, 0.78) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.94) 0%,
+      rgba(0, 0, 0, 0.88) 0%,
       transparent 28%,
-      rgba(0, 0, 0, 0.25) 68%,
-      #000 100%
+      rgba(0, 0, 0, 0.18) 68%,
+      rgba(0, 0, 0, 0.94) 100%
     ),
     url("/designs/galaxy-jeremy-thomas.webp") center / cover no-repeat;
   box-shadow: inset 0 0 8rem rgba(0, 0, 0, 0.56);
   content: "";
-  opacity: 0.72;
+  opacity: 0.9;
+}
+
+.hero::after {
+  position: absolute;
+  z-index: -1;
+  top: 12%;
+  right: -8rem;
+  width: min(52vw, 48rem);
+  height: 76%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(98, 105, 255, 0.28),
+    rgba(98, 105, 255, 0.1) 42%,
+    transparent 72%
+  );
+  filter: blur(1.2rem);
+  content: "";
+  opacity: 0.86;
 }
 
 .hero-copy-wrap {
@@ -407,14 +426,28 @@ button:disabled {
 
 .hero-art::before {
   position: absolute;
+  z-index: 4;
   inset: 1rem;
   border: 1px solid rgba(250, 192, 255, 0.2);
   border-radius: 1.5rem;
   content: "";
 }
 
+.particle-field {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
 .art-grid {
   position: absolute;
+  z-index: 2;
   inset: 0;
   opacity: 0.32;
   background-image:
@@ -426,6 +459,7 @@ button:disabled {
 
 .orbit-core {
   position: absolute;
+  z-index: 3;
   top: 50%;
   left: 50%;
   width: 15rem;
@@ -511,6 +545,7 @@ button:disabled {
 
 .art-caption {
   position: absolute;
+  z-index: 5;
   right: 2rem;
   bottom: 1.7rem;
   color: var(--muted);

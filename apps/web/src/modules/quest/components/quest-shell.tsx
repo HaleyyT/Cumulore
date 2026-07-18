@@ -72,6 +72,177 @@ function FocusHeading({ text }: { text: string }) {
   );
 }
 
+type DustParticle = {
+  alpha: number;
+  phase: number;
+  radius: number;
+  speed: number;
+  x: number;
+  y: number;
+  renderX: number;
+  renderY: number;
+};
+
+function GalaxyField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const surface = canvas?.parentElement;
+    const context = canvas?.getContext("2d");
+
+    if (!canvas || !surface || !context) return undefined;
+
+    let animationFrame = 0;
+    let width = 0;
+    let height = 0;
+    let pixelRatio = 1;
+    let hasDrawn = false;
+    const pointer = { active: false, x: 0, y: 0 };
+    let seed = 271828;
+    const nextRandom = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
+
+    const particles: DustParticle[] = Array.from({ length: 180 }, () => {
+      const x = 0.035 + nextRandom() * 0.93;
+      const y = 0.045 + nextRandom() * 0.91;
+      return {
+        alpha: 0.18 + nextRandom() * 0.68,
+        phase: nextRandom() * Math.PI * 2,
+        radius: 0.25 + Math.pow(nextRandom(), 1.8) * 1.25,
+        speed: 0.00018 + nextRandom() * 0.00042,
+        x,
+        y,
+        renderX: 0,
+        renderY: 0,
+      };
+    });
+
+    const resize = () => {
+      const bounds = canvas.getBoundingClientRect();
+      width = bounds.width;
+      height = bounds.height;
+      pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.floor(width * pixelRatio));
+      canvas.height = Math.max(1, Math.floor(height * pixelRatio));
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+      particles.forEach((particle) => {
+        particle.renderX = particle.x * width;
+        particle.renderY = particle.y * height;
+      });
+      hasDrawn = false;
+    };
+
+    const draw = (time: number) => {
+      context.clearRect(0, 0, width, height);
+      context.save();
+      context.globalCompositeOperation = "screen";
+
+      particles.forEach((particle) => {
+        const waveX = Math.sin(time * particle.speed + particle.phase) * 2.2;
+        const waveY =
+          Math.cos(time * particle.speed * 0.78 + particle.phase) * 1.8;
+        let targetX = particle.x * width + waveX;
+        let targetY = particle.y * height + waveY;
+
+        if (pointer.active) {
+          const distanceX = targetX - pointer.x;
+          const distanceY = targetY - pointer.y;
+          const distance = Math.hypot(distanceX, distanceY);
+          const influenceRadius = 180;
+
+          if (distance < influenceRadius) {
+            const strength = Math.pow(1 - distance / influenceRadius, 2);
+            const safeDistance = Math.max(distance, 1);
+            const push = strength * 58;
+            targetX +=
+              (distanceX / safeDistance) * push - distanceY * strength * 0.08;
+            targetY +=
+              (distanceY / safeDistance) * push + distanceX * strength * 0.08;
+          }
+        }
+
+        particle.renderX += (targetX - particle.renderX) * 0.09;
+        particle.renderY += (targetY - particle.renderY) * 0.09;
+        const twinkle =
+          0.72 + Math.sin(time * particle.speed * 5 + particle.phase) * 0.28;
+        const alpha = Math.max(0.06, particle.alpha * twinkle);
+
+        context.beginPath();
+        context.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        context.arc(
+          particle.renderX,
+          particle.renderY,
+          particle.radius,
+          0,
+          Math.PI * 2,
+        );
+        context.fill();
+
+        if (particle.radius > 1.15) {
+          context.beginPath();
+          context.fillStyle = `rgba(255, 255, 255, ${alpha * 0.14})`;
+          context.arc(
+            particle.renderX,
+            particle.renderY,
+            particle.radius * 3.8,
+            0,
+            Math.PI * 2,
+          );
+          context.fill();
+        }
+      });
+
+      context.restore();
+      hasDrawn = true;
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const bounds = surface.getBoundingClientRect();
+      pointer.x = event.clientX - bounds.left;
+      pointer.y = event.clientY - bounds.top;
+      pointer.active = true;
+    };
+    const handlePointerLeave = () => {
+      pointer.active = false;
+    };
+
+    resize();
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(surface);
+    surface.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
+    surface.addEventListener("pointerleave", handlePointerLeave);
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const frame = (time: number) => {
+      draw(time);
+      animationFrame = window.requestAnimationFrame(frame);
+    };
+
+    if (reducedMotion.matches) {
+      draw(0);
+    } else {
+      animationFrame = window.requestAnimationFrame(frame);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+      surface.removeEventListener("pointermove", handlePointerMove);
+      surface.removeEventListener("pointerleave", handlePointerLeave);
+      if (hasDrawn) context.clearRect(0, 0, width, height);
+    };
+  }, []);
+
+  return (
+    <canvas ref={canvasRef} className="particle-field" aria-hidden="true" />
+  );
+}
+
 export function QuestShell() {
   const shellRef = useRef<HTMLElement>(null);
   const [difficulty, setDifficulty] = useReducer(
@@ -248,6 +419,7 @@ export function QuestShell() {
           </div>
         </div>
         <div className="hero-art" aria-hidden="true">
+          <GalaxyField />
           <div className="art-grid" />
           <div className="orbit-core">
             <div className="orbit-ring orbit-ring-one" />
