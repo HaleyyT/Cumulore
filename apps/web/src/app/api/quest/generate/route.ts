@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { OpenAIQuestProvider } from "../../../../modules/quest/generation/openai-provider";
 import { safeGenerationFailure } from "../../../../modules/quest/generation/errors";
+import { parseLiveQuestRequest } from "../../../../modules/quest/generation/request";
 import { readQuestRuntimeConfig } from "../../../../modules/quest/runtime-config";
 import { segmentSource } from "../../../../modules/quest/source-segmentation";
 import { validateQuestSemantics } from "../../../../modules/quest/validation";
@@ -24,37 +25,37 @@ const failure = (requestId: string | undefined, code: string, status: number) =>
 export async function POST(request: Request) {
   const config = readQuestRuntimeConfig();
   const data = await request.formData();
-  const requestId = data.get("requestId");
-  const sourceTitle = data.get("sourceTitle");
-  const sourceText = data.get("sourceText");
-  const difficulty = data.get("requestedDifficulty");
+  const values = Object.fromEntries(data.entries());
+  const input = parseLiveQuestRequest(values);
+  if (!input) return failure(undefined, "INVALID_REQUEST", 400);
+  if (!config.liveEnabled)
+    return failure(input.requestId, "LIVE_MODE_DISABLED", 503);
   if (
-    typeof requestId !== "string" ||
-    typeof sourceTitle !== "string" ||
-    typeof sourceText !== "string" ||
-    !["easy", "medium", "hard"].includes(String(difficulty))
+    input.sourceText.length < 500 ||
+    input.sourceText.length > config.sourceMaxChars
   )
-    return failure(undefined, "INVALID_REQUEST", 400);
-  if (!config.liveEnabled) return failure(requestId, "LIVE_MODE_DISABLED", 503);
-  if (sourceText.length < 500 || sourceText.length > config.sourceMaxChars)
-    return failure(requestId, "SOURCE_TOO_LARGE", 413);
+    return failure(input.requestId, "SOURCE_TOO_LARGE", 413);
   try {
-    const level = difficulty as "easy" | "medium" | "hard";
     const quest = await new OpenAIQuestProvider(config).generate({
-      sourceTitle: sourceTitle.trim(),
-      sourceText,
-      difficulty: level,
+      ...input,
     });
     if (
-      !validateQuestSemantics(quest as never, segmentSource(sourceText), level)
-        .ok
+      !validateQuestSemantics(
+        quest as never,
+        segmentSource(input.sourceText),
+        input.difficulty,
+      ).ok
     )
-      return failure(requestId, "GENERATION_INVALID", 422);
-    return NextResponse.json({ requestId, mode: "live", quest });
+      return failure(input.requestId, "GENERATION_INVALID", 422);
+    return NextResponse.json({
+      requestId: input.requestId,
+      mode: "live",
+      quest,
+    });
   } catch (error) {
     const code = safeGenerationFailure(error);
     return failure(
-      requestId,
+      input.requestId,
       code,
       code === "RATE_LIMITED" ? 429 : code === "GENERATION_INVALID" ? 422 : 503,
     );
