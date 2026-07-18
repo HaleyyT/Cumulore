@@ -10,8 +10,11 @@
     "test:quest": "tsx tests/quest-generation.test.ts && tsx tests/quest-combat.test.ts && tsx tests/quest-provenance.test.ts"
   },
   "dependencies": {
+    "@cumulore/schemas": "workspace:*",
     "@auth0/nextjs-auth0": "4.25.0",
     "next": "16.2.10",
+    "openai": "6.48.0",
+    "openai": "6.48.0",
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
