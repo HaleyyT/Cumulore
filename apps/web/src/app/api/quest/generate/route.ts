@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { OpenAIQuestProvider } from "../../../../modules/quest/generation/openai-provider";
+import { safeGenerationFailure } from "../../../../modules/quest/generation/errors";
 import { readQuestRuntimeConfig } from "../../../../modules/quest/runtime-config";
 import { segmentSource } from "../../../../modules/quest/source-segmentation";
 import { validateQuestSemantics } from "../../../../modules/quest/validation";
@@ -50,7 +51,12 @@ export async function POST(request: Request) {
     )
       return failure(requestId, "GENERATION_INVALID", 422);
     return NextResponse.json({ requestId, mode: "live", quest });
-  } catch {
-    return failure(requestId, "GENERATION_UNAVAILABLE", 503);
+  } catch (error) {
+    const code = safeGenerationFailure(error);
+    return failure(
+      requestId,
+      code,
+      code === "RATE_LIMITED" ? 429 : code === "GENERATION_INVALID" ? 422 : 503,
+    );
   }
 }
