@@ -409,6 +409,13 @@ export function QuestShell() {
             A source-grounded boss battle for the ideas that make learning
             stick. Make the effort visible. Keep the signal.
           </p>
+          <aside className="mode-disclosure" aria-label="Quest mode">
+            <strong>Deterministic Demo</strong>
+            <span>
+              This run uses built-in learning material. Live AI is off unless
+              explicitly enabled by the server.
+            </span>
+          </aside>
           <div className="hero-actions">
             <a className="button button-primary" href="#quest">
               Enter the chamber <span aria-hidden="true">↗</span>

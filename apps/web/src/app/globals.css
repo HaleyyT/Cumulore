@@ -159,6 +159,24 @@ button:disabled {
   transition: color 180ms ease;
 }
 
+.mode-disclosure {
+  display: grid;
+  gap: 0.3rem;
+  max-width: 34rem;
+  margin: 1.25rem 0 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--line) 88%, white);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.mode-disclosure strong {
+  color: var(--ink);
+}
+
 .nav-links a:hover {
   color: var(--aqua);
 }
