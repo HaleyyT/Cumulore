@@ -37,4 +37,6 @@ fixtures and every demo difficulty. Live AI remains off unless explicitly
 enabled with server-only environment configuration; never commit an API key.
 The accepted Build Week plan and status are in
 [`docs/build-week/hackathon-plan.md`](docs/build-week/hackathon-plan.md) and
-[`hackathon-progress.md`](hackathon-progress.md).
+[`hackathon-progress.md`](hackathon-progress.md). See the
+[Build Week release checklist](docs/build-week/release-checklist.md) before
+enabling Live AI anywhere public.
