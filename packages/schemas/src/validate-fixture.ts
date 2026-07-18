@@ -7,7 +7,10 @@ import invalidActorFixture from "../fixtures/durable.synthetic.requested.v1.inva
 import invalidPayloadFixture from "../fixtures/durable.synthetic.requested.v1.invalid-payload.json" with { type: "json" };
 import unsupportedVersionFixture from "../fixtures/durable.synthetic.requested.v1.unsupported-version.json" with { type: "json" };
 import validEventFixture from "../fixtures/durable.synthetic.requested.v1.valid.json" with { type: "json" };
+import invalidQuestFixture from "../fixtures/quest-generation.v1.invalid.json" with { type: "json" };
+import validQuestFixture from "../fixtures/quest-generation.v1.valid.json" with { type: "json" };
 import { parseDurableSyntheticRequestedEvent } from "./durable-events.js";
+import { parseQuestGenerationV1 } from "./quest-generation.js";
 
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
@@ -20,6 +23,7 @@ function expectValid(name: string, schema: object, fixture: unknown): void {
 
 expectValid("foundation contract fixture", foundationSchema, foundationFixture);
 parseDurableSyntheticRequestedEvent(validEventFixture);
+parseQuestGenerationV1(validQuestFixture);
 
 for (const [name, fixture] of [
   ["invalid actor fixture", invalidActorFixture],
@@ -36,6 +40,17 @@ for (const [name, fixture] of [
     )
       throw error;
   }
+}
+
+try {
+  parseQuestGenerationV1(invalidQuestFixture);
+  throw new Error("invalid quest fixture unexpectedly passed");
+} catch (error) {
+  if (
+    error instanceof Error &&
+    error.message === "invalid quest fixture unexpectedly passed"
+  )
+    throw error;
 }
 
 console.log("TypeScript contract fixture validation passed.");

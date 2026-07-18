@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "requestedDifficulty": "medium",
+  "sourceTitle": "Science of Learning",
+  "priorityConcepts": [
+    {
+      "conceptId": "concept-retrieval",
+      "title": "Retrieval",
+      "learningObjective": "Recall ideas",
+      "priorityReason": "Build durable recall",
+      "evidence": [
+        {
+          "segmentId": "S001",
+          "excerpt": "Retrieval practice strengthens learning."
+        }
+      ]
+    },
+    {
+      "conceptId": "concept-spacing",
+      "title": "Spacing",
+      "learningObjective": "Plan practice",
+      "priorityReason": "Distribute practice",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+      ]
+    },
+    {
+      "conceptId": "concept-interleaving",
+      "title": "Interleaving",
+      "learningObjective": "Compare problems",
+      "priorityReason": "Build discrimination",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Interleaving mixes problem types." }
+      ]
+    },
+    {
+      "conceptId": "concept-feedback",
+      "title": "Feedback",
+      "learningObjective": "Correct errors",
+      "priorityReason": "Address misconceptions",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Feedback corrects errors." }
+      ]
+    },
+    {
+      "conceptId": "concept-transfer",
+      "title": "Transfer",
+      "learningObjective": "Apply principles",
+      "priorityReason": "Use learning",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Transfer applies learning." }
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "stageId": "stage-foundation",
+      "cognitiveFocus": "foundation",
+      "educationalMisconception": "Easy study is enough.",
+      "conceptIds": ["concept-retrieval"],
+      "questions": [
+        {
+          "questionId": "question-f1",
+          "conceptIds": ["concept-retrieval"],
+          "cognitiveOperation": "explain",
+          "prompt": "Why retrieve?",
+          "options": [
+            { "optionId": "option-f1a", "text": "Strengthen recall" },
+            { "optionId": "option-f1b", "text": "Avoid effort" },
+            { "optionId": "option-f1c", "text": "Skip practice" },
+            { "optionId": "option-f1d", "text": "Erase errors" }
+          ],
+          "correctOptionId": "option-f1a",
+          "answerExplanation": "Retrieval supports recall.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Retrieval practice strengthens learning."
+            }
+          ]
+        },
+        {
+          "questionId": "question-f2",
+          "conceptIds": ["concept-spacing"],
+          "cognitiveOperation": "differentiate",
+          "prompt": "What is spacing?",
+          "options": [
+            { "optionId": "option-f2a", "text": "Distributed practice" },
+            { "optionId": "option-f2b", "text": "No practice" },
+            { "optionId": "option-f2c", "text": "One session" },
+            { "optionId": "option-f2d", "text": "No feedback" }
+          ],
+          "correctOptionId": "option-f2a",
+          "answerExplanation": "Spacing distributes practice.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+          ]
+        },
+        {
+          "questionId": "question-f3",
+          "conceptIds": ["concept-interleaving"],
+          "cognitiveOperation": "explain",
+          "prompt": "What is interleaving?",
+          "options": [
+            { "optionId": "option-f3a", "text": "Mixed problems" },
+            { "optionId": "option-f3b", "text": "One repeated problem" },
+            { "optionId": "option-f3c", "text": "No problems" },
+            { "optionId": "option-f3d", "text": "Copied answers" }
+          ],
+          "correctOptionId": "option-f3a",
+          "answerExplanation": "Interleaving mixes types.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Interleaving mixes problem types."
+            }
+          ]
+        },
+        {
+          "questionId": "question-f4",
+          "conceptIds": ["concept-feedback"],
+          "cognitiveOperation": "explain",
+          "prompt": "Why get feedback?",
+          "options": [
+            { "optionId": "option-f4a", "text": "Correct errors" },
+            { "optionId": "option-f4b", "text": "Replace practice" },
+            { "optionId": "option-f4c", "text": "Guarantee memory" },
+            { "optionId": "option-f4d", "text": "Remove effort" }
+          ],
+          "correctOptionId": "option-f4a",
+          "answerExplanation": "Feedback identifies errors.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Feedback corrects errors." }
+          ]
+        }
+      ]
+    },
+    {
+      "stageId": "stage-connection",
+      "cognitiveFocus": "connection",
+      "educationalMisconception": "Practice cannot be planned.",
+      "conceptIds": ["concept-spacing"],
+      "questions": [
+        {
+          "questionId": "question-c1",
+          "conceptIds": ["concept-spacing"],
+          "cognitiveOperation": "combine",
+          "prompt": "Which plan spreads practice?",
+          "options": [
+            { "optionId": "option-c1a", "text": "Short sessions across days" },
+            { "optionId": "option-c1b", "text": "One marathon" },
+            { "optionId": "option-c1c", "text": "No review" },
+            { "optionId": "option-c1d", "text": "Only guessing" }
+          ],
+          "correctOptionId": "option-c1a",
+          "answerExplanation": "Spacing spreads practice.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+          ]
+        },
+        {
+          "questionId": "question-c2",
+          "conceptIds": ["concept-retrieval"],
+          "cognitiveOperation": "cause_effect",
+          "prompt": "What follows retrieval?",
+          "options": [
+            { "optionId": "option-c2a", "text": "Stronger recall" },
+            { "optionId": "option-c2b", "text": "Less learning" },
+            { "optionId": "option-c2c", "text": "No effort" },
+            { "optionId": "option-c2d", "text": "No practice" }
+          ],
+          "correctOptionId": "option-c2a",
+          "answerExplanation": "Retrieval strengthens recall.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Retrieval practice strengthens learning."
+            }
+          ]
+        },
+        {
+          "questionId": "question-c3",
+          "conceptIds": ["concept-interleaving"],
+          "cognitiveOperation": "combine",
+          "prompt": "How do mixed types help?",
+          "options": [
+            { "optionId": "option-c3a", "text": "They build discrimination" },
+            { "optionId": "option-c3b", "text": "They end practice" },
+            { "optionId": "option-c3c", "text": "They erase feedback" },
+            { "optionId": "option-c3d", "text": "They avoid recall" }
+          ],
+          "correctOptionId": "option-c3a",
+          "answerExplanation": "Mixed problems require comparison.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Interleaving mixes problem types."
+            }
+          ]
+        },
+        {
+          "questionId": "question-c4",
+          "conceptIds": ["concept-feedback"],
+          "cognitiveOperation": "cause_effect",
+          "prompt": "What does feedback reveal?",
+          "options": [
+            { "optionId": "option-c4a", "text": "Errors to correct" },
+            { "optionId": "option-c4b", "text": "A reason to skip" },
+            { "optionId": "option-c4c", "text": "Guaranteed memory" },
+            { "optionId": "option-c4d", "text": "No need to learn" }
+          ],
+          "correctOptionId": "option-c4a",
+          "answerExplanation": "Feedback corrects errors.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Feedback corrects errors." }
+          ]
+        }
+      ]
+    },
+    {
+      "stageId": "stage-synthesis",
+      "cognitiveFocus": "synthesis",
+      "educationalMisconception": "One study tactic fits every task.",
+      "conceptIds": ["concept-transfer"],
+      "questions": [
+        {
+          "questionId": "question-s1",
+          "conceptIds": ["concept-transfer"],
+          "cognitiveOperation": "infer",
+          "prompt": "How do you use a principle elsewhere?",
+          "options": [
+            { "optionId": "option-s1a", "text": "Transfer it" },
+            { "optionId": "option-s1b", "text": "Ignore it" },
+            { "optionId": "option-s1c", "text": "Erase it" },
+            { "optionId": "option-s1d", "text": "Memorize labels" }
+          ],
+          "correctOptionId": "option-s1a",
+          "answerExplanation": "Transfer applies learning.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Transfer applies learning." }
+          ]
+        },
+        {
+          "questionId": "question-s2",
+          "conceptIds": ["concept-spacing"],
+          "cognitiveOperation": "apply_multistep",
+          "prompt": "Which revision plan uses spacing?",
+          "options": [
+            { "optionId": "option-s2a", "text": "Review over several days" },
+            { "optionId": "option-s2b", "text": "Cram once" },
+            { "optionId": "option-s2c", "text": "Skip review" },
+            { "optionId": "option-s2d", "text": "Avoid feedback" }
+          ],
+          "correctOptionId": "option-s2a",
+          "answerExplanation": "Spacing distributes practice.",
+          "evidence": [
+            { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+          ]
+        },
+        {
+          "questionId": "question-s3",
+          "conceptIds": ["concept-retrieval"],
+          "cognitiveOperation": "infer",
+          "prompt": "Which activity tests recall?",
+          "options": [
+            { "optionId": "option-s3a", "text": "Answer from memory" },
+            { "optionId": "option-s3b", "text": "Reread only" },
+            { "optionId": "option-s3c", "text": "Highlight only" },
+            { "optionId": "option-s3d", "text": "Avoid questions" }
+          ],
+          "correctOptionId": "option-s3a",
+          "answerExplanation": "Retrieval requires recall.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Retrieval practice strengthens learning."
+            }
+          ]
+        },
+        {
+          "questionId": "question-s4",
+          "conceptIds": ["concept-interleaving"],
+          "cognitiveOperation": "apply_multistep",
+          "prompt": "Which set uses interleaving?",
+          "options": [
+            { "optionId": "option-s4a", "text": "Mix related question types" },
+            { "optionId": "option-s4b", "text": "Repeat one type" },
+            { "optionId": "option-s4c", "text": "Skip questions" },
+            { "optionId": "option-s4d", "text": "Copy solutions" }
+          ],
+          "correctOptionId": "option-s4a",
+          "answerExplanation": "Interleaving mixes types.",
+          "evidence": [
+            {
+              "segmentId": "S001",
+              "excerpt": "Interleaving mixes problem types."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rematchQuestions": [
+    {
+      "questionId": "question-r1",
+      "conceptIds": ["concept-retrieval"],
+      "cognitiveOperation": "recognize",
+      "prompt": "Name the recall practice.",
+      "options": [
+        { "optionId": "option-r1a", "text": "Retrieval" },
+        { "optionId": "option-r1b", "text": "Avoidance" },
+        { "optionId": "option-r1c", "text": "Cramming" },
+        { "optionId": "option-r1d", "text": "Erasure" }
+      ],
+      "correctOptionId": "option-r1a",
+      "answerExplanation": "Retrieval strengthens learning.",
+      "evidence": [
+        {
+          "segmentId": "S001",
+          "excerpt": "Retrieval practice strengthens learning."
+        }
+      ]
+    },
+    {
+      "questionId": "question-r2",
+      "conceptIds": ["concept-spacing"],
+      "cognitiveOperation": "sequence",
+      "prompt": "When should practice occur?",
+      "options": [
+        { "optionId": "option-r2a", "text": "Across time" },
+        { "optionId": "option-r2b", "text": "Never" },
+        { "optionId": "option-r2c", "text": "Once only" },
+        { "optionId": "option-r2d", "text": "After forgetting" }
+      ],
+      "correctOptionId": "option-r2a",
+      "answerExplanation": "Spacing distributes practice.",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+      ]
+    },
+    {
+      "questionId": "question-r3",
+      "conceptIds": ["concept-interleaving"],
+      "cognitiveOperation": "recognize",
+      "prompt": "Which practice mixes types?",
+      "options": [
+        { "optionId": "option-r3a", "text": "Interleaving" },
+        { "optionId": "option-r3b", "text": "Avoidance" },
+        { "optionId": "option-r3c", "text": "Cramming" },
+        { "optionId": "option-r3d", "text": "Erasure" }
+      ],
+      "correctOptionId": "option-r3a",
+      "answerExplanation": "Interleaving mixes types.",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Interleaving mixes problem types." }
+      ]
+    },
+    {
+      "questionId": "question-r4",
+      "conceptIds": ["concept-feedback"],
+      "cognitiveOperation": "sequence",
+      "prompt": "What follows an identified error?",
+      "options": [
+        { "optionId": "option-r4a", "text": "Feedback and correction" },
+        { "optionId": "option-r4b", "text": "Ignore it" },
+        { "optionId": "option-r4c", "text": "Avoid practice" },
+        { "optionId": "option-r4d", "text": "Erase evidence" }
+      ],
+      "correctOptionId": "option-r4a",
+      "answerExplanation": "Feedback corrects errors.",
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Feedback corrects errors." }
+      ]
+    }
+  ],
+  "reviewTakeaways": [
+    {
+      "takeawayId": "takeaway-retrieval",
+      "text": "Retrieve ideas to strengthen recall.",
+      "conceptIds": ["concept-retrieval"],
+      "evidence": [
+        {
+          "segmentId": "S001",
+          "excerpt": "Retrieval practice strengthens learning."
+        }
+      ]
+    },
+    {
+      "takeawayId": "takeaway-spacing",
+      "text": "Spread practice over time.",
+      "conceptIds": ["concept-spacing"],
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Spacing distributes practice." }
+      ]
+    },
+    {
+      "takeawayId": "takeaway-transfer",
+      "text": "Apply learning in a new setting.",
+      "conceptIds": ["concept-transfer"],
+      "evidence": [
+        { "segmentId": "S001", "excerpt": "Transfer applies learning." }
+      ]
+    }
+  ]
+}

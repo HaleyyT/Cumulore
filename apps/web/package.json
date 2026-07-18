@@ -6,7 +6,8 @@
   "scripts": {
     "build": "next build",
     "start": "next start",
-    "test": "tsx tests/identity.test.ts && tsx tests/quarantine-storage.test.ts && tsx tests/request-origin.test.ts"
+    "test": "tsx tests/identity.test.ts && tsx tests/quarantine-storage.test.ts && tsx tests/request-origin.test.ts",
+    "test:quest": "tsx tests/quest-generation.test.ts && tsx tests/quest-combat.test.ts"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "4.25.0",

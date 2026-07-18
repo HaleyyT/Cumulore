@@ -5,11 +5,17 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "jsx": "preserve",
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "strict": true,
     "target": "ES2023"
   },
-  "include": ["apps/**/*.ts", "packages/**/*.ts", "scripts/**/*.mts"]
+  "include": [
+    "apps/**/*.ts",
+    "apps/**/*.tsx",
+    "packages/**/*.ts",
+    "scripts/**/*.mts"
+  ]
 }

@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cumulore.local/contracts/quest-generation.v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requestedDifficulty",
+    "sourceTitle",
+    "priorityConcepts",
+    "stages",
+    "rematchQuestions",
+    "reviewTakeaways"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "requestedDifficulty": { "enum": ["easy", "medium", "hard"] },
+    "sourceTitle": { "$ref": "#/$defs/text" },
+    "priorityConcepts": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/concept" }
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/stage" }
+    },
+    "rematchQuestions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/question" }
+    },
+    "reviewTakeaways": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/takeaway" }
+    }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "maxLength": 1000 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{2,79}$" },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["segmentId", "excerpt"],
+      "properties": {
+        "segmentId": { "type": "string", "pattern": "^S[0-9]{3}$" },
+        "excerpt": { "$ref": "#/$defs/text" }
+      }
+    },
+    "evidenceList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "conceptIds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^concept-" }
+    },
+    "concept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conceptId",
+        "title",
+        "learningObjective",
+        "priorityReason",
+        "evidence"
+      ],
+      "properties": {
+        "conceptId": { "type": "string", "pattern": "^concept-" },
+        "title": { "$ref": "#/$defs/text" },
+        "learningObjective": { "$ref": "#/$defs/text" },
+        "priorityReason": { "$ref": "#/$defs/text" },
+        "evidence": { "$ref": "#/$defs/evidenceList" }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["optionId", "text"],
+      "properties": {
+        "optionId": { "type": "string", "pattern": "^option-" },
+        "text": { "$ref": "#/$defs/text" }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "conceptIds",
+        "cognitiveOperation",
+        "prompt",
+        "options",
+        "correctOptionId",
+        "answerExplanation",
+        "evidence"
+      ],
+      "properties": {
+        "questionId": { "type": "string", "pattern": "^question-" },
+        "conceptIds": { "$ref": "#/$defs/conceptIds" },
+        "cognitiveOperation": {
+          "enum": [
+            "recognize",
+            "recall",
+            "relate",
+            "sequence",
+            "apply_familiar",
+            "explain",
+            "differentiate",
+            "cause_effect",
+            "combine",
+            "apply_multistep",
+            "infer",
+            "discriminate",
+            "qualify",
+            "integrate",
+            "diagnose",
+            "transfer",
+            "evaluate"
+          ]
+        },
+        "prompt": { "$ref": "#/$defs/text" },
+        "options": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/option" }
+        },
+        "correctOptionId": { "type": "string", "pattern": "^option-" },
+        "answerExplanation": { "$ref": "#/$defs/text" },
+        "evidence": { "$ref": "#/$defs/evidenceList" }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stageId",
+        "cognitiveFocus",
+        "educationalMisconception",
+        "conceptIds",
+        "questions"
+      ],
+      "properties": {
+        "stageId": { "type": "string", "pattern": "^stage-" },
+        "cognitiveFocus": { "enum": ["foundation", "connection", "synthesis"] },
+        "educationalMisconception": { "$ref": "#/$defs/text" },
+        "conceptIds": { "$ref": "#/$defs/conceptIds" },
+        "questions": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/question" }
+        }
+      }
+    },
+    "takeaway": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["takeawayId", "text", "conceptIds", "evidence"],
+      "properties": {
+        "takeawayId": { "type": "string", "pattern": "^takeaway-" },
+        "text": { "$ref": "#/$defs/text" },
+        "conceptIds": { "$ref": "#/$defs/conceptIds" },
+        "evidence": { "$ref": "#/$defs/evidenceList" }
+      }
+    }
+  }
+}
