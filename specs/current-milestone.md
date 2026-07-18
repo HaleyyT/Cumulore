@@ -1,7 +1,7 @@
 # Current Milestone: Reliability Remediation — P0 Feature Freeze
 
-**Status:** Reliability corrections implemented through the bounded retrieval
-hardening slice; review required
+**Status:** Reliability corrections implemented through deterministic external
+reconciliation and bounded retrieval hardening; review required
 
 **Scope:** P0 dependency, tenancy, durable-retention, worker, provenance,
 grounding, migration-safety, and retrieval-boundary corrections
@@ -14,8 +14,8 @@ Milestone 3, and it does not authorize any later product milestone.
 
 - The private reliability plan and audit evidence remain ignored by Git.
 - Dependency, build, Python reproducibility, CI, fresh/upgrade migration,
-  tenancy, retention, worker-smoke, provenance, grounding, and bounded-retrieval
-  checks pass.
+  tenancy, retention, worker-smoke, fake external reconciliation, provenance,
+  grounding, and bounded-retrieval checks pass.
 - No critical or high production dependency advisories remain.
 - No real provider, product UI, upload route, or publication write path is
   enabled.

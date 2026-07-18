@@ -36,6 +36,24 @@ arrival rate and handler duration.
 4. Investigate repeated expiry by handler duration, database waits, shutdown
    timing, and heartbeat behavior.
 
+## Unknown external outcomes
+
+1. Do not invoke the provider again while an operation is `in_flight` or
+   `unknown`. A missing response is not proof that the provider performed no
+   effect.
+2. Maintenance converts an abandoned `prepared` operation to the safe
+   `invocation_not_started` failure, while an abandoned `in_flight` operation
+   becomes `unknown` and is scheduled for reconciliation.
+3. Reconciliation claims are bounded, leased, generation-fenced, and return the
+   authoritative workspace. A stale owner or generation cannot publish a
+   result.
+4. Resume the job only after reconciliation records confirmed success or
+   confirmed failure. A confirmed success completes through the matching
+   logical-operation fence without invoking the provider again.
+5. A provider without idempotency or reconciliation support must enter an
+   actionable dead letter; never implement a blind retry. The current runtime
+   exercises this policy only with a deterministic fake provider.
+
 ## Migration failure
 
 1. Stop application rollout; do not edit `schema_migrations` manually.
