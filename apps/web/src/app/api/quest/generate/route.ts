@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { OpenAIQuestProvider } from "../../../../modules/quest/generation/openai-provider";
 import { safeGenerationFailure } from "../../../../modules/quest/generation/errors";
 import { parseLiveQuestRequest } from "../../../../modules/quest/generation/request";
+import { QuestService } from "../../../../modules/quest/generation/quest-service";
 import { readQuestRuntimeConfig } from "../../../../modules/quest/runtime-config";
-import { segmentSource } from "../../../../modules/quest/source-segmentation";
-import { validateQuestSemantics } from "../../../../modules/quest/validation";
 
 export const runtime = "nodejs";
 const failure = (requestId: string | undefined, code: string, status: number) =>
@@ -36,21 +35,14 @@ export async function POST(request: Request) {
   )
     return failure(input.requestId, "SOURCE_TOO_LARGE", 413);
   try {
-    const quest = await new OpenAIQuestProvider(config).generate({
-      ...input,
-    });
-    if (
-      !validateQuestSemantics(
-        quest as never,
-        segmentSource(input.sourceText),
-        input.difficulty,
-      ).ok
-    )
-      return failure(input.requestId, "GENERATION_INVALID", 422);
+    const result = await new QuestService(
+      new OpenAIQuestProvider(config),
+    ).generate(input);
+    if (!result.ok) return failure(input.requestId, "GENERATION_INVALID", 422);
     return NextResponse.json({
       requestId: input.requestId,
       mode: "live",
-      quest,
+      quest: result.quest,
     });
   } catch (error) {
     const code = safeGenerationFailure(error);
