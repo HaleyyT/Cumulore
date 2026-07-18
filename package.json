@@ -31,6 +31,7 @@
     "worker:smoke": "tsx scripts/run-worker-smoke.mts",
     "db:migrate": "tsx packages/database/src/migrate.ts",
     "contracts": "pnpm --filter @cumulore/schemas test && python3 -m pytest services/worker/tests/test_contract_fixture.py",
+    "quest:eval": "tsx apps/web/scripts/evaluate-quest-fixture.mts",
     "docs:check": "node scripts/check-doc-links.mjs",
     "secrets:check": "node scripts/check-secrets.mjs",
     "env:check": "node scripts/check-env.mjs",

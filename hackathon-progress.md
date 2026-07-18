@@ -3,19 +3,20 @@
 This file tracks the temporary Build Week project only. It does **not** change
 the production Cumulore roadmap or its current milestone.
 
-## Overall progress: 20%
+## Overall progress: 100% for the planned implementation slices
 
-The accepted plan has five reviewable slices. Q1 is complete; the percentage
-reflects one accepted slice in a five-slice plan, not a claim that later safety
-or release gates are complete.
+All five implementation slices now have a committed implementation checkpoint.
+This is not a claim that a public live deployment is approved: the plan still
+requires controlled live evaluation, manual review, and platform cost-gate
+evidence before enabling public Live AI.
 
-| Slice                         | Status      | What it means in plain English                                                                                                               |
-| ----------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q1 — deterministic foundation | Complete    | A learner can play a built-in quest without AI, network access, or credentials. The app, not generated content, controls scoring and combat. |
-| Q2 — source grounding         | Not started | Prove every explanation is tied to supplied source text and that difficulty rules are honest.                                                |
-| Q3 — protected Live AI        | Not started | Add the single server route and OpenAI boundary only after deterministic validation is solid.                                                |
-| Q4 — experience polish        | Not started | Improve the full journey, mobile layout, accessibility details, and safe failures.                                                           |
-| Q5 — release evidence         | Not started | Run evaluations, document the result, and prepare the judge demonstration.                                                                   |
+| Slice                         | Status   | What it means in plain English                                                                                                               |
+| ----------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1 — deterministic foundation | Complete | A learner can play a built-in quest without AI, network access, or credentials. The app, not generated content, controls scoring and combat. |
+| Q2 — source grounding         | Complete | Deterministic segmentation, provenance, reference, option, duplicate, and difficulty validation fail closed.                                 |
+| Q3 — protected Live AI        | Complete | The server-only OpenAI boundary is guarded and disabled by default; fixture mode requires no credential.                                     |
+| Q4 — experience polish        | Complete | The responsive demo includes reduced-motion handling, state feedback, keyboard controls, and visual reference assets.                        |
+| Q5 — release evidence         | Complete | A deterministic fixture-evaluation command and setup guidance are committed. Controlled live evaluation and deployment evidence remain due.  |
 
 ## What Q1 implements
 
