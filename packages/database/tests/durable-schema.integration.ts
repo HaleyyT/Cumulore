@@ -152,6 +152,41 @@ try {
     );
     assert.equal(workerCreate.rows[0]!.can_create, false);
 
+    const externalRuntimeFunctions = await inspection.query<{
+      function_name: string;
+      owner_name: string;
+      worker_execute: boolean;
+      web_execute: boolean;
+    }>(
+      `SELECT p.proname AS function_name,
+         pg_get_userbyid(p.proowner) AS owner_name,
+         has_function_privilege('cumulore_worker', p.oid, 'EXECUTE') AS worker_execute,
+         has_function_privilege('cumulore_web', p.oid, 'EXECUTE') AS web_execute
+       FROM pg_proc p
+       JOIN pg_namespace n ON n.oid = p.pronamespace
+       WHERE n.nspname = 'app'
+         AND p.proname = ANY($1::text[])
+       ORDER BY p.proname`,
+      [
+        [
+          "claim_external_reconciliation",
+          "complete_job_from_external_operation",
+          "link_external_retry",
+          "recover_stale_external_operations",
+        ],
+      ],
+    );
+    assert.equal(externalRuntimeFunctions.rowCount, 4);
+    assert.ok(
+      externalRuntimeFunctions.rows.every(
+        (row) =>
+          row.owner_name === "cumulore_migration" &&
+          row.worker_execute &&
+          !row.web_execute,
+      ),
+      "external runtime functions are migration-owned and worker-only",
+    );
+
     for (const table of [
       "event_handlers",
       "jobs",
