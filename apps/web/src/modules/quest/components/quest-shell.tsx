@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { scienceQuest } from "../fixture";
+import { calculateMastery, orderRematch } from "../mastery";
 import {
   answer,
   continueQuest,
@@ -335,6 +336,8 @@ export function QuestShell() {
   }, []);
 
   if (!stage) {
+    const mastery = calculateMastery(quest, battle.answered);
+    const rematch = orderRematch(quest, mastery);
     return (
       <main ref={shellRef} className="app-shell">
         <nav className="topbar" aria-label="Primary navigation">
@@ -355,6 +358,28 @@ export function QuestShell() {
             with a fresh set of connections.
           </p>
           <p className="completion-score">{battle.score} points banked</p>
+          <section className="completion-review" aria-labelledby="review-title">
+            <h2 id="review-title">Your learning signal</h2>
+            <ul>
+              {mastery.map((item) => (
+                <li key={item.conceptId}>
+                  <span>
+                    {
+                      quest.concepts.find(
+                        (concept) => concept.id === item.conceptId,
+                      )?.title
+                    }
+                  </span>
+                  <strong>
+                    {item.mastery === undefined
+                      ? "Not sampled"
+                      : `${Math.round(item.mastery * 100)}% mastery`}
+                  </strong>
+                </li>
+              ))}
+            </ul>
+            <p>Next rematch: {rematch[0]?.prompt}</p>
+          </section>
           <button
             className="button button-primary"
             type="button"

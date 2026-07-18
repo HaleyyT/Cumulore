@@ -177,6 +177,27 @@ button:disabled {
   color: var(--ink);
 }
 
+.completion-review {
+  margin: 1.5rem 0;
+  text-align: left;
+}
+.completion-review ul {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0;
+  list-style: none;
+}
+.completion-review li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--line);
+}
+.completion-review strong {
+  color: var(--aqua);
+}
+
 .nav-links a:hover {
   color: var(--aqua);
 }
