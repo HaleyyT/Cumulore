@@ -48,4 +48,26 @@ assert.equal(
   true,
 );
 assert.equal(repairs, 1, "one sanitized repair is permitted");
+let failedRepairs = 0;
+assert.equal(
+  (
+    await new QuestService({
+      async generate() {
+        return invalid;
+      },
+      async repair(input) {
+        failedRepairs += 1;
+        assert.deepEqual(Object.keys(input).sort(), [
+          "difficulty",
+          "sourceText",
+          "sourceTitle",
+          "validationCode",
+        ]);
+        return invalid;
+      },
+    }).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" })
+  ).ok,
+  false,
+);
+assert.equal(failedRepairs, 1, "an invalid repair is not retried");
 console.log("Quest service validation boundary passed.");

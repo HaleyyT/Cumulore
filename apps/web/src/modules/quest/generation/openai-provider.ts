@@ -3,6 +3,27 @@ import questSchema from "@cumulore/schemas/contracts/quest-generation.v1.schema.
 import type { QuestProvider } from "./provider";
 import type { QuestRuntimeConfig } from "../runtime-config";
 
+type QuestResponseRequest = ReturnType<typeof createQuestResponseRequest>;
+
+export interface QuestResponsesClient {
+  responses: {
+    create(request: QuestResponseRequest): Promise<{
+      output_text?: string | null;
+    }>;
+  };
+}
+
+export type QuestClientFactory = (
+  config: QuestRuntimeConfig,
+) => QuestResponsesClient;
+
+const createOpenAIClient: QuestClientFactory = (config) =>
+  new OpenAI({
+    apiKey: config.apiKey,
+    maxRetries: 0,
+    timeout: config.timeoutMs,
+  }) as unknown as QuestResponsesClient;
+
 export function createQuestResponseRequest(
   config: QuestRuntimeConfig,
   input: {
@@ -44,7 +65,23 @@ export function createQuestRepairRequest(
 }
 
 export class OpenAIQuestProvider implements QuestProvider {
-  constructor(private readonly config: QuestRuntimeConfig) {}
+  constructor(
+    private readonly config: QuestRuntimeConfig,
+    private readonly createClient: QuestClientFactory = createOpenAIClient,
+  ) {}
+
+  private async request(request: QuestResponseRequest): Promise<unknown> {
+    const response = await this.createClient(this.config).responses.create(
+      request,
+    );
+    if (!response.output_text) throw new Error("GENERATION_INVALID");
+    try {
+      return JSON.parse(response.output_text) as unknown;
+    } catch {
+      throw new Error("GENERATION_INVALID");
+    }
+  }
+
   async generate(input: {
     sourceTitle: string;
     sourceText: string;
@@ -52,16 +89,7 @@ export class OpenAIQuestProvider implements QuestProvider {
   }): Promise<unknown> {
     if (!this.config.liveEnabled || !this.config.apiKey)
       throw new Error("LIVE_MODE_DISABLED");
-    const client = new OpenAI({
-      apiKey: this.config.apiKey,
-      maxRetries: 0,
-      timeout: this.config.timeoutMs,
-    });
-    const response = await client.responses.create(
-      createQuestResponseRequest(this.config, input),
-    );
-    if (!response.output_text) throw new Error("GENERATION_INVALID");
-    return JSON.parse(response.output_text) as unknown;
+    return this.request(createQuestResponseRequest(this.config, input));
   }
 
   async repair(input: {
@@ -72,15 +100,6 @@ export class OpenAIQuestProvider implements QuestProvider {
   }): Promise<unknown> {
     if (!this.config.liveEnabled || !this.config.apiKey)
       throw new Error("LIVE_MODE_DISABLED");
-    const client = new OpenAI({
-      apiKey: this.config.apiKey,
-      maxRetries: 0,
-      timeout: this.config.timeoutMs,
-    });
-    const response = await client.responses.create(
-      createQuestRepairRequest(this.config, input),
-    );
-    if (!response.output_text) throw new Error("GENERATION_INVALID");
-    return JSON.parse(response.output_text) as unknown;
+    return this.request(createQuestRepairRequest(this.config, input));
   }
 }
