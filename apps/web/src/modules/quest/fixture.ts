@@ -105,5 +105,25 @@ export function scienceQuest(difficulty: Difficulty): Quest {
       stage("synthesis", 2),
     ],
     rematch: questions,
+    takeaways: [
+      {
+        id: "takeaway-retrieval",
+        conceptIds: ["concept-retrieval"],
+        text: "Practise retrieving an idea before rereading it.",
+        excerpts: [excerpt],
+      },
+      {
+        id: "takeaway-spacing",
+        conceptIds: ["concept-spacing"],
+        text: "Spread short practice sessions across time.",
+        excerpts: [excerpt],
+      },
+      {
+        id: "takeaway-feedback",
+        conceptIds: ["concept-feedback"],
+        text: "Use feedback to find and correct misconceptions.",
+        excerpts: [excerpt],
+      },
+    ],
   };
 }

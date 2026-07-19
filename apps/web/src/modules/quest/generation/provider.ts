@@ -1,13 +1,13 @@
+export type QuestGenerationInput = {
+  sourceTitle: string;
+  sourceText: string;
+  difficulty: "easy" | "medium" | "hard";
+  learningGoal?: string;
+};
+
 export interface QuestProvider {
-  generate(input: {
-    sourceTitle: string;
-    sourceText: string;
-    difficulty: "easy" | "medium" | "hard";
-  }): Promise<unknown>;
-  repair?(input: {
-    sourceTitle: string;
-    sourceText: string;
-    difficulty: "easy" | "medium" | "hard";
-    validationCode: string;
-  }): Promise<unknown>;
+  generate(input: QuestGenerationInput): Promise<unknown>;
+  repair?(
+    input: QuestGenerationInput & { validationCode: string },
+  ): Promise<unknown>;
 }

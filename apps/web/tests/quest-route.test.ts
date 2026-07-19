@@ -13,7 +13,7 @@ const baseConfig: QuestRuntimeConfig = {
   sourceMaxChars: 20000,
 };
 
-function request(sourceText = "x".repeat(500)) {
+function request(sourceText = "x".repeat(500), learningGoal?: string) {
   const data = new FormData();
   data.set("requestId", requestId);
   data.set("sourceTitle", "Source");
@@ -21,6 +21,7 @@ function request(sourceText = "x".repeat(500)) {
   data.set("requestedDifficulty", "medium");
   data.set("mode", "live");
   data.set("consent", "true");
+  if (learningGoal) data.set("learningGoal", learningGoal);
   return new Request("http://localhost/api/quest/generate", {
     method: "POST",
     body: data,
@@ -69,17 +70,24 @@ const invalidGeneration = createQuestPostHandler({
 });
 assert.equal((await invalidGeneration(request())).status, 422);
 
+let receivedLearningGoal: string | undefined;
 const success = createQuestPostHandler({
   readConfig: () => baseConfig,
-  generate: async () => ({ ok: true, quest: { title: "Safe result" } }),
+  generate: async (_, input) => {
+    receivedLearningGoal = input.learningGoal;
+    return { ok: true, quest: { title: "Safe result" } };
+  },
 });
-const successResponse = await success(request());
+const successResponse = await success(
+  request(undefined, "Distinguish related definitions."),
+);
 assert.equal(successResponse.status, 200);
 assert.deepEqual(await successResponse.json(), {
   requestId,
   mode: "live",
   quest: { title: "Safe result" },
 });
+assert.equal(receivedLearningGoal, "Distinguish related definitions.");
 
 const rateLimited = createQuestPostHandler({
   readConfig: () => baseConfig,

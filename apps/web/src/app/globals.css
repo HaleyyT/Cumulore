@@ -209,6 +209,32 @@ button:disabled {
   min-height: 8rem;
   resize: vertical;
 }
+.live-setup input[type="file"] {
+  padding: 0.45rem;
+  color: var(--muted);
+}
+.live-setup input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.4rem;
+  background: rgba(168, 255, 237, 0.1);
+  color: var(--aqua);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.live-setup-helper,
+.live-setup [role="status"] {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.live-setup button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
 .live-setup .consent {
   display: flex;
   align-items: flex-start;
@@ -238,6 +264,24 @@ button:disabled {
 }
 .completion-review strong {
   color: var(--aqua);
+}
+.completion-notes {
+  margin: 1.5rem 0;
+}
+.completion-notes h3 {
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.completion-review .completion-notes li {
+  display: grid;
+  gap: 0.35rem;
+  justify-content: initial;
+}
+.completion-notes span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .rematch-panel {

@@ -1,4 +1,11 @@
-import type { Difficulty, Focus, Question, Quest, Stage } from "./types";
+import type {
+  Difficulty,
+  Focus,
+  Question,
+  Quest,
+  Stage,
+  Takeaway,
+} from "./types";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -86,6 +93,25 @@ function toStage(value: unknown): Stage | undefined {
   return { id, focus: focus as Focus, misconception, questions };
 }
 
+function toTakeaway(value: unknown): Takeaway | undefined {
+  const item = record(value);
+  const id = text(item?.takeawayId);
+  const takeawayText = text(item?.text);
+  const conceptIds = textList(item?.conceptIds);
+  if (!id || !takeawayText || !conceptIds || !Array.isArray(item?.evidence))
+    return undefined;
+  const excerpts = item.evidence.map((evidence) =>
+    text(record(evidence)?.excerpt),
+  );
+  if (
+    excerpts.length < 1 ||
+    excerpts.length > 2 ||
+    !excerpts.every((excerpt): excerpt is string => excerpt !== undefined)
+  )
+    return undefined;
+  return { id, text: takeawayText, conceptIds, excerpts };
+}
+
 /**
  * Maps only validated educational fields into the combat runtime. Runtime
  * mechanics remain application-owned and cannot arrive in a provider response.
@@ -112,6 +138,9 @@ export function toRuntimeQuest(value: unknown): Quest | undefined {
   const rematch = Array.isArray(item.rematchQuestions)
     ? item.rematchQuestions.map(toQuestion)
     : [];
+  const takeaways = Array.isArray(item.reviewTakeaways)
+    ? item.reviewTakeaways.map(toTakeaway)
+    : [];
   if (
     concepts.length !== 5 ||
     !concepts.every(
@@ -121,7 +150,11 @@ export function toRuntimeQuest(value: unknown): Quest | undefined {
     stages.length !== 3 ||
     !stages.every((stage): stage is Stage => stage !== undefined) ||
     rematch.length !== 4 ||
-    !rematch.every((question): question is Question => question !== undefined)
+    !rematch.every(
+      (question): question is Question => question !== undefined,
+    ) ||
+    takeaways.length !== 3 ||
+    !takeaways.every((takeaway): takeaway is Takeaway => takeaway !== undefined)
   )
     return undefined;
 
@@ -131,5 +164,6 @@ export function toRuntimeQuest(value: unknown): Quest | undefined {
     concepts,
     stages,
     rematch,
+    takeaways,
   };
 }

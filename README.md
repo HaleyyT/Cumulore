@@ -46,7 +46,7 @@ enabling Live AI anywhere public. Safe aggregate evaluation status and the
 manual-review protocol are tracked in
 [`docs/build-week/evaluation-evidence.md`](docs/build-week/evaluation-evidence.md).
 
-### Current progress — 91%
+### Current progress — 93%
 
 | Build Week slice              | Status      | Delivered outcome                                                                                                                          |
 | ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -91,3 +91,25 @@ matrix is deliberately separate: it needs `QUEST_PROVIDER=openai`,
 `QUEST_LIVE_GENERATION_ENABLED=true`, and an uncommitted `OPENAI_API_KEY`.
 Do not enable it publicly until every item in the
 [Build Week release checklist](docs/build-week/release-checklist.md) is evidenced.
+
+### Generate a quiz from your own material
+
+The deployed demo in the screenshot is intentionally in **Deterministic Demo**
+mode, so its Live AI button cannot make a provider call. To generate a grounded
+quest locally, copy `.env.example` to ignored `.env.local`, then set only these
+three values in `.env.local`:
+
+```bash
+QUEST_PROVIDER=openai
+QUEST_LIVE_GENERATION_ENABLED=true
+OPENAI_API_KEY=your_uncommitted_key
+```
+
+Restart `pnpm --filter @cumulore/web exec next dev`. Open **Try Live AI with
+your own material**, paste 500-20,000 characters or load a `.txt` file, choose
+the chamber intensity, optionally state a learning goal, acknowledge the data
+transfer, then select **Generate live quest**. The result is checked against
+the versioned contract and source excerpts before it can enter the quiz. After
+the run, the results screen shows source-grounded review notes and a targeted
+rematch. Never commit `.env.local` or enable these settings on a public
+deployment until the release checklist is complete.

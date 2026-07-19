@@ -10,6 +10,11 @@ assert.equal(runtime.difficulty, "medium");
 assert.equal(runtime.concepts.length, 5);
 assert.equal(runtime.stages.length, 3);
 assert.equal(runtime.rematch.length, 4);
+assert.equal(runtime.takeaways.length, 3);
+assert.equal(
+  runtime.takeaways[0]?.text,
+  "Retrieve ideas to strengthen recall.",
+);
 assert.equal(
   runtime.stages[0]?.questions[0]?.explanation,
   "Retrieval supports recall.",

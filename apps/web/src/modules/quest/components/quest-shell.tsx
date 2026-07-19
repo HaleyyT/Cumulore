@@ -402,6 +402,17 @@ export function QuestShell() {
                 </li>
               ))}
             </ul>
+            <section className="completion-notes" aria-labelledby="notes-title">
+              <h3 id="notes-title">Review notes for your next session</h3>
+              <ul>
+                {quest.takeaways.map((takeaway) => (
+                  <li key={takeaway.id}>
+                    <strong>{takeaway.text}</strong>
+                    <span>{takeaway.excerpts[0]}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
             <p>Next rematch: {rematch[0]?.prompt}</p>
             {rematchQuestion ? (
               <div className="rematch-panel">

@@ -5,6 +5,7 @@ export type LiveQuestRequest = {
   sourceTitle: string;
   sourceText: string;
   difficulty: Difficulty;
+  learningGoal?: string;
 };
 
 const uuid =
@@ -20,6 +21,7 @@ export function parseLiveQuestRequest(
     "requestedDifficulty",
     "mode",
     "consent",
+    "learningGoal",
   ]);
   if (
     Object.keys(values).some((key) => !allowed.has(key)) ||
@@ -31,6 +33,7 @@ export function parseLiveQuestRequest(
   const sourceTitle = values.sourceTitle;
   const sourceText = values.sourceText;
   const difficulty = values.requestedDifficulty;
+  const learningGoal = values.learningGoal;
   if (
     typeof requestId !== "string" ||
     !uuid.test(requestId) ||
@@ -38,6 +41,8 @@ export function parseLiveQuestRequest(
     sourceTitle.trim().length < 1 ||
     sourceTitle.trim().length > 120 ||
     typeof sourceText !== "string" ||
+    (learningGoal !== undefined &&
+      (typeof learningGoal !== "string" || learningGoal.trim().length > 240)) ||
     !["easy", "medium", "hard"].includes(String(difficulty))
   )
     return undefined;
@@ -46,5 +51,9 @@ export function parseLiveQuestRequest(
     sourceTitle: sourceTitle.trim(),
     sourceText,
     difficulty: difficulty as Difficulty,
+    learningGoal:
+      typeof learningGoal === "string" && learningGoal.trim()
+        ? learningGoal.trim()
+        : undefined,
   };
 }

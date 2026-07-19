@@ -1,7 +1,7 @@
 import { segmentSource } from "../source-segmentation";
 import { validateQuestSemantics } from "../validation";
 import type { Difficulty } from "../types";
-import type { QuestProvider } from "./provider";
+import type { QuestGenerationInput, QuestProvider } from "./provider";
 
 export type QuestServiceResult =
   | { ok: true; quest: unknown }
@@ -10,11 +10,9 @@ export type QuestServiceResult =
 export class QuestService {
   constructor(private readonly provider: QuestProvider) {}
 
-  async generate(input: {
-    sourceTitle: string;
-    sourceText: string;
-    difficulty: Difficulty;
-  }): Promise<QuestServiceResult> {
+  async generate(
+    input: QuestGenerationInput & { difficulty: Difficulty },
+  ): Promise<QuestServiceResult> {
     const validate = (quest: unknown) =>
       validateQuestSemantics(
         quest as never,

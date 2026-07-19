@@ -18,12 +18,19 @@ export type Stage = {
   misconception: string;
   questions: readonly Question[];
 };
+export type Takeaway = {
+  id: string;
+  text: string;
+  conceptIds: readonly string[];
+  excerpts: readonly string[];
+};
 export type Quest = {
   title: string;
   difficulty: Difficulty;
   concepts: readonly { id: string; title: string; reason: string }[];
   stages: readonly Stage[];
   rematch: readonly Question[];
+  takeaways: readonly Takeaway[];
 };
 
 export type Battle = {
