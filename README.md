@@ -45,6 +45,8 @@ The accepted Build Week plan and status are in
 enabling Live AI anywhere public. Safe aggregate evaluation status and the
 manual-review protocol are tracked in
 [`docs/build-week/evaluation-evidence.md`](docs/build-week/evaluation-evidence.md).
+Deployment configuration and safe smoke checks are in the
+[Vercel Live AI runbook](docs/build-week/vercel-live-ai.md).
 
 ### Current progress — 93%
 
@@ -92,7 +94,7 @@ matrix is deliberately separate: it needs `QUEST_PROVIDER=openai`,
 Do not enable it publicly until every item in the
 [Build Week release checklist](docs/build-week/release-checklist.md) is evidenced.
 
-### Generate a quiz from your own material
+### Generate a quest from your own material
 
 The deployed demo in the screenshot is intentionally in **Deterministic Demo**
 mode, so its Live AI button cannot make a provider call. To generate a grounded
@@ -102,7 +104,7 @@ three values in `.env.local`:
 ```bash
 QUEST_PROVIDER=openai
 QUEST_LIVE_GENERATION_ENABLED=true
-OPENAI_API_KEY=your_uncommitted_key
+OPENAI_API_KEY=<real key from a dedicated OpenAI project>
 ```
 
 Restart `pnpm --filter @cumulore/web exec next dev`. Open **Try Live AI with
@@ -113,3 +115,10 @@ the versioned contract and source excerpts before it can enter the quiz. After
 the run, the results screen shows source-grounded review notes and a targeted
 rematch. Never commit `.env.local` or enable these settings on a public
 deployment until the release checklist is complete.
+
+For Vercel, add all three variables to the same environment scope as the
+deployment, then redeploy. Adding only `OPENAI_API_KEY` deliberately leaves
+Live AI off. A literal value such as `your_actual_OpenAI_API_key` is a
+placeholder, not a usable credential. Follow the
+[Vercel Live AI runbook](docs/build-week/vercel-live-ai.md) for the exact
+configuration, protection, and verification sequence.

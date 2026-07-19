@@ -1,0 +1,74 @@
+# Vercel Live AI runbook
+
+This runbook applies only to Cumulore Quest on the isolated Build Week branch.
+It does not change the production Cumulore milestone or authorize unrestricted
+public model usage.
+
+## Why a key alone does not enable Live AI
+
+Live generation fails closed unless all three server-side variables are set:
+
+```text
+QUEST_PROVIDER=openai
+QUEST_LIVE_GENERATION_ENABLED=true
+OPENAI_API_KEY=<real secret from a dedicated OpenAI project>
+```
+
+The two explicit flags prevent an accidentally configured credential from
+turning on a paid public endpoint. A value such as
+`your_actual_OpenAI_API_key` is only example text and is rejected.
+
+## Safe Vercel configuration
+
+1. Use a dedicated OpenAI project for this demo. Configure its usage alerts
+   and enforceable spending boundary before public access.
+2. In Vercel Project Settings, add the three variables above to the exact
+   environment being tested: Preview, Production, or both. Mark the API key as
+   sensitive and never expose it with a `NEXT_PUBLIC_` prefix.
+3. Keep the optional defaults unless a controlled evaluation justifies a
+   change:
+
+   ```text
+   OPENAI_QUEST_MODEL=gpt-5.6-sol
+   OPENAI_QUEST_REASONING_EFFORT=low
+   OPENAI_QUEST_TIMEOUT_MS=45000
+   QUEST_SOURCE_MAX_CHARS=20000
+   QUEST_OUTPUT_MAX_TOKENS=14000
+   ```
+
+4. Protect the deployment for judges or configure enforceable platform request
+   limits. Repeated-click protection in the browser does not replace a
+   server-side cost boundary.
+5. Redeploy after changing environment variables. Existing deployments do not
+   receive newly added values automatically.
+
+## Verification
+
+1. Open the redeployed URL in a fresh session. The Live AI section must show a
+   **ready** badge rather than **offline**.
+2. Submit one non-sensitive, 500–2,000 character source with a precise learner
+   goal. Confirm the response produces five ranked concepts, three stages,
+   twelve main questions, four rematch questions, and grounded review notes.
+3. Check that every displayed excerpt exists verbatim in the submitted source
+   and that the selected difficulty applies throughout the quest.
+4. Submit one deliberately unsupported source and confirm it fails safely
+   rather than inventing facts.
+5. Confirm the API key, source text, filenames, and generated content do not
+   appear in browser payloads other than the intended request, Vercel logs, or
+   error messages.
+6. Run the controlled nine-generation evaluation and manual review required by
+   [`release-checklist.md`](release-checklist.md). Do not record private source
+   content in committed evidence.
+
+If the page still shows **offline**, confirm the variable names, values,
+environment scope, and redeployment. Server configuration errors intentionally
+appear as unavailable rather than exposing secret or configuration details.
+
+## Public release boundary
+
+The live route uses strict structured output, `store: false`, bounded source
+and output sizes, one sanitized repair attempt, safe errors, and browser-side
+duplicate-submit protection. These controls improve correctness but do not
+provide distributed rate limiting. Until every unchecked item in
+[`release-checklist.md`](release-checklist.md) is evidenced, keep the public
+deployment fixture-first or restrict Live AI to judges.
