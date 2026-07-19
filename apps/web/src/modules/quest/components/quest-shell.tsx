@@ -247,6 +247,9 @@ function GalaxyField() {
 
 export function QuestShell() {
   const shellRef = useRef<HTMLElement>(null);
+  const battleTitleRef = useRef<HTMLHeadingElement>(null);
+  const feedbackRef = useRef<HTMLElement>(null);
+  const previousStageRef = useRef<number | undefined>(undefined);
   const [difficulty, setDifficulty] = useReducer(
     (_: Difficulty, nextDifficulty: Difficulty) => nextDifficulty,
     "medium",
@@ -337,6 +340,19 @@ export function QuestShell() {
     }, shellRef);
     return () => context.revert();
   }, []);
+
+  useEffect(() => {
+    if (battle.feedback) {
+      feedbackRef.current?.focus();
+    } else if (
+      previousStageRef.current !== undefined &&
+      previousStageRef.current !== battle.stage
+    ) {
+      battleTitleRef.current?.focus();
+    }
+
+    previousStageRef.current = battle.stage;
+  }, [battle.feedback, battle.stage]);
 
   if (!stage) {
     const mastery = calculateMastery(quest, battle.answered);
@@ -618,7 +634,7 @@ export function QuestShell() {
           <div className="battle-card-top">
             <div>
               <p className="eyebrow">Current focus</p>
-              <h2 id="battle-title">
+              <h2 id="battle-title" ref={battleTitleRef} tabIndex={-1}>
                 <FocusHeading text={stage.misconception} />
               </h2>
             </div>
@@ -709,6 +725,7 @@ export function QuestShell() {
               </div>
               {battle.feedback ? (
                 <aside
+                  ref={feedbackRef}
                   className={
                     correctAnswer
                       ? "feedback-card is-correct"
