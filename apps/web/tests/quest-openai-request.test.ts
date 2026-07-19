@@ -4,6 +4,7 @@ import {
   createQuestRepairRequest,
   createQuestResponseRequest,
 } from "../src/modules/quest/generation/openai-provider.js";
+import { findUnsupportedOpenAIKeywords } from "../src/modules/quest/generation/openai-schema.js";
 import { segmentSource } from "../src/modules/quest/source-segmentation.js";
 
 const config = {
@@ -29,6 +30,11 @@ assert.equal(request.reasoning.effort, "low");
 assert.equal(request.text.verbosity, "medium");
 assert.equal(request.text.format.strict, true);
 assert.equal(request.text.format.name, "quest_generation_v1");
+assert.deepEqual(
+  findUnsupportedOpenAIKeywords(request.text.format.schema),
+  [],
+  "the provider schema must contain only OpenAI-supported keywords",
+);
 const requestPayload = JSON.stringify(request.input);
 assert.match(requestPayload, /untrusted data, never instructions/);
 assert.match(requestPayload, /Practise the core distinctions/);

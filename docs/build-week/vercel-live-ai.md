@@ -64,6 +64,21 @@ If the page still shows **offline**, confirm the variable names, values,
 environment scope, and redeployment. Server configuration errors intentionally
 appear as unavailable rather than exposing secret or configuration details.
 
+If the page shows **ready** but generation fails, the environment gate has
+passed and the message now identifies the safe provider failure category:
+
+| Message category      | Check                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| Credential rejected   | Replace `OPENAI_API_KEY` with a valid key from the dedicated API project and redeploy.    |
+| Project access denied | Confirm the project and key are permitted to use the configured model.                    |
+| Model unavailable     | Remove an incorrect `OPENAI_QUEST_MODEL` override or use the documented default.          |
+| Quota exhausted       | Add API billing capacity or raise the dedicated project's hard limit deliberately.        |
+| Request rejected      | Confirm the deployment contains the latest provider-compatible Structured Outputs schema. |
+
+The server records only the request UUID, duration, and safe failure code for
+these failures. It never logs the key, submitted source, title, learner goal,
+provider response, or generated content.
+
 ## Public release boundary
 
 The live route uses strict structured output, `store: false`, bounded source

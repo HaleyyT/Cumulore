@@ -125,4 +125,34 @@ assert.deepEqual(await rateResponse.json(), {
   },
 });
 
+const safeLogs: Array<Record<string, unknown>> = [];
+const invalidCredential = createQuestPostHandler({
+  readConfig: () => baseConfig,
+  generate: async () => {
+    throw {
+      status: 401,
+      apiKey: "must not be logged",
+      sourceText: "must not be logged",
+    };
+  },
+  logFailure: (entry) => safeLogs.push(entry),
+});
+const credentialResponse = await invalidCredential(request());
+assert.equal(credentialResponse.status, 503);
+assert.deepEqual(await credentialResponse.json(), {
+  requestId,
+  error: {
+    code: "OPENAI_AUTH_FAILED",
+    message:
+      "OpenAI rejected the deployment credential. Replace OPENAI_API_KEY with a valid project key, then redeploy.",
+  },
+});
+assert.equal(safeLogs.length, 1);
+assert.deepEqual(Object.keys(safeLogs[0]!).sort(), [
+  "code",
+  "durationMs",
+  "requestId",
+]);
+assert.equal(JSON.stringify(safeLogs).includes("must not be logged"), false);
+
 console.log("Quest route safety boundary passed.");

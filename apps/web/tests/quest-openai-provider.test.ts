@@ -74,6 +74,30 @@ await assert.rejects(
 );
 assert.equal(safeGenerationFailure(providerFailure), "RATE_LIMITED");
 assert.equal(
+  safeGenerationFailure({ status: 400, message: "private provider detail" }),
+  "OPENAI_REQUEST_REJECTED",
+);
+assert.equal(
+  safeGenerationFailure({ status: 401, message: "private provider detail" }),
+  "OPENAI_AUTH_FAILED",
+);
+assert.equal(
+  safeGenerationFailure({ status: 403, message: "private provider detail" }),
+  "OPENAI_ACCESS_DENIED",
+);
+assert.equal(
+  safeGenerationFailure({ status: 404, message: "private provider detail" }),
+  "OPENAI_MODEL_UNAVAILABLE",
+);
+assert.equal(
+  safeGenerationFailure({
+    status: 429,
+    code: "insufficient_quota",
+    message: "private provider detail",
+  }),
+  "OPENAI_QUOTA_EXHAUSTED",
+);
+assert.equal(
   safeGenerationFailure({ status: 503, message: "do not expose source text" }),
   "GENERATION_UNAVAILABLE",
 );

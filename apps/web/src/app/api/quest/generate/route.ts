@@ -16,6 +16,16 @@ const safeMessage: Readonly<Record<string, string>> = {
   SOURCE_TOO_LARGE: "Use between 500 and 20,000 characters.",
   LIVE_MODE_DISABLED:
     "Live AI is not enabled for this deployment. Deterministic Demo is still available.",
+  OPENAI_AUTH_FAILED:
+    "OpenAI rejected the deployment credential. Replace OPENAI_API_KEY with a valid project key, then redeploy.",
+  OPENAI_ACCESS_DENIED:
+    "This OpenAI project cannot run the configured quest model. Check its project permissions and model access.",
+  OPENAI_MODEL_UNAVAILABLE:
+    "The configured OpenAI quest model is unavailable to this project. Check OPENAI_QUEST_MODEL and project access.",
+  OPENAI_QUOTA_EXHAUSTED:
+    "The OpenAI project's available quota is exhausted. Check its billing and spending limit.",
+  OPENAI_REQUEST_REJECTED:
+    "OpenAI rejected the quest request configuration. Use the documented model settings or Deterministic Demo.",
   RATE_LIMITED: "Live AI is busy. Wait briefly or use Deterministic Demo.",
   GENERATION_TIMEOUT:
     "Quest generation took too long. Try a shorter source or use Deterministic Demo.",
@@ -53,12 +63,35 @@ type QuestRouteDependencies = {
     config: QuestRuntimeConfig,
     input: LiveQuestRequest,
   ) => Promise<QuestServiceResult>;
+  logFailure?: (entry: {
+    requestId: string;
+    code: string;
+    durationMs: number;
+  }) => void;
+};
+
+const logFailure: NonNullable<QuestRouteDependencies["logFailure"]> = (
+  entry,
+) => {
+  console.error(
+    JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: "error",
+      service: "web",
+      operation: "quest.generate",
+      correlation_id: entry.requestId,
+      duration_ms: entry.durationMs,
+      outcome: "failed",
+      safe_error_code: entry.code.toLowerCase(),
+    }),
+  );
 };
 
 const productionDependencies: QuestRouteDependencies = {
   readConfig: readQuestRuntimeConfig,
   generate: (config, input) =>
     new QuestService(new OpenAIQuestProvider(config)).generate(input),
+  logFailure,
 };
 
 export function createQuestPostHandler(
@@ -94,10 +127,17 @@ export function createQuestPostHandler(
       input.sourceText.length > config.sourceMaxChars
     )
       return failure(input.requestId, "SOURCE_TOO_LARGE", 413);
+    const startedAt = Date.now();
     try {
       const result = await dependencies.generate(config, input);
-      if (!result.ok)
+      if (!result.ok) {
+        dependencies.logFailure?.({
+          requestId: input.requestId,
+          code: "GENERATION_INVALID",
+          durationMs: Date.now() - startedAt,
+        });
         return failure(input.requestId, "GENERATION_INVALID", 422);
+      }
       return NextResponse.json({
         requestId: input.requestId,
         mode: "live",
@@ -105,6 +145,11 @@ export function createQuestPostHandler(
       });
     } catch (error) {
       const { code, retryAfterSeconds } = safeGenerationError(error);
+      dependencies.logFailure?.({
+        requestId: input.requestId,
+        code,
+        durationMs: Date.now() - startedAt,
+      });
       return failure(
         input.requestId,
         code,

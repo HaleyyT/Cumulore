@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import questSchema from "@cumulore/schemas/contracts/quest-generation.v1.schema.json" with { type: "json" };
 
 import type { QuestRuntimeConfig } from "../runtime-config";
+import { toOpenAIStructuredOutputSchema } from "./openai-schema";
 import type {
   QuestGenerationInput,
   QuestProvider,
@@ -9,6 +10,8 @@ import type {
 } from "./provider";
 
 type QuestResponseRequest = ReturnType<typeof createQuestResponseRequest>;
+
+const openAIQuestSchema = toOpenAIStructuredOutputSchema(questSchema);
 
 export interface QuestResponsesClient {
   responses: {
@@ -82,7 +85,7 @@ function createRequest(
         type: "json_schema" as const,
         name: "quest_generation_v1",
         strict: true,
-        schema: questSchema,
+        schema: openAIQuestSchema,
       },
     },
   };

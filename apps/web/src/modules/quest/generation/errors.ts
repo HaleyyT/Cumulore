@@ -1,5 +1,10 @@
 export type QuestGenerationFailure =
   | "LIVE_MODE_DISABLED"
+  | "OPENAI_AUTH_FAILED"
+  | "OPENAI_ACCESS_DENIED"
+  | "OPENAI_MODEL_UNAVAILABLE"
+  | "OPENAI_QUOTA_EXHAUSTED"
+  | "OPENAI_REQUEST_REJECTED"
   | "RATE_LIMITED"
   | "GENERATION_TIMEOUT"
   | "GENERATION_INVALID"
@@ -40,7 +45,18 @@ export function safeGenerationFailure(error: unknown): QuestGenerationFailure {
     return "LIVE_MODE_DISABLED";
   if (typeof error === "object" && error !== null && "status" in error) {
     const status = (error as { status?: unknown }).status;
-    if (status === 429) return "RATE_LIMITED";
+    const providerCode =
+      "code" in error && typeof (error as { code?: unknown }).code === "string"
+        ? (error as { code: string }).code
+        : undefined;
+    if (status === 400) return "OPENAI_REQUEST_REJECTED";
+    if (status === 401) return "OPENAI_AUTH_FAILED";
+    if (status === 403) return "OPENAI_ACCESS_DENIED";
+    if (status === 404) return "OPENAI_MODEL_UNAVAILABLE";
+    if (status === 429)
+      return providerCode === "insufficient_quota"
+        ? "OPENAI_QUOTA_EXHAUSTED"
+        : "RATE_LIMITED";
     if (typeof status === "number" && status >= 500)
       return "GENERATION_UNAVAILABLE";
   }
