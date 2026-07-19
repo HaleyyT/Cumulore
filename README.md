@@ -45,3 +45,49 @@ The accepted Build Week plan and status are in
 enabling Live AI anywhere public. Safe aggregate evaluation status and the
 manual-review protocol are tracked in
 [`docs/build-week/evaluation-evidence.md`](docs/build-week/evaluation-evidence.md).
+
+### Current progress — 91%
+
+| Build Week slice              | Status      | Delivered outcome                                                                                                                          |
+| ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Q1 — deterministic foundation | Complete    | A complete, credential-free learning quest with application-owned combat and rematches.                                                    |
+| Q2 — source grounding         | Complete    | Segmentation, evidence, duplicate, difficulty, reference, and requested-source validation fail closed.                                     |
+| Q3 — protected Live AI        | Complete    | A guarded server-only OpenAI boundary with strict outputs, one repair, safe errors, and recoverable setup.                                 |
+| Q4 — experience polish        | Complete    | Responsive visual experience, reduced-motion support, keyboard controls, focus management, and result/rematch states.                      |
+| Q5 — release evidence         | In progress | Fixture evaluation and safe evidence recording are ready; controlled live evaluation, manual review, deployment, and cost evidence remain. |
+
+### System design choices
+
+| Choice                               | Why it matters                                                                                                                      |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Content teaches; code plays**      | Provider output can supply educational questions and evidence, but never health, score, hearts, timing, or animation behavior.      |
+| **Fixture-first by default**         | The public and CI experience works without a key, network access, or paid model call.                                               |
+| **Server-only Live AI boundary**     | OpenAI configuration and source submission stay behind the POST route; the browser never receives credentials.                      |
+| **Fail closed, then recover safely** | Invalid provenance, schema, or runtime content is rejected. A failed live attempt leaves the learner able to retry or use the demo. |
+| **Evidence stays with every claim**  | Every displayed answer explanation is linked to validated source excerpts.                                                          |
+
+### Repository structure
+
+| Path                                             | Purpose                                                                              |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| [`apps/web/`](apps/web/)                         | Next.js Quest interface, API route, live-provider adapter, and focused tests.        |
+| [`packages/schemas/`](packages/schemas/)         | Versioned JSON Schema contracts and valid/invalid fixtures.                          |
+| [`docs/build-week/`](docs/build-week/)           | Accepted plan, release gate, and safe evaluation evidence.                           |
+| [`hackathon-progress.md`](hackathon-progress.md) | Plain-language implementation progress and percentage.                               |
+| [`docs/`](docs/)                                 | Production Cumulore architecture, security, operations, and milestone documentation. |
+
+### Run and verify
+
+```bash
+pnpm install --frozen-lockfile
+pnpm --filter @cumulore/web exec next dev
+pnpm quest:eval -- --provider=fixture
+pnpm --filter @cumulore/web test:quest
+pnpm build:production
+```
+
+The fixture command is safe for local development and CI. The controlled live
+matrix is deliberately separate: it needs `QUEST_PROVIDER=openai`,
+`QUEST_LIVE_GENERATION_ENABLED=true`, and an uncommitted `OPENAI_API_KEY`.
+Do not enable it publicly until every item in the
+[Build Week release checklist](docs/build-week/release-checklist.md) is evidenced.
