@@ -32,9 +32,12 @@ Operational recovery and performance evidence are documented in
 The temporary **Cumulore Quest** demo is isolated on the
 `hackathon/openai-build-week-cumulore-quest` branch. Start it with
 `pnpm --filter @cumulore/web exec next dev`; it defaults to the credential-free
-**Deterministic Demo**. Run `pnpm quest:eval` to check the three checked source
-fixtures and every demo difficulty. Live AI remains off unless explicitly
-enabled with server-only environment configuration; never commit an API key.
+**Deterministic Demo**. Run `pnpm quest:eval -- --provider=fixture` to check
+the three checked source fixtures and every demo difficulty. Live AI remains off
+unless explicitly enabled with server-only environment configuration; a
+controlled live matrix additionally requires `QUEST_PROVIDER=openai`,
+`QUEST_LIVE_GENERATION_ENABLED=true`, and an uncommitted `OPENAI_API_KEY`.
+Never run it in ordinary CI or commit an API key.
 The accepted Build Week plan and status are in
 [`docs/build-week/hackathon-plan.md`](docs/build-week/hackathon-plan.md) and
 [`hackathon-progress.md`](hackathon-progress.md). See the
