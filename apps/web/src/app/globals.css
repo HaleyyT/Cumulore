@@ -177,6 +177,48 @@ button:disabled {
   color: var(--ink);
 }
 
+.live-setup {
+  max-width: 34rem;
+  margin-top: 1rem;
+  color: var(--muted);
+}
+.live-setup summary {
+  cursor: pointer;
+  color: var(--aqua);
+  font-weight: 700;
+}
+.live-setup form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.live-setup label {
+  display: grid;
+  gap: 0.3rem;
+}
+.live-setup input,
+.live-setup textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.65rem;
+  background: rgb(3 11 25 / 70%);
+  color: var(--ink);
+}
+.live-setup textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.live-setup .consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.live-setup .consent input {
+  width: auto;
+  margin-top: 0.25rem;
+}
+
 .completion-review {
   margin: 1.5rem 0;
   text-align: left;

@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { scienceQuest } from "../fixture";
 import { calculateMastery, orderRematch } from "../mastery";
+import { LiveQuestSetup } from "./live-quest-setup";
 import {
   answer,
   continueQuest,
@@ -441,6 +442,7 @@ export function QuestShell() {
               explicitly enabled by the server.
             </span>
           </aside>
+          <LiveQuestSetup difficulty={difficulty} />
           <div className="hero-actions">
             <a className="button button-primary" href="#quest">
               Enter the chamber <span aria-hidden="true">↗</span>
