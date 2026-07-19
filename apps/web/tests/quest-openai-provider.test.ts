@@ -5,19 +5,23 @@ import {
   type QuestResponsesClient,
 } from "../src/modules/quest/generation/openai-provider.js";
 import { safeGenerationFailure } from "../src/modules/quest/generation/errors.js";
+import { segmentSource } from "../src/modules/quest/source-segmentation.js";
 
 const config = {
   provider: "openai" as const,
   liveEnabled: true,
   apiKey: "test-only-key",
   model: "gpt-5.6-sol",
+  reasoningEffort: "low" as const,
   timeoutMs: 45000,
   sourceMaxChars: 20000,
+  maxOutputTokens: 10000,
 };
 const input = {
   sourceTitle: "Learning",
-  sourceText:
+  sourceSegments: segmentSource(
     "Untrusted source text that must stay inside the provider boundary.",
+  ),
   difficulty: "medium" as const,
 };
 
@@ -80,14 +84,28 @@ assert.equal(
 
 const repair = new OpenAIQuestProvider(config, () =>
   fakeClient(async (request) => {
-    assert.match(request.input, /Repair one educational JSON response/);
-    assert.match(request.input, /Validation code: EXCERPT_MISMATCH/);
+    const payload = JSON.stringify(request.input);
+    assert.match(payload, /Regenerate one complete corrected quest/);
+    assert.match(payload, /EXCERPT_MISMATCH/);
+    assert.doesNotMatch(payload, /stack trace|internal log/i);
     return { output_text: '{"repaired":true}' };
   }),
 );
 assert.deepEqual(
-  await repair.repair({ ...input, validationCode: "EXCERPT_MISMATCH" }),
+  await repair.repair({
+    ...input,
+    repair: {
+      validationCode: "EXCERPT_MISMATCH",
+      affectedIds: ["question-1"],
+      fieldPaths: ["stages[0].questions[0].evidence[0].excerpt"],
+    },
+  }),
   { repaired: true },
 );
+
+const incomplete = new OpenAIQuestProvider(config, () =>
+  fakeClient(async () => ({ status: "incomplete", output_text: "{}" })),
+);
+await assert.rejects(() => incomplete.generate(input), /GENERATION_INVALID/);
 
 console.log("Quest OpenAI provider boundary passed.");

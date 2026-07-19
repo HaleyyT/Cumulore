@@ -6,15 +6,29 @@ import { toRuntimeQuest } from "../live-quest";
 import type { Difficulty, Quest } from "../types";
 
 type LiveQuestResponse = {
-  error?: { code?: string; message?: string };
+  error?: {
+    code?: string;
+    message?: string;
+    retryAfterSeconds?: number;
+  };
   quest?: unknown;
 };
 
+function liveFailureMessage(error: NonNullable<LiveQuestResponse["error"]>) {
+  if (error.code === "RATE_LIMITED" && error.retryAfterSeconds)
+    return `Live AI is at its request limit. Try again in about ${error.retryAfterSeconds} seconds, or use Deterministic Demo now.`;
+  return (
+    error.message ?? "Live generation is unavailable. Use Deterministic Demo."
+  );
+}
+
 export function LiveQuestSetup({
   difficulty,
+  liveAvailable,
   onQuestReady,
 }: {
   difficulty: Difficulty;
+  liveAvailable: boolean;
   onQuestReady: (quest: Quest) => void;
 }) {
   const gate = useRef(new QuestSubmissionGate<LiveQuestResponse>());
@@ -49,6 +63,12 @@ export function LiveQuestSetup({
   }
 
   async function submit(form: HTMLFormElement) {
+    if (!liveAvailable) {
+      setMessage(
+        "Live AI is off for this deployment. Use Deterministic Demo instead.",
+      );
+      return;
+    }
     setMessage(undefined);
     setIsSubmitting(true);
     try {
@@ -62,16 +82,24 @@ export function LiveQuestSetup({
             method: "POST",
             body: data,
           });
-          return (await response.json()) as LiveQuestResponse;
+          const payload = (await response.json().catch(() => undefined)) as
+            | LiveQuestResponse
+            | undefined;
+          if (payload && typeof payload === "object") return payload;
+          return {
+            error: {
+              code: "GENERATION_UNAVAILABLE",
+              message:
+                response.status === 413
+                  ? "Your material is too large for live generation."
+                  : "Live generation returned an unreadable response. Try again or use Deterministic Demo.",
+            },
+          };
         },
         (result) => !result.error && toRuntimeQuest(result.quest) !== undefined,
       );
       if (result.error) {
-        setMessage(
-          result.error.code === "LIVE_MODE_DISABLED"
-            ? "Live generation is not enabled in this deployment. Use Deterministic Demo, or configure Live AI locally before trying again."
-            : (result.error.message ?? "Live generation is unavailable."),
-        );
+        setMessage(liveFailureMessage(result.error));
         return;
       }
       const quest = toRuntimeQuest(result.quest);
@@ -83,9 +111,11 @@ export function LiveQuestSetup({
       }
       onQuestReady(quest);
       setMessage("Your live quest is ready.");
-    } catch {
+    } catch (error) {
       setMessage(
-        "This request has already completed. Start a new setup to try again.",
+        error instanceof Error && error.message === "REQUEST_ALREADY_COMPLETED"
+          ? "This quest has already loaded. Start a new setup to generate another."
+          : "The network request did not complete. Check your connection, then try again or use Deterministic Demo.",
       );
     } finally {
       setIsSubmitting(false);
@@ -94,12 +124,30 @@ export function LiveQuestSetup({
 
   return (
     <details className="live-setup">
-      <summary>Try Live AI with your own material</summary>
+      <summary>
+        Try Live AI with your own material
+        <span
+          className={
+            liveAvailable
+              ? "live-availability is-available"
+              : "live-availability"
+          }
+        >
+          {liveAvailable ? "ready" : "offline"}
+        </span>
+      </summary>
       <p>
         Live AI sends the material you provide to OpenAI to generate your quest.
-        Cumulore Quest does not persist it in this hackathon build. Choose
-        Deterministic Demo if you do not want to send material.
+        Cumulore Quest does not persist it in this hackathon build. OpenAI may
+        process or retain data according to the applicable OpenAI policies.
+        Choose Deterministic Demo if you do not want to send material.
       </p>
+      {!liveAvailable ? (
+        <p className="live-unavailable" role="status">
+          Live AI is off for this deployment, so your material cannot be sent.
+          Deterministic Demo remains fully available.
+        </p>
+      ) : null}
       <p className="live-setup-helper">
         Paste 500 to 20,000 characters, or load a plain-text file. The selected
         chamber intensity sets the question difficulty for the whole quest.
@@ -156,15 +204,24 @@ export function LiveQuestSetup({
           understand this material will be sent to OpenAI.
         </label>
         <button
+          aria-busy={isSubmitting}
           className="button button-light"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !liveAvailable}
           type="submit"
         >
-          {isSubmitting ? "Building your quest..." : "Generate live quest"}{" "}
+          {isSubmitting
+            ? "Mapping concepts and evidence..."
+            : liveAvailable
+              ? "Generate live quest"
+              : "Live AI unavailable"}{" "}
           <span aria-hidden="true">↗</span>
         </button>
       </form>
-      {message ? <p role="status">{message}</p> : null}
+      {message ? (
+        <p className="live-message" role="status" aria-live="polite">
+          {message}
+        </p>
+      ) : null}
     </details>
   );
 }

@@ -304,7 +304,7 @@
     {
       "questionId": "question-r1",
       "conceptIds": ["concept-retrieval"],
-      "cognitiveOperation": "recognize",
+      "cognitiveOperation": "explain",
       "prompt": "Name the recall practice.",
       "options": [
         { "optionId": "option-r1a", "text": "Retrieval" },
@@ -324,7 +324,7 @@
     {
       "questionId": "question-r2",
       "conceptIds": ["concept-spacing"],
-      "cognitiveOperation": "sequence",
+      "cognitiveOperation": "cause_effect",
       "prompt": "When should practice occur?",
       "options": [
         { "optionId": "option-r2a", "text": "Across time" },
@@ -341,7 +341,7 @@
     {
       "questionId": "question-r3",
       "conceptIds": ["concept-interleaving"],
-      "cognitiveOperation": "recognize",
+      "cognitiveOperation": "differentiate",
       "prompt": "Which practice mixes types?",
       "options": [
         { "optionId": "option-r3a", "text": "Interleaving" },
@@ -358,7 +358,7 @@
     {
       "questionId": "question-r4",
       "conceptIds": ["concept-feedback"],
-      "cognitiveOperation": "sequence",
+      "cognitiveOperation": "infer",
       "prompt": "What follows an identified error?",
       "options": [
         { "optionId": "option-r4a", "text": "Feedback and correction" },

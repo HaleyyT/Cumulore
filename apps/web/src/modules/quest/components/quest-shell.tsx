@@ -248,7 +248,7 @@ function GalaxyField() {
   );
 }
 
-export function QuestShell() {
+export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   const shellRef = useRef<HTMLElement>(null);
   const battleTitleRef = useRef<HTMLHeadingElement>(null);
   const feedbackRef = useRef<HTMLElement>(null);
@@ -518,6 +518,7 @@ export function QuestShell() {
           </aside>
           <LiveQuestSetup
             difficulty={difficulty}
+            liveAvailable={liveAvailable}
             onQuestReady={(nextQuest) => {
               setLiveQuest(nextQuest);
               setRematchAnswer(undefined);

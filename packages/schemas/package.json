@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./quest-generation": "./src/quest-generation.ts",
     "./contracts/quest-generation.v1.schema.json": "./contracts/quest-generation.v1.schema.json"
   },
   "dependencies": {

@@ -183,9 +183,32 @@ button:disabled {
   color: var(--muted);
 }
 .live-setup summary {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
   cursor: pointer;
   color: var(--aqua);
   font-weight: 700;
+}
+.live-availability {
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.live-availability.is-available {
+  border-color: rgb(168 255 237 / 45%);
+  color: var(--aqua);
+}
+.live-unavailable {
+  border-left: 2px solid var(--yellow);
+  padding: 0.65rem 0.8rem;
+  background: rgb(255 224 138 / 8%);
 }
 .live-setup form {
   display: grid;
@@ -232,8 +255,15 @@ button:disabled {
   line-height: 1.5;
 }
 .live-setup button:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.65;
+}
+.live-setup button:disabled[aria-busy="true"] {
+  cursor: wait;
+}
+.live-message {
+  border-left: 2px solid var(--aqua);
+  padding-left: 0.75rem;
 }
 .live-setup .consent {
   display: flex;

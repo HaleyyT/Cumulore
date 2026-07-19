@@ -1,34 +1,11 @@
+import type {
+  QuestGeneratedQuestion,
+  QuestGenerationV1,
+  QuestSourceEvidence,
+} from "@cumulore/schemas/quest-generation";
+
 import type { Difficulty, Focus } from "./types";
 import type { SourceSegment } from "./source-segmentation";
-
-type Evidence = { segmentId: string; excerpt: string };
-type GeneratedQuestion = {
-  questionId: string;
-  conceptIds: string[];
-  cognitiveOperation: string;
-  prompt: string;
-  options: { optionId: string; text: string }[];
-  correctOptionId: string;
-  evidence: Evidence[];
-};
-type GeneratedQuest = {
-  schemaVersion: number;
-  requestedDifficulty: string;
-  sourceTitle: string;
-  priorityConcepts: { conceptId: string }[];
-  stages: {
-    stageId: string;
-    cognitiveFocus: string;
-    conceptIds: string[];
-    questions: GeneratedQuestion[];
-  }[];
-  rematchQuestions: GeneratedQuestion[];
-  reviewTakeaways: {
-    takeawayId: string;
-    conceptIds: string[];
-    evidence: Evidence[];
-  }[];
-};
 
 export type QuestValidationCode =
   | "SCHEMA_INVALID"
@@ -39,9 +16,15 @@ export type QuestValidationCode =
   | "IDENTIFIER_DUPLICATE"
   | "CONTENT_DUPLICATE"
   | "DIFFICULTY_RULE_MISMATCH";
+
 export type QuestValidationResult =
   | { ok: true }
-  | { ok: false; code: QuestValidationCode };
+  | {
+      ok: false;
+      code: QuestValidationCode;
+      affectedIds: string[];
+      fieldPaths: string[];
+    };
 
 const operations: Record<Difficulty, Record<Focus, readonly string[]>> = {
   easy: {
@@ -60,11 +43,31 @@ const operations: Record<Difficulty, Record<Focus, readonly string[]>> = {
     synthesis: ["transfer", "evaluate"],
   },
 };
+
+const orderedFocus: readonly Focus[] = [
+  "foundation",
+  "connection",
+  "synthesis",
+];
+
 const normalize = (value: string) =>
   value.toLowerCase().replace(/\s+/g, " ").trim();
 
+function failure(
+  code: QuestValidationCode,
+  fieldPath: string,
+  affectedId?: string,
+): QuestValidationResult {
+  return {
+    ok: false,
+    code,
+    affectedIds: affectedId ? [affectedId] : [],
+    fieldPaths: [fieldPath],
+  };
+}
+
 export function validateQuestSemantics(
-  quest: GeneratedQuest,
+  quest: QuestGenerationV1,
   source: readonly SourceSegment[],
   difficulty: Difficulty,
   sourceTitle: string,
@@ -74,72 +77,188 @@ export function validateQuestSemantics(
     quest.requestedDifficulty !== difficulty ||
     quest.sourceTitle !== sourceTitle
   )
-    return { ok: false, code: "SCHEMA_INVALID" };
-  const concepts = new Set(
-    quest.priorityConcepts.map((concept) => concept.conceptId),
-  );
-  const ids = new Set<string>();
+    return failure("SCHEMA_INVALID", "quest.metadata");
+
+  if (
+    !quest.stages.every(
+      (stage, index) => stage.cognitiveFocus === orderedFocus[index],
+    )
+  )
+    return failure("DIFFICULTY_RULE_MISMATCH", "stages.cognitiveFocus");
+
+  const identifiers = new Set<string>();
   const prompts = new Set<string>();
+  const concepts = new Set<string>();
+  const usedConcepts = new Set<string>();
   const segments = new Map(
     source.map((segment) => [segment.id, normalize(segment.text)]),
   );
-  const evidenceIsValid = (evidence: readonly Evidence[]) =>
-    evidence.every((item) => {
-      const segment = segments.get(item.segmentId);
-      return segment ? segment.includes(normalize(item.excerpt)) : false;
-    });
-  const validateQuestion = (
-    question: GeneratedQuestion,
-    focus?: Focus,
+
+  const registerId = (id: string, path: string): QuestValidationResult => {
+    if (identifiers.has(id)) return failure("IDENTIFIER_DUPLICATE", path, id);
+    identifiers.add(id);
+    return { ok: true };
+  };
+
+  const validateEvidence = (
+    evidence: readonly QuestSourceEvidence[],
+    path: string,
+    affectedId: string,
   ): QuestValidationResult => {
-    if (ids.has(question.questionId))
-      return { ok: false, code: "IDENTIFIER_DUPLICATE" };
-    ids.add(question.questionId);
-    if (!question.conceptIds.every((id) => concepts.has(id)))
-      return { ok: false, code: "REFERENCE_INVALID" };
-    if (!evidenceIsValid(question.evidence))
-      return { ok: false, code: "EXCERPT_MISMATCH" };
+    for (const [index, item] of evidence.entries()) {
+      const segment = segments.get(item.segmentId);
+      if (!segment)
+        return failure(
+          "LOCATOR_UNKNOWN",
+          `${path}[${index}].segmentId`,
+          affectedId,
+        );
+      if (!segment.includes(normalize(item.excerpt)))
+        return failure(
+          "EXCERPT_MISMATCH",
+          `${path}[${index}].excerpt`,
+          affectedId,
+        );
+    }
+    return { ok: true };
+  };
+
+  for (const [index, concept] of quest.priorityConcepts.entries()) {
+    const path = `priorityConcepts[${index}]`;
+    const registered = registerId(concept.conceptId, `${path}.conceptId`);
+    if (!registered.ok) return registered;
+    concepts.add(concept.conceptId);
+    const evidence = validateEvidence(
+      concept.evidence,
+      `${path}.evidence`,
+      concept.conceptId,
+    );
+    if (!evidence.ok) return evidence;
+  }
+
+  const validateReferences = (
+    conceptIds: readonly string[],
+    path: string,
+    affectedId: string,
+  ): QuestValidationResult => {
+    if (!conceptIds.every((id) => concepts.has(id)))
+      return failure("REFERENCE_INVALID", path, affectedId);
+    conceptIds.forEach((id) => usedConcepts.add(id));
+    return { ok: true };
+  };
+
+  const validateQuestion = (
+    question: QuestGeneratedQuestion,
+    path: string,
+    allowedOperations: readonly string[],
+  ): QuestValidationResult => {
+    const registered = registerId(question.questionId, `${path}.questionId`);
+    if (!registered.ok) return registered;
+
+    const references = validateReferences(
+      question.conceptIds,
+      `${path}.conceptIds`,
+      question.questionId,
+    );
+    if (!references.ok) return references;
+
+    if (!allowedOperations.includes(question.cognitiveOperation))
+      return failure(
+        "DIFFICULTY_RULE_MISMATCH",
+        `${path}.cognitiveOperation`,
+        question.questionId,
+      );
+
+    const evidence = validateEvidence(
+      question.evidence,
+      `${path}.evidence`,
+      question.questionId,
+    );
+    if (!evidence.ok) return evidence;
+
+    const optionTexts = question.options.map((option) =>
+      normalize(option.text),
+    );
+    const optionIds = question.options.map((option) => option.optionId);
+    const correctOptions = question.options.filter(
+      (option) => option.optionId === question.correctOptionId,
+    );
     if (
-      focus &&
-      !operations[difficulty][focus].includes(question.cognitiveOperation)
+      new Set(optionTexts).size !== 4 ||
+      new Set(optionIds).size !== 4 ||
+      correctOptions.length !== 1
     )
-      return { ok: false, code: "DIFFICULTY_RULE_MISMATCH" };
-    const optionText = question.options.map((option) => normalize(option.text));
-    if (
-      new Set(optionText).size !== 4 ||
-      !question.options.some(
-        (option) => option.optionId === question.correctOptionId,
-      )
-    )
-      return { ok: false, code: "OPTION_INVALID" };
+      return failure("OPTION_INVALID", `${path}.options`, question.questionId);
+
+    for (const [optionIndex, option] of question.options.entries()) {
+      const optionId = registerId(
+        option.optionId,
+        `${path}.options[${optionIndex}].optionId`,
+      );
+      if (!optionId.ok) return optionId;
+    }
+
     const prompt = normalize(question.prompt);
-    if (prompts.has(prompt)) return { ok: false, code: "CONTENT_DUPLICATE" };
+    if (prompts.has(prompt))
+      return failure(
+        "CONTENT_DUPLICATE",
+        `${path}.prompt`,
+        question.questionId,
+      );
     prompts.add(prompt);
     return { ok: true };
   };
-  for (const stage of quest.stages) {
-    if (!stage.conceptIds.every((id) => concepts.has(id)))
-      return { ok: false, code: "REFERENCE_INVALID" };
-    if (
-      !(["foundation", "connection", "synthesis"] as const).includes(
-        stage.cognitiveFocus as Focus,
-      )
-    )
-      return { ok: false, code: "DIFFICULTY_RULE_MISMATCH" };
-    for (const question of stage.questions) {
-      const result = validateQuestion(question, stage.cognitiveFocus as Focus);
+
+  for (const [stageIndex, stage] of quest.stages.entries()) {
+    const path = `stages[${stageIndex}]`;
+    const registered = registerId(stage.stageId, `${path}.stageId`);
+    if (!registered.ok) return registered;
+    const references = validateReferences(
+      stage.conceptIds,
+      `${path}.conceptIds`,
+      stage.stageId,
+    );
+    if (!references.ok) return references;
+    for (const [questionIndex, question] of stage.questions.entries()) {
+      const result = validateQuestion(
+        question,
+        `${path}.questions[${questionIndex}]`,
+        operations[difficulty][stage.cognitiveFocus],
+      );
       if (!result.ok) return result;
     }
   }
-  for (const question of quest.rematchQuestions) {
-    const result = validateQuestion(question);
+
+  const rematchOperations = Object.values(operations[difficulty]).flat();
+  for (const [index, question] of quest.rematchQuestions.entries()) {
+    const result = validateQuestion(
+      question,
+      `rematchQuestions[${index}]`,
+      rematchOperations,
+    );
     if (!result.ok) return result;
   }
-  for (const takeaway of quest.reviewTakeaways)
-    if (
-      !takeaway.conceptIds.every((id) => concepts.has(id)) ||
-      !evidenceIsValid(takeaway.evidence)
-    )
-      return { ok: false, code: "REFERENCE_INVALID" };
+
+  for (const [index, takeaway] of quest.reviewTakeaways.entries()) {
+    const path = `reviewTakeaways[${index}]`;
+    const registered = registerId(takeaway.takeawayId, `${path}.takeawayId`);
+    if (!registered.ok) return registered;
+    const references = validateReferences(
+      takeaway.conceptIds,
+      `${path}.conceptIds`,
+      takeaway.takeawayId,
+    );
+    if (!references.ok) return references;
+    const evidence = validateEvidence(
+      takeaway.evidence,
+      `${path}.evidence`,
+      takeaway.takeawayId,
+    );
+    if (!evidence.ok) return evidence;
+  }
+
+  if (![...concepts].every((conceptId) => usedConcepts.has(conceptId)))
+    return failure("REFERENCE_INVALID", "priorityConcepts");
+
   return { ok: true };
 }

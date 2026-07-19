@@ -20,24 +20,28 @@
       "type": "array",
       "minItems": 5,
       "maxItems": 5,
+      "uniqueItems": true,
       "items": { "$ref": "#/$defs/concept" }
     },
     "stages": {
       "type": "array",
       "minItems": 3,
       "maxItems": 3,
+      "uniqueItems": true,
       "items": { "$ref": "#/$defs/stage" }
     },
     "rematchQuestions": {
       "type": "array",
       "minItems": 4,
       "maxItems": 4,
+      "uniqueItems": true,
       "items": { "$ref": "#/$defs/question" }
     },
     "reviewTakeaways": {
       "type": "array",
       "minItems": 3,
       "maxItems": 3,
+      "uniqueItems": true,
       "items": { "$ref": "#/$defs/takeaway" }
     }
   },
@@ -64,7 +68,12 @@
       "minItems": 1,
       "maxItems": 3,
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^concept-" }
+      "items": {
+        "type": "string",
+        "minLength": 9,
+        "maxLength": 80,
+        "pattern": "^concept-[a-z0-9][a-z0-9-]*$"
+      }
     },
     "concept": {
       "type": "object",
@@ -77,7 +86,12 @@
         "evidence"
       ],
       "properties": {
-        "conceptId": { "type": "string", "pattern": "^concept-" },
+        "conceptId": {
+          "type": "string",
+          "minLength": 9,
+          "maxLength": 80,
+          "pattern": "^concept-[a-z0-9][a-z0-9-]*$"
+        },
         "title": { "$ref": "#/$defs/text" },
         "learningObjective": { "$ref": "#/$defs/text" },
         "priorityReason": { "$ref": "#/$defs/text" },
@@ -89,7 +103,12 @@
       "additionalProperties": false,
       "required": ["optionId", "text"],
       "properties": {
-        "optionId": { "type": "string", "pattern": "^option-" },
+        "optionId": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 80,
+          "pattern": "^option-[a-z0-9][a-z0-9-]*$"
+        },
         "text": { "$ref": "#/$defs/text" }
       }
     },
@@ -107,7 +126,12 @@
         "evidence"
       ],
       "properties": {
-        "questionId": { "type": "string", "pattern": "^question-" },
+        "questionId": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 80,
+          "pattern": "^question-[a-z0-9][a-z0-9-]*$"
+        },
         "conceptIds": { "$ref": "#/$defs/conceptIds" },
         "cognitiveOperation": {
           "enum": [
@@ -135,9 +159,15 @@
           "type": "array",
           "minItems": 4,
           "maxItems": 4,
+          "uniqueItems": true,
           "items": { "$ref": "#/$defs/option" }
         },
-        "correctOptionId": { "type": "string", "pattern": "^option-" },
+        "correctOptionId": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 80,
+          "pattern": "^option-[a-z0-9][a-z0-9-]*$"
+        },
         "answerExplanation": { "$ref": "#/$defs/text" },
         "evidence": { "$ref": "#/$defs/evidenceList" }
       }
@@ -153,7 +183,12 @@
         "questions"
       ],
       "properties": {
-        "stageId": { "type": "string", "pattern": "^stage-" },
+        "stageId": {
+          "type": "string",
+          "minLength": 7,
+          "maxLength": 80,
+          "pattern": "^stage-[a-z0-9][a-z0-9-]*$"
+        },
         "cognitiveFocus": { "enum": ["foundation", "connection", "synthesis"] },
         "educationalMisconception": { "$ref": "#/$defs/text" },
         "conceptIds": { "$ref": "#/$defs/conceptIds" },
@@ -170,7 +205,12 @@
       "additionalProperties": false,
       "required": ["takeawayId", "text", "conceptIds", "evidence"],
       "properties": {
-        "takeawayId": { "type": "string", "pattern": "^takeaway-" },
+        "takeawayId": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 80,
+          "pattern": "^takeaway-[a-z0-9][a-z0-9-]*$"
+        },
         "text": { "$ref": "#/$defs/text" },
         "conceptIds": { "$ref": "#/$defs/conceptIds" },
         "evidence": { "$ref": "#/$defs/evidenceList" }

@@ -1,16 +1,21 @@
 import assert from "node:assert/strict";
+import validQuestFixture from "../../../packages/schemas/fixtures/quest-generation.v1.valid.json" with { type: "json" };
+import { parseQuestGenerationV1 } from "@cumulore/schemas/quest-generation";
 
 import { createQuestPostHandler } from "../src/app/api/quest/generate/route.js";
 import type { QuestRuntimeConfig } from "../src/modules/quest/runtime-config.js";
 
 const requestId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+const validQuest = parseQuestGenerationV1(validQuestFixture);
 const baseConfig: QuestRuntimeConfig = {
   provider: "openai",
   liveEnabled: true,
   apiKey: "test-only-key",
   model: "gpt-5.6-sol",
+  reasoningEffort: "low",
   timeoutMs: 45000,
   sourceMaxChars: 20000,
+  maxOutputTokens: 10000,
 };
 
 function request(sourceText = "x".repeat(500), learningGoal?: string) {
@@ -33,7 +38,7 @@ const disabled = createQuestPostHandler({
   readConfig: () => ({ ...baseConfig, liveEnabled: false, apiKey: undefined }),
   generate: async () => {
     calls += 1;
-    return { ok: true, quest: {} };
+    return { ok: true, quest: validQuest };
   },
 });
 const disabledResponse = await disabled(request());
@@ -42,10 +47,19 @@ assert.deepEqual(await disabledResponse.json(), {
   requestId,
   error: {
     code: "LIVE_MODE_DISABLED",
-    message: "Live AI is unavailable. Use Deterministic Demo.",
+    message:
+      "Live AI is not enabled for this deployment. Deterministic Demo is still available.",
   },
 });
 assert.equal(calls, 0, "disabled live mode must not reach the provider");
+
+const fixtureProvider = createQuestPostHandler({
+  readConfig: () => ({ ...baseConfig, provider: "fixture" }),
+  generate: async () => {
+    throw new Error("fixture provider must not receive a live request");
+  },
+});
+assert.equal((await fixtureProvider(request())).status, 503);
 
 const invalid = await disabled(
   new Request("http://localhost/api/quest/generate", {
@@ -75,7 +89,7 @@ const success = createQuestPostHandler({
   readConfig: () => baseConfig,
   generate: async (_, input) => {
     receivedLearningGoal = input.learningGoal;
-    return { ok: true, quest: { title: "Safe result" } };
+    return { ok: true, quest: validQuest };
   },
 });
 const successResponse = await success(
@@ -85,18 +99,30 @@ assert.equal(successResponse.status, 200);
 assert.deepEqual(await successResponse.json(), {
   requestId,
   mode: "live",
-  quest: { title: "Safe result" },
+  quest: validQuest,
 });
 assert.equal(receivedLearningGoal, "Distinguish related definitions.");
 
 const rateLimited = createQuestPostHandler({
   readConfig: () => baseConfig,
   generate: async () => {
-    throw { status: 429, sourceText: "must not be exposed" };
+    throw {
+      status: 429,
+      headers: { "retry-after": "17" },
+      sourceText: "must not be exposed",
+    };
   },
 });
 const rateResponse = await rateLimited(request());
 assert.equal(rateResponse.status, 429);
-assert.equal((await rateResponse.json()).error.code, "RATE_LIMITED");
+assert.equal(rateResponse.headers.get("retry-after"), "17");
+assert.deepEqual(await rateResponse.json(), {
+  requestId,
+  error: {
+    code: "RATE_LIMITED",
+    message: "Live AI is busy. Wait briefly or use Deterministic Demo.",
+    retryAfterSeconds: 17,
+  },
+});
 
 console.log("Quest route safety boundary passed.");
