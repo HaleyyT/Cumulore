@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -257,6 +257,8 @@ export function QuestShell() {
     undefined,
     initialBattle,
   );
+  const [rematchIndex, setRematchIndex] = useState<number>();
+  const [rematchAnswer, setRematchAnswer] = useState<string>();
   const stage = quest.stages[battle.stage];
 
   useEffect(() => {
@@ -339,6 +341,7 @@ export function QuestShell() {
   if (!stage) {
     const mastery = calculateMastery(quest, battle.answered);
     const rematch = orderRematch(quest, mastery);
+    const rematchQuestion = rematch[rematchIndex ?? 0];
     return (
       <main ref={shellRef} className="app-shell">
         <nav className="topbar" aria-label="Primary navigation">
@@ -380,6 +383,45 @@ export function QuestShell() {
               ))}
             </ul>
             <p>Next rematch: {rematch[0]?.prompt}</p>
+            {rematchQuestion ? (
+              <div className="rematch-panel">
+                <h3>Weak-topic rematch</h3>
+                <p>{rematchQuestion.prompt}</p>
+                {rematchQuestion.options.map((option) => (
+                  <button
+                    className="answer-choice"
+                    disabled={Boolean(rematchAnswer)}
+                    key={option.id}
+                    type="button"
+                    onClick={() => setRematchAnswer(option.id)}
+                  >
+                    {option.text}
+                  </button>
+                ))}
+                {rematchAnswer ? (
+                  <div role="status">
+                    <p>
+                      {rematchAnswer === rematchQuestion.correctId
+                        ? "Correct."
+                        : "Keep practising."}{" "}
+                      {rematchQuestion.explanation}
+                    </p>
+                    <button
+                      className="button button-light"
+                      type="button"
+                      onClick={() => {
+                        setRematchAnswer(undefined);
+                        setRematchIndex((rematchIndex ?? 0) + 1);
+                      }}
+                    >
+                      Next rematch <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <p>Rematch complete. Your next full run is ready when you are.</p>
+            )}
           </section>
           <button
             className="button button-primary"

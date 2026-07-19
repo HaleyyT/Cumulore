@@ -240,6 +240,15 @@ button:disabled {
   color: var(--aqua);
 }
 
+.rematch-panel {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+.rematch-panel .answer-choice {
+  text-align: left;
+}
+
 .nav-links a:hover {
   color: var(--aqua);
 }
