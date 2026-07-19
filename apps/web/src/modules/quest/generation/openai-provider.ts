@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import type { ResponseCreateParamsNonStreaming } from "openai/resources/responses/responses";
 import questSchema from "@cumulore/schemas/contracts/quest-generation.v1.schema.json" with { type: "json" };
 
 import type { QuestRuntimeConfig } from "../runtime-config";
@@ -9,7 +10,7 @@ import type {
   QuestRepairInput,
 } from "./provider";
 
-type QuestResponseRequest = ReturnType<typeof createQuestResponseRequest>;
+type QuestResponseRequest = ReturnType<typeof createRequest>;
 
 const openAIQuestSchema = toOpenAIStructuredOutputSchema(questSchema);
 
@@ -80,7 +81,6 @@ function createRequest(
       { role: "user" as const, content: JSON.stringify(userData) },
     ],
     text: {
-      verbosity: "medium" as const,
       format: {
         type: "json_schema" as const,
         name: "quest_generation_v1",
@@ -88,7 +88,7 @@ function createRequest(
         schema: openAIQuestSchema,
       },
     },
-  };
+  } satisfies ResponseCreateParamsNonStreaming;
 }
 
 function providerData(input: QuestGenerationInput) {

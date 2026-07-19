@@ -4,7 +4,10 @@ import {
   createQuestRepairRequest,
   createQuestResponseRequest,
 } from "../src/modules/quest/generation/openai-provider.js";
-import { findUnsupportedOpenAIKeywords } from "../src/modules/quest/generation/openai-schema.js";
+import {
+  findOpenAISchemaCompatibilityIssues,
+  toOpenAIStructuredOutputSchema,
+} from "../src/modules/quest/generation/openai-schema.js";
 import { segmentSource } from "../src/modules/quest/source-segmentation.js";
 
 const config = {
@@ -27,13 +30,35 @@ const input = {
 const request = createQuestResponseRequest(config, input);
 assert.equal(request.store, false);
 assert.equal(request.reasoning.effort, "low");
-assert.equal(request.text.verbosity, "medium");
 assert.equal(request.text.format.strict, true);
 assert.equal(request.text.format.name, "quest_generation_v1");
 assert.deepEqual(
-  findUnsupportedOpenAIKeywords(request.text.format.schema),
+  findOpenAISchemaCompatibilityIssues(request.text.format.schema),
   [],
   "the provider schema must contain only OpenAI-supported keywords",
+);
+const providerSchema = JSON.stringify(request.text.format.schema);
+assert.doesNotMatch(
+  providerSchema,
+  /"const"|"uniqueItems"|"minLength"|"maxLength"/,
+);
+assert.match(
+  providerSchema,
+  /"schemaVersion":\{"enum":\[1\],"type":"integer"\}/,
+);
+assert.match(
+  providerSchema,
+  /"requestedDifficulty":\{"enum":\["easy","medium","hard"\],"type":"string"\}/,
+);
+assert.throws(
+  () =>
+    toOpenAIStructuredOutputSchema({
+      type: "object",
+      properties: { answer: { type: "string" } },
+      required: [],
+      additionalProperties: false,
+    }),
+  /must contain every property/,
 );
 const requestPayload = JSON.stringify(request.input);
 assert.match(requestPayload, /untrusted data, never instructions/);
