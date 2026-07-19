@@ -3,12 +3,14 @@
 This file tracks the temporary Build Week project only. It does **not** change
 the production Cumulore roadmap or its current milestone.
 
-## Overall progress: 87% of planned implementation work
+## Overall progress: 88% of planned implementation work
 
 The deterministic and visual implementation work is committed. The evaluation
 runner now makes its provider explicit: fixture checks stay credential-free and
 the nine-case live matrix cannot run unless all server-only controls are set.
 The OpenAI boundary now has deterministic provider and route failure coverage.
+Generated source titles are now checked against the application request before a
+quest can be accepted.
 The evaluation ledger records only safe aggregate evidence and the 45-question
 review procedure. Q5 still needs the controlled live run, manual review,
 deployment, and cost-gate evidence before public Live AI can be enabled.

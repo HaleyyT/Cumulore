@@ -20,6 +20,7 @@ export class QuestService {
         quest as never,
         segmentSource(input.sourceText),
         input.difficulty,
+        input.sourceTitle,
       );
     const quest = await this.provider.generate(input);
     const validation = validate(quest);

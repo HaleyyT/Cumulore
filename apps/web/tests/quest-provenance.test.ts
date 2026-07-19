@@ -11,12 +11,20 @@ function expectFailure(value: unknown, expectedCode: string): void {
     value as typeof validQuest,
     source,
     "medium",
+    "Science of Learning",
   );
   assert.equal(result.ok, false);
   if (!result.ok) assert.equal(result.code, expectedCode);
 }
 
-assert.equal(validateQuestSemantics(validQuest, source, "medium").ok, true);
+assert.equal(
+  validateQuestSemantics(validQuest, source, "medium", "Science of Learning")
+    .ok,
+  true,
+);
+const wrongTitle = structuredClone(validQuest);
+wrongTitle.sourceTitle = "Different source";
+expectFailure(wrongTitle, "SCHEMA_INVALID");
 const missingLocator = structuredClone(validQuest);
 missingLocator.stages[0]!.questions[0]!.evidence[0]!.segmentId = "S999";
 expectFailure(missingLocator, "EXCERPT_MISMATCH");

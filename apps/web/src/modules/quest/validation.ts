@@ -14,6 +14,7 @@ type GeneratedQuestion = {
 type GeneratedQuest = {
   schemaVersion: number;
   requestedDifficulty: string;
+  sourceTitle: string;
   priorityConcepts: { conceptId: string }[];
   stages: {
     stageId: string;
@@ -66,8 +67,13 @@ export function validateQuestSemantics(
   quest: GeneratedQuest,
   source: readonly SourceSegment[],
   difficulty: Difficulty,
+  sourceTitle: string,
 ): QuestValidationResult {
-  if (quest.schemaVersion !== 1 || quest.requestedDifficulty !== difficulty)
+  if (
+    quest.schemaVersion !== 1 ||
+    quest.requestedDifficulty !== difficulty ||
+    quest.sourceTitle !== sourceTitle
+  )
     return { ok: false, code: "SCHEMA_INVALID" };
   const concepts = new Set(
     quest.priorityConcepts.map((concept) => concept.conceptId),

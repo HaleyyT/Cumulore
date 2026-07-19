@@ -12,7 +12,7 @@ const service = new QuestService({
 assert.equal(
   (
     await service.generate({
-      sourceTitle: "Science",
+      sourceTitle: "Science of Learning",
       sourceText,
       difficulty: "medium",
     })
@@ -27,7 +27,11 @@ assert.equal(
       async generate() {
         return invalid;
       },
-    }).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" })
+    }).generate({
+      sourceTitle: "Science of Learning",
+      sourceText,
+      difficulty: "medium",
+    })
   ).ok,
   false,
 );
@@ -43,7 +47,11 @@ assert.equal(
         assert.equal(input.validationCode, "EXCERPT_MISMATCH");
         return validQuest;
       },
-    }).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" })
+    }).generate({
+      sourceTitle: "Science of Learning",
+      sourceText,
+      difficulty: "medium",
+    })
   ).ok,
   true,
 );
