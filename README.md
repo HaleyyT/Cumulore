@@ -42,4 +42,6 @@ The accepted Build Week plan and status are in
 [`docs/build-week/hackathon-plan.md`](docs/build-week/hackathon-plan.md) and
 [`hackathon-progress.md`](hackathon-progress.md). See the
 [Build Week release checklist](docs/build-week/release-checklist.md) before
-enabling Live AI anywhere public.
+enabling Live AI anywhere public. Safe aggregate evaluation status and the
+manual-review protocol are tracked in
+[`docs/build-week/evaluation-evidence.md`](docs/build-week/evaluation-evidence.md).

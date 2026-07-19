@@ -3,14 +3,15 @@
 This file tracks the temporary Build Week project only. It does **not** change
 the production Cumulore roadmap or its current milestone.
 
-## Overall progress: 84% of planned implementation work
+## Overall progress: 85% of planned implementation work
 
 The deterministic and visual implementation work is committed. The evaluation
 runner now makes its provider explicit: fixture checks stay credential-free and
 the nine-case live matrix cannot run unless all server-only controls are set.
 The OpenAI boundary now has deterministic failure and one-repair coverage.
-Q5 still needs the controlled live run, manual review, deployment, and
-cost-gate evidence before public Live AI can be enabled.
+The evaluation ledger records only safe aggregate evidence and the 45-question
+review procedure. Q5 still needs the controlled live run, manual review,
+deployment, and cost-gate evidence before public Live AI can be enabled.
 
 | Slice                         | Status      | What it means in plain English                                                                                                                 |
 | ----------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -18,7 +19,7 @@ cost-gate evidence before public Live AI can be enabled.
 | Q2 — source grounding         | Complete    | Deterministic segmentation, provenance, reference, option, duplicate, and difficulty validation fail closed.                                   |
 | Q3 — protected Live AI        | In progress | The server-only OpenAI boundary is guarded, disabled by default, and now has provider failure/repair coverage; controlled route smoke remains. |
 | Q4 — experience polish        | Complete    | The responsive demo includes reduced-motion handling, state feedback, keyboard controls, and visual reference assets.                          |
-| Q5 — release evidence         | In progress | Fixture and guarded live evaluation commands are committed. Controlled live/manual evaluation and deployment evidence remain due.              |
+| Q5 — release evidence         | In progress | Fixture evaluation, guarded live command, and safe evidence ledger are committed. Controlled live/manual review and deployment remain due.     |
 
 ## What Q1 implements
 
