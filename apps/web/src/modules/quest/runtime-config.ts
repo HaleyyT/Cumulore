@@ -7,7 +7,9 @@ export type QuestRuntimeConfig = {
   sourceMaxChars: number;
 };
 
-export function readQuestRuntimeConfig(env = process.env): QuestRuntimeConfig {
+export function readQuestRuntimeConfig(
+  env: Readonly<Record<string, string | undefined>> = process.env,
+): QuestRuntimeConfig {
   const provider = env.QUEST_PROVIDER === "openai" ? "openai" : "fixture";
   const liveEnabled = env.QUEST_LIVE_GENERATION_ENABLED === "true";
   const timeoutMs = Number(env.OPENAI_QUEST_TIMEOUT_MS ?? 45000);
