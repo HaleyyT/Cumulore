@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test": "tsx tests/identity.test.ts && tsx tests/quarantine-storage.test.ts && tsx tests/request-origin.test.ts",
-    "test:quest": "tsx tests/quest-generation.test.ts && tsx tests/quest-combat.test.ts && tsx tests/quest-provenance.test.ts && tsx tests/quest-provider.test.ts && tsx tests/quest-openai-request.test.ts && tsx tests/quest-openai-provider.test.ts && tsx tests/quest-request.test.ts && tsx tests/quest-route.test.ts && tsx tests/quest-mastery.test.ts && tsx tests/quest-service.test.ts && tsx tests/quest-submission-gate.test.ts && tsx tests/quest-runtime-config.test.ts && tsx tests/quest-evaluation-config.test.ts"
+    "test:quest": "tsx tests/quest-generation.test.ts && tsx tests/quest-combat.test.ts && tsx tests/quest-provenance.test.ts && tsx tests/quest-provider.test.ts && tsx tests/quest-openai-request.test.ts && tsx tests/quest-openai-provider.test.ts && tsx tests/quest-request.test.ts && tsx tests/quest-route.test.ts && tsx tests/live-quest.test.ts && tsx tests/quest-mastery.test.ts && tsx tests/quest-service.test.ts && tsx tests/quest-submission-gate.test.ts && tsx tests/quest-runtime-config.test.ts && tsx tests/quest-evaluation-config.test.ts"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "4.25.0",
