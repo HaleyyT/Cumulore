@@ -3,7 +3,7 @@
 This file tracks the temporary Build Week project only. It does **not** change
 the production Cumulore roadmap or its current milestone.
 
-## Overall progress: 89% of planned implementation work
+## Overall progress: 91% of planned implementation work
 
 The deterministic and visual implementation work is committed. The evaluation
 runner now makes its provider explicit: fixture checks stay credential-free and
@@ -13,6 +13,8 @@ Generated source titles are now checked against the application request before a
 quest can be accepted.
 Validated live educational content now has a narrow adapter into the
 application-owned combat runtime.
+Successful live responses now load into a reset combat run, while recoverable
+generation failures leave the setup available for another safe attempt.
 The evaluation ledger records only safe aggregate evidence and the 45-question
 review procedure. Q5 still needs the controlled live run, manual review,
 deployment, and cost-gate evidence before public Live AI can be enabled.
@@ -21,7 +23,7 @@ deployment, and cost-gate evidence before public Live AI can be enabled.
 | ----------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | Q1 — deterministic foundation | Complete    | A learner can play a built-in quest without AI, network access, or credentials. The app, not generated content, controls scoring and combat. |
 | Q2 — source grounding         | Complete    | Deterministic segmentation, provenance, reference, option, duplicate, and difficulty validation fail closed.                                 |
-| Q3 — protected Live AI        | Complete    | The server-only OpenAI route is guarded, disabled by default, and has deterministic provider, repair, and route safety coverage.             |
+| Q3 — protected Live AI        | Complete    | The guarded OpenAI path has provider, repair, route, and runtime-handoff coverage; failed generation remains recoverable.                    |
 | Q4 — experience polish        | Complete    | The responsive demo includes reduced-motion handling, state feedback, keyboard controls, and visual reference assets.                        |
 | Q5 — release evidence         | In progress | Fixture evaluation, guarded live command, and safe evidence ledger are committed. Controlled live/manual review and deployment remain due.   |
 

@@ -14,7 +14,7 @@ import {
   next,
   retryStage,
 } from "../reducer";
-import type { Battle, Difficulty } from "../types";
+import type { Battle, Difficulty, Quest } from "../types";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,7 +22,8 @@ type BattleAction =
   | { type: "answer"; optionId: string }
   | { type: "next" }
   | { type: "retry" }
-  | { type: "continue" };
+  | { type: "continue" }
+  | { type: "reset" };
 
 function battleReducer(quest: ReturnType<typeof scienceQuest>) {
   return (state: Battle, action: BattleAction): Battle => {
@@ -35,6 +36,8 @@ function battleReducer(quest: ReturnType<typeof scienceQuest>) {
         return retryStage(state);
       case "continue":
         return continueQuest(quest, state);
+      case "reset":
+        return initialBattle();
     }
   };
 }
@@ -254,7 +257,8 @@ export function QuestShell() {
     (_: Difficulty, nextDifficulty: Difficulty) => nextDifficulty,
     "medium",
   );
-  const quest = scienceQuest(difficulty);
+  const [liveQuest, setLiveQuest] = useState<Quest>();
+  const quest = liveQuest ?? scienceQuest(difficulty);
   const [battle, dispatch] = useReducer(
     battleReducer(quest),
     undefined,
@@ -374,8 +378,8 @@ export function QuestShell() {
           <p className="hero-kicker">The loop is complete</p>
           <h1 className="completion-title">You built a durable signal.</h1>
           <p>
-            Your Science of Learning run is complete. The next challenge starts
-            with a fresh set of connections.
+            Your {quest.title} run is complete. The next challenge starts with a
+            fresh set of connections.
           </p>
           <p className="completion-score">{battle.score} points banked</p>
           <section className="completion-review" aria-labelledby="review-title">
@@ -471,14 +475,14 @@ export function QuestShell() {
           <a href="#quest">Enter chamber</a>
         </div>
         <span className="nav-status">
-          <i /> live run
+          <i /> {liveQuest ? "live run" : "demo run"}
         </span>
       </nav>
 
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-copy-wrap">
           <p className="hero-kicker">
-            <span className="live-dot" /> Science of Learning / live chamber
+            <span className="live-dot" /> {quest.title} / live chamber
           </p>
           <h1 className="hero-title" id="hero-title">
             <span className="hero-line">Build a mind that</span>
@@ -494,13 +498,22 @@ export function QuestShell() {
             stick. Make the effort visible. Keep the signal.
           </p>
           <aside className="mode-disclosure" aria-label="Quest mode">
-            <strong>Deterministic Demo</strong>
+            <strong>{liveQuest ? "Live AI" : "Deterministic Demo"}</strong>
             <span>
-              This run uses built-in learning material. Live AI is off unless
-              explicitly enabled by the server.
+              {liveQuest
+                ? "This run was generated from your submitted material and validated before play."
+                : "This run uses built-in learning material. Live AI is off unless explicitly enabled by the server."}
             </span>
           </aside>
-          <LiveQuestSetup difficulty={difficulty} />
+          <LiveQuestSetup
+            difficulty={difficulty}
+            onQuestReady={(nextQuest) => {
+              setLiveQuest(nextQuest);
+              setRematchAnswer(undefined);
+              setRematchIndex(undefined);
+              dispatch({ type: "reset" });
+            }}
+          />
           <div className="hero-actions">
             <a className="button button-primary" href="#quest">
               Enter the chamber <span aria-hidden="true">↗</span>
@@ -614,7 +627,9 @@ export function QuestShell() {
             <select
               id="difficulty"
               value={difficulty}
-              disabled={battle.question > 0 || battle.stage > 0}
+              disabled={
+                Boolean(liveQuest) || battle.question > 0 || battle.stage > 0
+              }
               onChange={(event) =>
                 setDifficulty(event.target.value as Difficulty)
               }

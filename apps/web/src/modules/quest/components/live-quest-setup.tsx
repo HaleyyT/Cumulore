@@ -2,29 +2,51 @@
 
 import { useRef, useState } from "react";
 import { QuestSubmissionGate } from "../generation/submission-gate";
-import type { Difficulty } from "../types";
+import { toRuntimeQuest } from "../live-quest";
+import type { Difficulty, Quest } from "../types";
 
-export function LiveQuestSetup({ difficulty }: { difficulty: Difficulty }) {
-  const gate = useRef(
-    new QuestSubmissionGate<{ error?: { message?: string } }>(),
-  );
+type LiveQuestResponse = { error?: { message?: string }; quest?: unknown };
+
+export function LiveQuestSetup({
+  difficulty,
+  onQuestReady,
+}: {
+  difficulty: Difficulty;
+  onQuestReady: (quest: Quest) => void;
+}) {
+  const gate = useRef(new QuestSubmissionGate<LiveQuestResponse>());
   const [message, setMessage] = useState<string>();
 
   async function submit(form: HTMLFormElement) {
     setMessage(undefined);
     try {
-      const result = await gate.current.submit(async () => {
-        const data = new FormData(form);
-        data.set("requestId", crypto.randomUUID());
-        data.set("mode", "live");
-        data.set("requestedDifficulty", difficulty);
-        const response = await fetch("/api/quest/generate", {
-          method: "POST",
-          body: data,
-        });
-        return (await response.json()) as { error?: { message?: string } };
-      });
-      setMessage(result.error?.message ?? "Your live quest is ready.");
+      const result = await gate.current.submit(
+        async () => {
+          const data = new FormData(form);
+          data.set("requestId", crypto.randomUUID());
+          data.set("mode", "live");
+          data.set("requestedDifficulty", difficulty);
+          const response = await fetch("/api/quest/generate", {
+            method: "POST",
+            body: data,
+          });
+          return (await response.json()) as LiveQuestResponse;
+        },
+        (result) => !result.error && toRuntimeQuest(result.quest) !== undefined,
+      );
+      if (result.error) {
+        setMessage(result.error.message ?? "Live generation is unavailable.");
+        return;
+      }
+      const quest = toRuntimeQuest(result.quest);
+      if (!quest) {
+        setMessage(
+          "Live generation returned an invalid quest. Try again or use Deterministic Demo.",
+        );
+        return;
+      }
+      onQuestReady(quest);
+      setMessage("Your live quest is ready.");
     } catch {
       setMessage(
         "This request has already completed. Start a new setup to try again.",
