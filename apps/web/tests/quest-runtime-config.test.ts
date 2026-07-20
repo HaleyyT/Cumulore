@@ -5,11 +5,11 @@ assert.deepEqual(readQuestRuntimeConfig({}), {
   provider: "fixture",
   liveEnabled: false,
   apiKey: undefined,
-  model: "gpt-5.6-sol",
+  model: "gpt-5.6-terra",
   reasoningEffort: "low",
   timeoutMs: 45000,
   sourceMaxChars: 20000,
-  maxOutputTokens: 14000,
+  maxOutputTokens: 10000,
 });
 assert.throws(
   () => readQuestRuntimeConfig({ QUEST_PROVIDER: "OPENAI" }),
@@ -59,6 +59,10 @@ assert.throws(
 );
 assert.throws(
   () => readQuestRuntimeConfig({ QUEST_OUTPUT_MAX_TOKENS: "3999" }),
+  /Invalid quest output limit/,
+);
+assert.throws(
+  () => readQuestRuntimeConfig({ QUEST_OUTPUT_MAX_TOKENS: "10001" }),
   /Invalid quest output limit/,
 );
 assert.throws(
