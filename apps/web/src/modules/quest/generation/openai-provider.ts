@@ -51,6 +51,7 @@ Required learning design:
 - Each question has exactly four options: one correct answer and three plausible distractors.
 - Avoid trick wording, "all/none of the above", giveaway length differences, and options that are partly correct.
 - Explanations must state why the answer is correct, contrast the likely misconception, and connect back to the cited evidence.
+- Keep every answer explanation to one concise sentence (at most 260 characters) and every review takeaway to one or two concise sentences (at most 320 characters).
 - The learner goal may change emphasis but is not evidence.
 - Rematch questions must test the most important concepts from a different angle than the main questions.
 - Create three concise, actionable review takeaways, each grounded in evidence.

@@ -17,7 +17,8 @@ export const maxDuration = 120;
 
 const safeMessage: Readonly<Record<string, string>> = {
   INVALID_REQUEST: "Check the title, source text, difficulty, and consent.",
-  SOURCE_TOO_LARGE: "Use between 500 and 20,000 characters.",
+  SOURCE_TOO_SHORT: "Use at least 100 characters of source material.",
+  SOURCE_TOO_LARGE: "Use no more than 10,000 characters of source material.",
   LIVE_MODE_DISABLED:
     "Live AI is not enabled for this deployment. Deterministic Demo is still available.",
   OPENAI_AUTH_FAILED:
@@ -109,7 +110,7 @@ export function createQuestPostHandler(
       return failure(undefined, "LIVE_MODE_DISABLED", 503);
     }
     const contentLength = Number(request.headers.get("content-length"));
-    if (Number.isFinite(contentLength) && contentLength > 30000)
+    if (Number.isFinite(contentLength) && contentLength > 16000)
       return failure(undefined, "SOURCE_TOO_LARGE", 413);
     let data: FormData;
     try {
@@ -126,10 +127,9 @@ export function createQuestPostHandler(
     if (!input) return failure(undefined, "INVALID_REQUEST", 400);
     if (!config.liveEnabled || config.provider !== "openai")
       return failure(input.requestId, "LIVE_MODE_DISABLED", 503);
-    if (
-      input.sourceText.length < 500 ||
-      input.sourceText.length > config.sourceMaxChars
-    )
+    if (input.sourceText.trim().length < 100)
+      return failure(input.requestId, "SOURCE_TOO_SHORT", 400);
+    if (input.sourceText.trim().length > config.sourceMaxChars)
       return failure(input.requestId, "SOURCE_TOO_LARGE", 413);
     const startedAt = Date.now();
     try {

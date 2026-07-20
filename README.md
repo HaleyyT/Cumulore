@@ -108,7 +108,7 @@ OPENAI_API_KEY=<real key from a dedicated OpenAI project>
 ```
 
 Restart `pnpm --filter @cumulore/web exec next dev`. Open **Try Live AI with
-your own material**, paste 500-20,000 characters or load a `.txt` file, choose
+your own material**, paste 100-10,000 characters or load a `.txt` file, choose
 the chamber intensity, optionally state a learning goal, acknowledge the data
 transfer, then select **Generate live quest**. The result is checked against
 the versioned contract and source excerpts before it can enter the quiz. After

@@ -35,8 +35,8 @@ turning on a paid public endpoint. A value such as
    OPENAI_QUEST_MODEL=gpt-5.6-terra
    OPENAI_QUEST_REASONING_EFFORT=low
    OPENAI_QUEST_TIMEOUT_MS=45000
-   QUEST_SOURCE_MAX_CHARS=20000
-   QUEST_OUTPUT_MAX_TOKENS=10000
+   QUEST_SOURCE_MAX_CHARS=10000
+   QUEST_OUTPUT_MAX_TOKENS=8000
    ```
 
 4. Protect the deployment for judges or configure enforceable platform request
@@ -52,8 +52,8 @@ comparisons; it is not the cost-safe default. Recheck the official model
 pricing before the final evaluation rather than treating these relative prices
 as permanent.
 
-The 10,000-token response ceiling includes visible output and reasoning tokens.
-Together with the 20,000-character source limit, zero SDK retries, and at most
+The 8,000-token response ceiling includes visible output and reasoning tokens.
+Together with the 10,000-character source limit, zero SDK retries, and at most
 one validation repair, it bounds the cost of one submission. It does not bound
 the number of submissions, so keep the deployment judge-protected unless a
 durable platform-side request quota is configured.
@@ -67,7 +67,7 @@ deadline below that bounded two-call path: the platform would return a generic
 
 1. Open the redeployed URL in a fresh session. The Live AI section must show a
    **ready** badge rather than **offline**.
-2. Submit one non-sensitive, 500–2,000 character source with a precise learner
+2. Submit one non-sensitive, 100–2,000 character source with a precise learner
    goal. Confirm the response produces five ranked concepts, three stages,
    twelve main questions, four rematch questions, and grounded review notes.
 3. Check that every displayed excerpt exists verbatim in the submitted source

@@ -15,8 +15,12 @@ Validated live educational content now has a narrow adapter into the
 application-owned combat runtime.
 Successful live responses now load into a reset combat run, while recoverable
 generation failures leave the setup available for another safe attempt.
-Learners can now paste material or load a text file, set a bounded study goal,
+Learners can now paste 100–10,000 characters of material or load a text file,
+set a bounded study goal,
 and receive source-grounded review notes after their quiz.
+The Live AI path now uses smaller source and response ceilings plus concise
+explanations, reducing avoidable model work while preserving the full validated
+16-question quest.
 The evaluation ledger records only safe aggregate evidence and the 45-question
 review procedure. Q5 still needs the controlled live run, manual review,
 deployment, and cost-gate evidence before public Live AI can be enabled.

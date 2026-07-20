@@ -24,8 +24,8 @@ export function readQuestRuntimeConfig(
   const model = env.OPENAI_QUEST_MODEL ?? "gpt-5.6-terra";
   const reasoningEffort = env.OPENAI_QUEST_REASONING_EFFORT ?? "low";
   const timeoutMs = Number(env.OPENAI_QUEST_TIMEOUT_MS ?? 45000);
-  const sourceMaxChars = Number(env.QUEST_SOURCE_MAX_CHARS ?? 20000);
-  const maxOutputTokens = Number(env.QUEST_OUTPUT_MAX_TOKENS ?? 10000);
+  const sourceMaxChars = Number(env.QUEST_SOURCE_MAX_CHARS ?? 10000);
+  const maxOutputTokens = Number(env.QUEST_OUTPUT_MAX_TOKENS ?? 8000);
   if (liveEnabled && provider !== "openai")
     throw new Error(
       "QUEST_PROVIDER=openai is required when live generation is enabled",
@@ -34,14 +34,14 @@ export function readQuestRuntimeConfig(
     throw new Error("Invalid quest timeout configuration");
   if (
     !Number.isInteger(sourceMaxChars) ||
-    sourceMaxChars < 500 ||
-    sourceMaxChars > 20000
+    sourceMaxChars < 100 ||
+    sourceMaxChars > 10000
   )
     throw new Error("Invalid quest source limit configuration");
   if (
     !Number.isInteger(maxOutputTokens) ||
     maxOutputTokens < 4000 ||
-    maxOutputTokens > 10000
+    maxOutputTokens > 8000
   )
     throw new Error("Invalid quest output limit configuration");
   if (!/^(gpt-5\.6|gpt-5\.6-(sol|terra|luna))$/.test(model))

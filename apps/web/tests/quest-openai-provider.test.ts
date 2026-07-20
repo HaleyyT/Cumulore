@@ -14,8 +14,8 @@ const config = {
   model: "gpt-5.6-sol",
   reasoningEffort: "low" as const,
   timeoutMs: 45000,
-  sourceMaxChars: 20000,
-  maxOutputTokens: 10000,
+  sourceMaxChars: 10000,
+  maxOutputTokens: 8000,
 };
 const input = {
   sourceTitle: "Learning",

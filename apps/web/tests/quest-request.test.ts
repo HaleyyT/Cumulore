@@ -4,7 +4,7 @@ import { parseLiveQuestRequest } from "../src/modules/quest/generation/request.j
 const valid = {
   requestId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   sourceTitle: "Source",
-  sourceText: "x".repeat(500),
+  sourceText: "x".repeat(100),
   requestedDifficulty: "medium",
   learningGoal: "Practise the definitions and reductions.",
   mode: "live",

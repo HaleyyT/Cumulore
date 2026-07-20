@@ -193,7 +193,7 @@ a test framework. React state plus a typed reducer and CSS/SVG are sufficient.
 | `mode`                | `fixture` or `live`                                     |
 | `requestedDifficulty` | `easy`, `medium`, or `hard`; applies to the whole quest |
 | `sourceTitle`         | live only; trimmed, 1–120 characters                    |
-| `sourceText`          | live only; normalized, 500–20,000 Unicode characters    |
+| `sourceText`          | live only; normalized, 100–10,000 Unicode characters    |
 | `demoSourceId`        | fixture only; P0 permits only `science-of-learning`     |
 
 Exactly one source mode is accepted. Reject unknown fields, malformed UUIDs,
@@ -592,8 +592,8 @@ Environment contract:
 | `OPENAI_QUEST_MODEL`            | `gpt-5.6-terra`                            |
 | `OPENAI_QUEST_REASONING_EFFORT` | `low`                                      |
 | `OPENAI_QUEST_TIMEOUT_MS`       | `45000`                                    |
-| `QUEST_SOURCE_MAX_CHARS`        | `20000`                                    |
-| `QUEST_OUTPUT_MAX_TOKENS`       | `10000`                                    |
+| `QUEST_SOURCE_MAX_CHARS`        | `10000`                                    |
+| `QUEST_OUTPUT_MAX_TOKENS`       | `8000`                                     |
 
 Environment validation must fail the server build/start when live mode is true
 without its key or when numeric bounds are invalid. Fixture builds require no

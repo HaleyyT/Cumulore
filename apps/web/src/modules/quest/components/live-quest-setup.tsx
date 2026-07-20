@@ -41,16 +41,16 @@ export function LiveQuestSetup({
   async function loadTextFile(file: File | undefined) {
     setFileMessage(undefined);
     if (!file) return;
-    if (!file.type.startsWith("text/") || file.size > 20000) {
+    if (!file.type.startsWith("text/") || file.size > 10000) {
       setFileMessage(
-        "Choose a plain-text file smaller than 20 KB, or paste text instead.",
+        "Choose a plain-text file smaller than 10 KB, or paste text instead.",
       );
       return;
     }
     const sourceText = await file.text();
-    if (sourceText.trim().length < 500) {
+    if (sourceText.trim().length < 100) {
       setFileMessage(
-        "This file needs at least 500 characters before it can make a useful quest.",
+        "This file needs at least 100 characters before it can make a useful quest.",
       );
       return;
     }
@@ -149,8 +149,9 @@ export function LiveQuestSetup({
         </p>
       ) : null}
       <p className="live-setup-helper">
-        Paste 500 to 20,000 characters, or load a plain-text file. The selected
-        chamber intensity sets the question difficulty for the whole quest.
+        Paste 100 to 10,000 characters, or load a plain-text file. Shorter,
+        focused material generates faster. The selected chamber intensity sets
+        the question difficulty for the whole quest.
       </p>
       <form
         onSubmit={(event) => {
@@ -186,8 +187,8 @@ export function LiveQuestSetup({
           <textarea
             ref={sourceTextRef}
             name="sourceText"
-            minLength={500}
-            maxLength={20000}
+            minLength={100}
+            maxLength={10000}
             required
           />
         </label>
@@ -210,7 +211,7 @@ export function LiveQuestSetup({
           type="submit"
         >
           {isSubmitting
-            ? "Mapping concepts and evidence..."
+            ? "Mapping concepts and evidence. This can take a moment..."
             : liveAvailable
               ? "Generate live quest"
               : "Live AI unavailable"}{" "}

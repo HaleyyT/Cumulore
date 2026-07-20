@@ -22,11 +22,11 @@ const baseConfig: QuestRuntimeConfig = {
   model: "gpt-5.6-sol",
   reasoningEffort: "low",
   timeoutMs: 45000,
-  sourceMaxChars: 20000,
-  maxOutputTokens: 10000,
+  sourceMaxChars: 10000,
+  maxOutputTokens: 8000,
 };
 
-function request(sourceText = "x".repeat(500), learningGoal?: string) {
+function request(sourceText = "x".repeat(100), learningGoal?: string) {
   const data = new FormData();
   data.set("requestId", requestId);
   data.set("sourceTitle", "Source");
@@ -79,12 +79,25 @@ assert.equal(invalid.status, 400);
 assert.equal((await invalid.json()).error.code, "INVALID_REQUEST");
 
 const sourceTooLarge = createQuestPostHandler({
-  readConfig: () => ({ ...baseConfig, sourceMaxChars: 500 }),
+  readConfig: () => ({ ...baseConfig, sourceMaxChars: 100 }),
   generate: async () => {
     throw new Error("must not run");
   },
 });
-assert.equal((await sourceTooLarge(request("x".repeat(501)))).status, 413);
+assert.equal((await sourceTooLarge(request("x".repeat(101)))).status, 413);
+
+const sourceTooShort = createQuestPostHandler({
+  readConfig: () => baseConfig,
+  generate: async () => {
+    throw new Error("must not run");
+  },
+});
+assert.equal((await sourceTooShort(request("x".repeat(99)))).status, 400);
+assert.equal(
+  (await sourceTooShort(request(" ".repeat(100)))).status,
+  400,
+  "whitespace cannot satisfy the minimum source length",
+);
 
 const invalidGeneration = createQuestPostHandler({
   readConfig: () => baseConfig,
