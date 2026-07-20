@@ -13,8 +13,9 @@ not approve or alter the production Cumulore roadmap.
 
 ## Required before any public Live AI enablement
 
-- [ ] A dedicated OpenAI project has verified usage alerts and a hard spend
-      boundary that prevents further paid usage.
+- [ ] A dedicated OpenAI project has only the intended prepaid balance,
+      auto-recharge disabled, and verified usage alerts. Because billing cutoff
+      can lag, this is paired with the deployment access boundary below.
 - [ ] Deployment-side request and token rate limits are evidenced, or the
       experience is restricted to judges.
 - [ ] Controlled live evaluation completes all three sources at all three

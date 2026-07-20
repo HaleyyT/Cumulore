@@ -20,8 +20,11 @@ turning on a paid public endpoint. A value such as
 
 ## Safe Vercel configuration
 
-1. Use a dedicated OpenAI project for this demo. Configure its usage alerts
-   and enforceable spending boundary before public access.
+1. Use a dedicated OpenAI project for this demo. Purchase only the intended
+   prepaid balance, turn auto-recharge off, and configure usage alerts. OpenAI
+   project budgets are alert thresholds rather than hard caps, and prepaid
+   cutoff can be delayed, so billing settings do not replace deployment access
+   control.
 2. In Vercel Project Settings, add the three variables above to the exact
    environment being tested: Preview, Production, or both. Mark the API key as
    sensitive and never expose it with a `NEXT_PUBLIC_` prefix.
@@ -29,11 +32,11 @@ turning on a paid public endpoint. A value such as
    change:
 
    ```text
-   OPENAI_QUEST_MODEL=gpt-5.6-sol
+   OPENAI_QUEST_MODEL=gpt-5.6-terra
    OPENAI_QUEST_REASONING_EFFORT=low
    OPENAI_QUEST_TIMEOUT_MS=45000
    QUEST_SOURCE_MAX_CHARS=20000
-   QUEST_OUTPUT_MAX_TOKENS=14000
+   QUEST_OUTPUT_MAX_TOKENS=10000
    ```
 
 4. Protect the deployment for judges or configure enforceable platform request
@@ -41,6 +44,19 @@ turning on a paid public endpoint. A value such as
    server-side cost boundary.
 5. Redeploy after changing environment variables. Existing deployments do not
    receive newly added values automatically.
+
+The default uses Terra because it retains the Responses API and strict
+Structured Outputs while costing half as much per token as Sol at the time of
+this review. Sol remains an allowed, explicit override for controlled quality
+comparisons; it is not the cost-safe default. Recheck the official model
+pricing before the final evaluation rather than treating these relative prices
+as permanent.
+
+The 10,000-token response ceiling includes visible output and reasoning tokens.
+Together with the 20,000-character source limit, zero SDK retries, and at most
+one validation repair, it bounds the cost of one submission. It does not bound
+the number of submissions, so keep the deployment judge-protected unless a
+durable platform-side request quota is configured.
 
 ## Verification
 
@@ -72,7 +88,7 @@ passed and the message now identifies the safe provider failure category:
 | Credential rejected   | Replace `OPENAI_API_KEY` with a valid key from the dedicated API project and redeploy.    |
 | Project access denied | Confirm the project and key are permitted to use the configured model.                    |
 | Model unavailable     | Remove an incorrect `OPENAI_QUEST_MODEL` override or use the documented default.          |
-| Quota exhausted       | Add API billing capacity or raise the dedicated project's hard limit deliberately.        |
+| Quota exhausted       | Add prepaid API credit deliberately; confirm auto-recharge remains off before retrying.   |
 | Request rejected      | Confirm the deployment contains the latest provider-compatible Structured Outputs schema. |
 
 The server records only the request UUID, duration, and safe failure code for

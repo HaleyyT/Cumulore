@@ -408,11 +408,11 @@ interface QuestProvider {
 
 OpenAI request defaults:
 
-- model: `gpt-5.6-sol`, configurable by server-only environment variable;
+- model: `gpt-5.6-terra`, configurable by server-only environment variable;
 - reasoning effort: `low`;
 - strict Structured Outputs via `text.format` and the repository JSON Schema;
 - `store: false`;
-- maximum output: 14,000 tokens;
+- maximum output: 10,000 tokens;
 - total application timeout: 45 seconds;
 - SDK transport retries: zero;
 - no tools and no previous response chain.
@@ -571,15 +571,15 @@ Required controls:
 Live public generation is a release gate. It may be enabled only when both are
 true:
 
-1. a dedicated OpenAI project has usage alerts and a verified hard boundary
-   that blocks additional spend; and
+1. a dedicated OpenAI project has only the intended prepaid balance,
+   auto-recharge disabled, and usage alerts; and
 2. the deployment is judge-access-protected **or** has enforceable platform-side
    request and token rate limits.
 
-An alert-only budget is insufficient. If either requirement lacks evidence,
-the public deployment remains fixture-first. Demonstrate live generation in the
-video or a controlled judge deployment; never expose an unrestricted paid
-endpoint.
+Project budget alerts are not hard limits, and prepaid cutoff may lag. If either
+requirement lacks evidence, the public deployment remains fixture-first.
+Demonstrate live generation in the video or a controlled judge deployment;
+never expose an unrestricted paid endpoint.
 
 Environment contract:
 
@@ -588,11 +588,11 @@ Environment contract:
 | `QUEST_PROVIDER`                | `fixture`                                  |
 | `QUEST_LIVE_GENERATION_ENABLED` | `false`                                    |
 | `OPENAI_API_KEY`                | absent; required only when live is enabled |
-| `OPENAI_QUEST_MODEL`            | `gpt-5.6-sol`                              |
+| `OPENAI_QUEST_MODEL`            | `gpt-5.6-terra`                            |
 | `OPENAI_QUEST_REASONING_EFFORT` | `low`                                      |
 | `OPENAI_QUEST_TIMEOUT_MS`       | `45000`                                    |
 | `QUEST_SOURCE_MAX_CHARS`        | `20000`                                    |
-| `QUEST_OUTPUT_MAX_TOKENS`       | `14000`                                    |
+| `QUEST_OUTPUT_MAX_TOKENS`       | `10000`                                    |
 
 Environment validation must fail the server build/start when live mode is true
 without its key or when numeric bounds are invalid. Fixture builds require no
