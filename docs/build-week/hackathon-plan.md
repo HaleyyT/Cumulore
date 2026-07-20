@@ -413,7 +413,8 @@ OpenAI request defaults:
 - strict Structured Outputs via `text.format` and the repository JSON Schema;
 - `store: false`;
 - maximum output: 10,000 tokens;
-- total application timeout: 45 seconds;
+- provider-call timeout: 45 seconds;
+- hosting deadline: 120 seconds, covering one initial call and one repair;
 - SDK transport retries: zero;
 - no tools and no previous response chain.
 

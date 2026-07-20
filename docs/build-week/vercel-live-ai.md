@@ -58,6 +58,11 @@ one validation repair, it bounds the cost of one submission. It does not bound
 the number of submissions, so keep the deployment judge-protected unless a
 durable platform-side request quota is configured.
 
+The route permits 120 seconds because an initial generation and its single
+repair can each use the 45-second provider-call timeout. Do not reduce the host
+deadline below that bounded two-call path: the platform would return a generic
+504 before the application can return its safe fallback response.
+
 ## Verification
 
 1. Open the redeployed URL in a fresh session. The Live AI section must show a

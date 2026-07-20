@@ -9,7 +9,11 @@ import type { LiveQuestRequest } from "../../../../modules/quest/generation/requ
 import type { QuestRuntimeConfig } from "../../../../modules/quest/runtime-config";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// One initial provider call plus one bounded validation repair can each consume
+// the configured 45-second provider timeout. Keep the hosting deadline above
+// that 90-second worst case so Vercel returns our safe response instead of a
+// platform-generated 504.
+export const maxDuration = 120;
 
 const safeMessage: Readonly<Record<string, string>> = {
   INVALID_REQUEST: "Check the title, source text, difficulty, and consent.",

@@ -2,11 +2,19 @@ import assert from "node:assert/strict";
 import validQuestFixture from "../../../packages/schemas/fixtures/quest-generation.v1.valid.json" with { type: "json" };
 import { parseQuestGenerationV1 } from "@cumulore/schemas/quest-generation";
 
-import { createQuestPostHandler } from "../src/app/api/quest/generate/route.js";
+import {
+  createQuestPostHandler,
+  maxDuration,
+} from "../src/app/api/quest/generate/route.js";
 import type { QuestRuntimeConfig } from "../src/modules/quest/runtime-config.js";
 
 const requestId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 const validQuest = parseQuestGenerationV1(validQuestFixture);
+assert.equal(
+  maxDuration,
+  120,
+  "the route deadline must cover an initial provider call and one repair",
+);
 const baseConfig: QuestRuntimeConfig = {
   provider: "openai",
   liveEnabled: true,
