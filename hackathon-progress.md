@@ -3,7 +3,7 @@
 This file tracks the temporary Build Week project only. It does **not** change
 the production Cumulore roadmap or its current milestone.
 
-## Overall progress: 93% of planned implementation work
+## Overall progress: 94% of planned implementation work
 
 The deterministic and visual implementation work is committed. The evaluation
 runner now makes its provider explicit: fixture checks stay credential-free and
@@ -24,6 +24,8 @@ explanations, reducing avoidable model work while preserving the full validated
 Quest reliability now also includes run-stable shuffled answer positions, a
 true in-app new-run reset, and a progress meter that reaches 100% on early
 stage victories.
+The documented frozen Node install and full repository verification now pass
+with the locked Python environment, including TypeScript/Python contract tests.
 The evaluation ledger records only safe aggregate evidence and the 45-question
 review procedure. Q5 still needs the controlled live run, manual review,
 deployment, and cost-gate evidence before public Live AI can be enabled.
