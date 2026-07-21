@@ -18,7 +18,11 @@ Use these documents in order:
    and personalisation prompts.
 3. [`DEMO_VIDEO_SCRIPT.md`](DEMO_VIDEO_SCRIPT.md) — a sub-three-minute recording
    plan and voiceover.
-4. [`JUDGE_HANDOFF.md`](JUDGE_HANDOFF.md) — safe test path, verification commands,
+4. [`TECHNICAL_PROOF_SHOTS.md`](TECHNICAL_PROOF_SHOTS.md) — three clean,
+   screenshot-ready technical evidence panels for the demo video.
+5. [`CODEX_BUILD_STORY_SHOTS.md`](CODEX_BUILD_STORY_SHOTS.md) — exact screenshot
+   cues for explaining the Codex and GPT-5.6 collaboration.
+6. [`JUDGE_HANDOFF.md`](JUDGE_HANDOFF.md) — safe test path, verification commands,
    limitations, and judge notes.
 
 The implementation source of truth remains

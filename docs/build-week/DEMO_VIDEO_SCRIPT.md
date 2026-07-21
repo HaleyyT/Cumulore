@@ -84,6 +84,10 @@ excerpt. Show one incorrect answer if it can be done without slowing the edit.
 **Screen:** Brief split or quick cuts of the validated contract, focused test
 output, and the running app. Keep code large enough to read.
 
+Use the three prepared recording panels in
+[`TECHNICAL_PROOF_SHOTS.md`](TECHNICAL_PROOF_SHOTS.md); they contain verified,
+secret-free excerpts and the exact focused test output.
+
 **Voiceover:**
 
 > Live generation uses GPT-5.6 Terra through the Responses API with strict
@@ -97,6 +101,11 @@ output, and the running app. Keep code large enough to read.
 
 **Screen:** Show the commit history, one focused test file, and the accepted
 Build Week plan. Never show the Session ID or private conversation text.
+
+Use the four prepared, judge-safe recording panels in
+[`CODEX_BUILD_STORY_SHOTS.md`](CODEX_BUILD_STORY_SHOTS.md). They map exact
+spoken phrases to real commits, plan decisions, passing checks, and the human
+acceptance boundary.
 
 **Voiceover:**
 

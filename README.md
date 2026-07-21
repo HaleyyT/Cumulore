@@ -30,14 +30,29 @@ Operational recovery and performance evidence are documented in
 ## Cumulore Quest Build Week demo
 
 The temporary **Cumulore Quest** demo is isolated on the
-`hackathon/openai-build-week-cumulore-quest` branch. Start it with
-`pnpm --filter @cumulore/web exec next dev`; it defaults to the credential-free
-**Deterministic Demo**. Run `pnpm quest:eval -- --provider=fixture` to check
-the three checked source fixtures and every demo difficulty. Live AI remains off
-unless explicitly enabled with server-only environment configuration; a
-controlled live matrix additionally requires `QUEST_PROVIDER=openai`,
-`QUEST_LIVE_GENERATION_ENABLED=true`, and an uncommitted `OPENAI_API_KEY`.
-Never run it in ordinary CI or commit an API key.
+`hackathon/openai-build-week-cumulore-quest` branch.
+
+### Quick start Cumulore Quest
+
+Prerequisites: Node.js 22 and Corepack. From the repository root, run:
+
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+pnpm --filter @cumulore/web exec next dev
+```
+
+Open `http://localhost:3000`. The credential-free **Ready-made quest** works
+immediately without Auth0, PostgreSQL, object storage, or an OpenAI key. Run
+`pnpm quest:eval -- --provider=fixture` to check the three source fixtures and
+every demo difficulty.
+
+Live AI remains off locally unless explicitly enabled with server-only
+environment configuration. A controlled live path additionally requires
+`QUEST_PROVIDER=openai`, `QUEST_LIVE_GENERATION_ENABLED=true`, and an
+uncommitted `OPENAI_API_KEY`. Never run paid evaluation in ordinary CI or
+commit an API key.
+
 The accepted Build Week plan and status are in
 [`docs/build-week/hackathon-plan.md`](docs/build-week/hackathon-plan.md) and
 [`hackathon-progress.md`](hackathon-progress.md). See the
@@ -134,10 +149,9 @@ Do not enable it publicly until every item in the
 
 ### Generate a quest from your own material
 
-The deployed demo in the screenshot is intentionally in **Deterministic Demo**
-mode, so its Live AI button cannot make a provider call. To generate a grounded
-quest locally, copy `.env.example` to ignored `.env.local`, then set only these
-three values in `.env.local`:
+Local development defaults to the credential-free ready-made quest. To generate
+a grounded quest locally, copy `.env.example` to ignored `.env.local`, then set
+only these three values in `.env.local`:
 
 ```bash
 QUEST_PROVIDER=openai
@@ -149,10 +163,11 @@ Restart `pnpm --filter @cumulore/web exec next dev`. Open **Try Live AI with
 your own material**, paste 100-10,000 characters or load a `.txt` file, choose
 the chamber intensity, optionally state a learning goal, acknowledge the data
 transfer, then select **Generate live quest**. The result is checked against
-the versioned contract and source excerpts before it can enter the quiz. After
-the run, the results screen shows source-grounded review notes and a targeted
-rematch. Never commit `.env.local` or enable these settings on a public
-deployment until the release checklist is complete.
+the versioned contract and source excerpts before it can enter the quiz. A
+visible **Live AI quest ready** notice then lets the learner jump directly to
+the generated quest or scroll to it manually. After the run, the results screen
+shows source-grounded review notes and a targeted rematch. Never commit
+`.env.local` or enable these settings on an unrestricted public deployment.
 
 For Vercel, add all three variables to the same environment scope as the
 deployment, then redeploy. Adding only `OPENAI_API_KEY` deliberately leaves
