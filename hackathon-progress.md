@@ -27,8 +27,10 @@ stage victories.
 The documented frozen Node install and full repository verification now pass
 with the locked Python environment, including TypeScript/Python contract tests.
 The evaluation ledger records only safe aggregate evidence and the 45-question
-review procedure. Q5 still needs the controlled live run, manual review,
-deployment, and cost-gate evidence before public Live AI can be enabled.
+review procedure. A controlled Medium production smoke now proves generation,
+the ready signal, navigation, combat, and grounded feedback. Q5 still needs the
+complete nine-case live matrix, manual review, and public cost/rate-limit
+evidence before unrestricted Live AI availability.
 
 | Slice                         | Status      | What it means in plain English                                                                                                               |
 | ----------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -36,7 +38,7 @@ deployment, and cost-gate evidence before public Live AI can be enabled.
 | Q2 — source grounding         | Complete    | Deterministic segmentation, provenance, reference, option, duplicate, and difficulty validation fail closed.                                 |
 | Q3 — protected Live AI        | Complete    | The guarded OpenAI path supports text-file or pasted material, bounded learner goals, review notes, and recoverable generation failures.     |
 | Q4 — experience polish        | Complete    | The responsive demo includes reduced-motion handling, state feedback, keyboard controls, and visual reference assets.                        |
-| Q5 — release evidence         | In progress | Fixture evaluation, guarded live command, and safe evidence ledger are committed. Controlled live/manual review and deployment remain due.   |
+| Q5 — release evidence         | In progress | Fixture evaluation and one production smoke pass. The nine-case live matrix, manual review, and public cost/rate-limit evidence remain due.  |
 
 ## What Q1 implements
 

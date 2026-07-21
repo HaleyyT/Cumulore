@@ -9,7 +9,24 @@ not approve or alter the production Cumulore roadmap.
 - [x] Source, provenance, difficulty, combat, and safe-failure unit checks.
 - [x] Production web build, documentation-link check, secret scan, and
       whitespace diff check.
-- [x] The visible UI labels the built-in experience as **Deterministic Demo**.
+- [x] The visible UI labels the built-in experience as the **Ready-made quest**
+      and distinguishes it from Live AI.
+
+## Controlled production smoke — 22 July 2026
+
+- [x] Vercel production deployment `2a48f14` reached `READY` and was aliased to
+      `https://cumulore.vercel.app`.
+- [x] The deployed page reported Live AI as ready and kept the expanded setup
+      stable while entering a synthetic source.
+- [x] One Medium live request returned a validated quest titled _How Durable
+      Learning Works_ with five ranked Priority Focus concepts.
+- [x] The persistent **Live AI quest ready** notice appeared, its action moved
+      focus to the generated chamber, and manual scrolling remained available.
+- [x] A generated answer updated deterministic combat state and displayed a
+      matching source excerpt.
+
+This is a bounded production smoke test, not the required nine-case automated
+evaluation or 45-question manual review.
 
 ## Required before any public Live AI enablement
 

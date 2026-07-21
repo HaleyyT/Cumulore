@@ -103,13 +103,13 @@ terms.
 
 ### Current progress — 94%
 
-| Build Week slice              | Status      | Delivered outcome                                                                                                                          |
-| ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Q1 — deterministic foundation | Complete    | A complete, credential-free learning quest with application-owned combat and rematches.                                                    |
-| Q2 — source grounding         | Complete    | Segmentation, evidence, duplicate, difficulty, reference, and requested-source validation fail closed.                                     |
-| Q3 — protected Live AI        | Complete    | A guarded server-only OpenAI boundary with strict outputs, one repair, safe errors, and recoverable setup.                                 |
-| Q4 — experience polish        | Complete    | Responsive visual experience, reduced-motion support, keyboard controls, focus management, and result/rematch states.                      |
-| Q5 — release evidence         | In progress | Fixture evaluation and safe evidence recording are ready; controlled live evaluation, manual review, deployment, and cost evidence remain. |
+| Build Week slice              | Status      | Delivered outcome                                                                                                                                  |
+| ----------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q1 — deterministic foundation | Complete    | A complete, credential-free learning quest with application-owned combat and rematches.                                                            |
+| Q2 — source grounding         | Complete    | Segmentation, evidence, duplicate, difficulty, reference, and requested-source validation fail closed.                                             |
+| Q3 — protected Live AI        | Complete    | A guarded server-only OpenAI boundary with strict outputs, one repair, safe errors, and recoverable setup.                                         |
+| Q4 — experience polish        | Complete    | Responsive visual experience, reduced-motion support, keyboard controls, focus management, and result/rematch states.                              |
+| Q5 — release evidence         | In progress | Fixture evaluation and a production Live AI smoke test pass; the nine-case live matrix, manual review, and public cost/rate-limit evidence remain. |
 
 ### System design choices
 
@@ -144,8 +144,10 @@ pnpm build:production
 The fixture command is safe for local development and CI. The controlled live
 matrix is deliberately separate: it needs `QUEST_PROVIDER=openai`,
 `QUEST_LIVE_GENERATION_ENABLED=true`, and an uncommitted `OPENAI_API_KEY`.
-Do not enable it publicly until every item in the
-[Build Week release checklist](docs/build-week/release-checklist.md) is evidenced.
+The public judge window requires a hard spending boundary; unrestricted public
+availability remains blocked until every applicable item in the
+[Build Week release checklist](docs/build-week/release-checklist.md) is
+evidenced.
 
 ### Generate a quest from your own material
 
