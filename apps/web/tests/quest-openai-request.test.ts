@@ -18,7 +18,7 @@ const config = {
   reasoningEffort: "low" as const,
   timeoutMs: 45000,
   sourceMaxChars: 10000,
-  maxOutputTokens: 8000,
+  maxOutputTokens: 10000,
 };
 const input = {
   sourceTitle: "Learning",
@@ -30,7 +30,7 @@ const input = {
 const request = createQuestResponseRequest(config, input);
 assert.equal(request.store, false);
 assert.equal(request.reasoning.effort, "low");
-assert.equal(request.max_output_tokens, 8000);
+assert.equal(request.max_output_tokens, 10000);
 assert.equal(request.text.format.strict, true);
 assert.equal(request.text.format.name, "quest_generation_v1");
 assert.deepEqual(
@@ -67,6 +67,8 @@ assert.match(requestPayload, /Practise the core distinctions/);
 assert.match(requestPayload, /S001/);
 assert.match(requestPayload, /three plausible distractors/);
 assert.match(requestPayload, /at most 260 characters/);
+assert.match(requestPayload, /globally unique across the complete quest/);
+assert.match(requestPayload, /short, contiguous substring/);
 assert.doesNotMatch(
   requestPayload,
   /four plausible but clearly wrong distractors/,

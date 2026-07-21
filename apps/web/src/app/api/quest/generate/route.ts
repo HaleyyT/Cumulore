@@ -34,6 +34,8 @@ const safeMessage: Readonly<Record<string, string>> = {
   RATE_LIMITED: "Live AI is busy. Wait briefly or play the ready-made quest.",
   GENERATION_TIMEOUT:
     "Quest generation took too long. Try a shorter source or play the ready-made quest.",
+  GENERATION_OUTPUT_LIMIT:
+    "The quest response was cut off before it finished. Try a shorter, more focused source or play the ready-made quest.",
   GENERATION_INVALID:
     "The generated quest did not pass its evidence checks. Try again or play the ready-made quest.",
   GENERATION_UNAVAILABLE:
@@ -72,6 +74,9 @@ type QuestRouteDependencies = {
     requestId: string;
     code: string;
     durationMs: number;
+    validationPhase?: "initial" | "repair";
+    validationCode?: string;
+    fieldPaths?: string[];
   }) => void;
 };
 
@@ -88,6 +93,13 @@ const logFailure: NonNullable<QuestRouteDependencies["logFailure"]> = (
       duration_ms: entry.durationMs,
       outcome: "failed",
       safe_error_code: entry.code.toLowerCase(),
+      ...(entry.validationPhase
+        ? { validation_phase: entry.validationPhase }
+        : {}),
+      ...(entry.validationCode
+        ? { safe_validation_code: entry.validationCode.toLowerCase() }
+        : {}),
+      ...(entry.fieldPaths ? { safe_field_paths: entry.fieldPaths } : {}),
     }),
   );
 };
@@ -135,10 +147,21 @@ export function createQuestPostHandler(
     try {
       const result = await dependencies.generate(config, input);
       if (!result.ok) {
+        const diagnostic =
+          result.diagnostics?.final ?? result.diagnostics?.initial;
         dependencies.logFailure?.({
           requestId: input.requestId,
           code: "GENERATION_INVALID",
           durationMs: Date.now() - startedAt,
+          ...(diagnostic
+            ? {
+                validationPhase: result.diagnostics?.final
+                  ? ("repair" as const)
+                  : ("initial" as const),
+                validationCode: diagnostic.validationCode,
+                fieldPaths: diagnostic.fieldPaths,
+              }
+            : {}),
         });
         return failure(input.requestId, "GENERATION_INVALID", 422);
       }

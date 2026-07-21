@@ -84,26 +84,33 @@ assert.equal(
 );
 assert.equal(schemaRepairs, 1, "schema-invalid output receives one repair");
 let failedRepairs = 0;
-assert.equal(
-  (
-    await new QuestService({
-      async generate() {
-        return invalid;
-      },
-      async repair(input) {
-        failedRepairs += 1;
-        assert.deepEqual(Object.keys(input).sort(), [
-          "difficulty",
-          "learningGoal",
-          "repair",
-          "sourceSegments",
-          "sourceTitle",
-        ]);
-        return invalid;
-      },
-    }).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" })
-  ).ok,
-  false,
-);
+const failedRepairResult = await new QuestService({
+  async generate() {
+    return invalid;
+  },
+  async repair(input) {
+    failedRepairs += 1;
+    assert.deepEqual(Object.keys(input).sort(), [
+      "difficulty",
+      "learningGoal",
+      "repair",
+      "sourceSegments",
+      "sourceTitle",
+    ]);
+    return invalid;
+  },
+}).generate({ sourceTitle: "Science", sourceText, difficulty: "medium" });
+assert.equal(failedRepairResult.ok, false);
+if (!failedRepairResult.ok)
+  assert.deepEqual(failedRepairResult.diagnostics, {
+    initial: {
+      validationCode: "SCHEMA_INVALID",
+      fieldPaths: ["quest.metadata"],
+    },
+    final: {
+      validationCode: "SCHEMA_INVALID",
+      fieldPaths: ["quest.metadata"],
+    },
+  });
 assert.equal(failedRepairs, 1, "an invalid repair is not retried");
 console.log("Quest service validation boundary passed.");

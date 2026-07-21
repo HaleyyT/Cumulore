@@ -23,7 +23,7 @@ const baseConfig: QuestRuntimeConfig = {
   reasoningEffort: "low",
   timeoutMs: 45000,
   sourceMaxChars: 10000,
-  maxOutputTokens: 8000,
+  maxOutputTokens: 10000,
 };
 
 function request(sourceText = "x".repeat(100), learningGoal?: string) {
@@ -99,11 +99,36 @@ assert.equal(
   "whitespace cannot satisfy the minimum source length",
 );
 
+const validationLogs: Array<Record<string, unknown>> = [];
 const invalidGeneration = createQuestPostHandler({
   readConfig: () => baseConfig,
-  generate: async () => ({ ok: false, code: "GENERATION_INVALID" }),
+  generate: async () => ({
+    ok: false,
+    code: "GENERATION_INVALID",
+    diagnostics: {
+      initial: {
+        validationCode: "IDENTIFIER_DUPLICATE",
+        fieldPaths: ["stages[0].questions[1].options[0].optionId"],
+      },
+      final: {
+        validationCode: "EXCERPT_MISMATCH",
+        fieldPaths: ["rematchQuestions[2].evidence[0].excerpt"],
+      },
+    },
+  }),
+  logFailure: (entry) => validationLogs.push(entry),
 });
 assert.equal((await invalidGeneration(request())).status, 422);
+assert.deepEqual(validationLogs, [
+  {
+    requestId,
+    code: "GENERATION_INVALID",
+    durationMs: validationLogs[0]?.durationMs,
+    validationPhase: "repair",
+    validationCode: "EXCERPT_MISMATCH",
+    fieldPaths: ["rematchQuestions[2].evidence[0].excerpt"],
+  },
+]);
 
 let receivedLearningGoal: string | undefined;
 const success = createQuestPostHandler({

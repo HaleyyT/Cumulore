@@ -16,6 +16,10 @@ assert.equal(
   "GENERATION_INVALID",
 );
 assert.equal(
+  safeGenerationFailure(new Error("GENERATION_OUTPUT_LIMIT")),
+  "GENERATION_OUTPUT_LIMIT",
+);
+assert.equal(
   safeGenerationFailure(new Error("unexpected")),
   "GENERATION_UNAVAILABLE",
 );

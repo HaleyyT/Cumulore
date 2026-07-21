@@ -7,6 +7,7 @@ export type QuestGenerationFailure =
   | "OPENAI_REQUEST_REJECTED"
   | "RATE_LIMITED"
   | "GENERATION_TIMEOUT"
+  | "GENERATION_OUTPUT_LIMIT"
   | "GENERATION_INVALID"
   | "GENERATION_UNAVAILABLE";
 
@@ -62,6 +63,8 @@ export function safeGenerationFailure(error: unknown): QuestGenerationFailure {
   }
   if (error instanceof Error && /timeout|abort/i.test(error.message))
     return "GENERATION_TIMEOUT";
+  if (error instanceof Error && error.message === "GENERATION_OUTPUT_LIMIT")
+    return "GENERATION_OUTPUT_LIMIT";
   if (error instanceof Error && error.message === "GENERATION_INVALID")
     return "GENERATION_INVALID";
   return "GENERATION_UNAVAILABLE";

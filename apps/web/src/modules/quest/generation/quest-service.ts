@@ -10,7 +10,19 @@ import type { QuestGenerationInput, QuestProvider } from "./provider";
 
 export type QuestServiceResult =
   | { ok: true; quest: QuestGenerationV1 }
-  | { ok: false; code: "GENERATION_INVALID" };
+  | {
+      ok: false;
+      code: "GENERATION_INVALID";
+      diagnostics?: {
+        initial: QuestValidationDiagnostic;
+        final?: QuestValidationDiagnostic;
+      };
+    };
+
+export type QuestValidationDiagnostic = {
+  validationCode: string;
+  fieldPaths: string[];
+};
 
 export type QuestServiceInput = Omit<QuestGenerationInput, "sourceSegments"> & {
   sourceText: string;
@@ -48,7 +60,16 @@ export class QuestService {
     const quest = await this.provider.generate(providerInput);
     const validation = validate(quest);
     if (validation.ok) return { ok: true, quest: validation.quest };
-    if (!this.provider.repair) return { ok: false, code: "GENERATION_INVALID" };
+    const initialDiagnostic = {
+      validationCode: validation.code,
+      fieldPaths: validation.fieldPaths,
+    };
+    if (!this.provider.repair)
+      return {
+        ok: false,
+        code: "GENERATION_INVALID",
+        diagnostics: { initial: initialDiagnostic },
+      };
     const repaired = await this.provider.repair({
       ...providerInput,
       repair: {
@@ -60,6 +81,16 @@ export class QuestService {
     const repairedValidation = validate(repaired);
     return repairedValidation.ok
       ? { ok: true, quest: repairedValidation.quest }
-      : { ok: false, code: "GENERATION_INVALID" };
+      : {
+          ok: false,
+          code: "GENERATION_INVALID",
+          diagnostics: {
+            initial: initialDiagnostic,
+            final: {
+              validationCode: repairedValidation.code,
+              fieldPaths: repairedValidation.fieldPaths,
+            },
+          },
+        };
   }
 }

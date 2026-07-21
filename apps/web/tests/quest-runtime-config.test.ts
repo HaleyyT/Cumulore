@@ -9,7 +9,7 @@ assert.deepEqual(readQuestRuntimeConfig({}), {
   reasoningEffort: "low",
   timeoutMs: 45000,
   sourceMaxChars: 10000,
-  maxOutputTokens: 8000,
+  maxOutputTokens: 10000,
 });
 assert.throws(
   () => readQuestRuntimeConfig({ QUEST_PROVIDER: "OPENAI" }),
@@ -62,7 +62,7 @@ assert.throws(
   /Invalid quest output limit/,
 );
 assert.throws(
-  () => readQuestRuntimeConfig({ QUEST_OUTPUT_MAX_TOKENS: "8001" }),
+  () => readQuestRuntimeConfig({ QUEST_OUTPUT_MAX_TOKENS: "10001" }),
   /Invalid quest output limit/,
 );
 assert.throws(

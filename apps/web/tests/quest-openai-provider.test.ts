@@ -15,7 +15,7 @@ const config = {
   reasoningEffort: "low" as const,
   timeoutMs: 45000,
   sourceMaxChars: 10000,
-  maxOutputTokens: 8000,
+  maxOutputTokens: 10000,
 };
 const input = {
   sourceTitle: "Learning",
@@ -131,5 +131,17 @@ const incomplete = new OpenAIQuestProvider(config, () =>
   fakeClient(async () => ({ status: "incomplete", output_text: "{}" })),
 );
 await assert.rejects(() => incomplete.generate(input), /GENERATION_INVALID/);
+
+const outputLimited = new OpenAIQuestProvider(config, () =>
+  fakeClient(async () => ({
+    status: "incomplete",
+    output_text: "{}",
+    incomplete_details: { reason: "max_output_tokens" },
+  })),
+);
+await assert.rejects(
+  () => outputLimited.generate(input),
+  /GENERATION_OUTPUT_LIMIT/,
+);
 
 console.log("Quest OpenAI provider boundary passed.");
