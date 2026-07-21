@@ -593,7 +593,7 @@ Environment contract:
 | `OPENAI_QUEST_REASONING_EFFORT` | `low`                                      |
 | `OPENAI_QUEST_TIMEOUT_MS`       | `45000`                                    |
 | `QUEST_SOURCE_MAX_CHARS`        | `10000`                                    |
-| `QUEST_OUTPUT_MAX_TOKENS`       | `8000`                                     |
+| `QUEST_OUTPUT_MAX_TOKENS`       | `10000`                                    |
 
 Environment validation must fail the server build/start when live mode is true
 without its key or when numeric bounds are invalid. Fixture builds require no
