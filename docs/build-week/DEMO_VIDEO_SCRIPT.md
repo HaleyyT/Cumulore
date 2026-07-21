@@ -13,7 +13,9 @@ secrets, dashboards, or private material; use tight cuts and clear captions.
 - Select the exact quest and manually verify every question, answer,
   explanation, and excerpt that will appear.
 - Record at 1080p, browser zoom 100%, notifications off, and a clean window.
-- Use Deterministic Demo for the continuous walkthrough. Optionally insert one
+- Use **Medium Deterministic Demo** for the continuous walkthrough. Its complete
+  16-question bank is the reviewed recording source. Do not switch difficulty
+  or content after that review. Optionally insert one
   clearly labelled controlled Live AI generation clip after it has been reviewed.
 - Keep the cursor slow, pause after important changes, and do not narrate while
   visually rushing to another screen.

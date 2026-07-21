@@ -30,7 +30,7 @@ judge path.
 
 - Submitted repository branch:
   `https://github.com/HaleyyT/Cumulore/tree/hackathon/openai-build-week-cumulore-quest`
-  (private; judge access must be granted before the deadline)
+  (public for judging under the repository's evaluation licence)
 - Build Week branch: `hackathon/openai-build-week-cumulore-quest`; do not judge
   the default `main` branch as the hackathon submission.
 - Quest app: `apps/web/src/modules/quest/`
@@ -81,6 +81,9 @@ the hackathon work does not claim that later production milestones are complete.
   deployment or fixture-first public experience preserves the fixed cost limit.
 - Credentials, private material, signed URLs, and raw provider payloads must not
   appear in logs, documentation, video, or error responses.
+- Copyright remains with Haley Tran. `LICENSE` permits OpenAI, Devpost, and
+  appointed judges to clone, build, run, and test the submission for Build Week
+  evaluation; it is not a general open-source licence.
 
 ## Judge-access acceptance gate
 

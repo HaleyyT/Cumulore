@@ -4,10 +4,10 @@ Last verified: 22 July 2026, Sydney time.
 
 ## Current verdict
 
-**Registered and draft started; not yet ready to submit.** Six of eleven
-submission evidence gates are confirmed. The remaining critical path is repo
-access, the `/feedback` Session ID, the demo video, final visible-question
-review, and changing the Devpost project from Draft to Submitted.
+**Registered and draft started; not yet ready to submit.** Eight of eleven
+submission evidence gates are confirmed. The remaining critical path is the
+`/feedback` Session ID, the demo video, and changing the Devpost project from
+Draft to Submitted.
 
 The Devpost screenshot confirms the submission exists and the Manage team step
 is complete. The official integration confirms the account is registered and
@@ -16,19 +16,19 @@ while it is untitled or has not been saved from Project overview.
 
 ## Evidence-backed checklist
 
-| Gate                                   | Status                    | Evidence or exact next action                                                                                                                                         |
-| -------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Registered for OpenAI Build Week       | Confirmed                 | Devpost registration and the visible submission draft.                                                                                                                |
-| Submission draft started               | Confirmed                 | Devpost shows `Untitled`, `DRAFT`, and `1/5 steps done`. Save Project overview promptly so it is indexed.                                                             |
-| Team step complete                     | Confirmed with caveat     | Devpost marks Manage team complete. If this is not a solo entry, verify every invite shows Accepted before the deadline.                                              |
-| Core project works                     | Confirmed                 | Credential-free quest, protected live path, focused tests, production build, and repository verification are recorded in commit `92d1160`.                            |
-| Remote repository and branch exist     | Confirmed                 | Private repository `HaleyyT/Cumulore`; branch `hackathon/openai-build-week-cumulore-quest` matches its remote.                                                        |
-| README setup and Codex/GPT-5.6 story   | Confirmed in working tree | README contains setup, run commands, architecture boundaries, and a dedicated Codex/GPT-5.6 section. Commit/push it before submitting.                                |
-| Private repo shared with both judges   | **Blocked**               | In GitHub repository access, invite `testing@devpost.com` and `build-week-event@openai.com`; verify both invitations exist before 10:00 am.                           |
-| Primary `/feedback` Session ID entered | **Blocked**               | In the official Codex task where most core work happened, run `/feedback`; copy the returned alphanumeric ID directly to Additional info. Do not invent or commit it. |
-| Final demo questions reviewed          | **Blocked**               | Manually validate every question, answer, explanation, and excerpt shown in the recording. Record only the aggregate completion in `evaluation-evidence.md`.          |
-| Demo video accepted by YouTube         | **Blocked**               | Record from `DEMO_VIDEO_SCRIPT.md`, keep it under three minutes, upload Public or Unlisted, and test the URL in a signed-out/incognito window.                        |
-| Submission marked Submitted            | **Blocked**               | Complete all five Devpost steps, submit, then return to My projects and verify a green `Submitted` label—not Draft.                                                   |
+| Gate                                   | Status                | Evidence or exact next action                                                                                                                                         |
+| -------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Registered for OpenAI Build Week       | Confirmed             | Devpost registration and the visible submission draft.                                                                                                                |
+| Submission draft started               | Confirmed             | Devpost shows `Untitled`, `DRAFT`, and `1/5 steps done`. Save Project overview promptly so it is indexed.                                                             |
+| Team step complete                     | Confirmed with caveat | Devpost marks Manage team complete. If this is not a solo entry, verify every invite shows Accepted before the deadline.                                              |
+| Core project works                     | Confirmed             | Credential-free quest, protected live path, focused Quest tests, fixture evaluation, production build, and full repository verification passed on 22 July 2026.       |
+| Remote repository and branch exist     | Confirmed             | Public repository `HaleyyT/Cumulore`; branch `hackathon/openai-build-week-cumulore-quest` matches its remote.                                                         |
+| README setup and Codex/GPT-5.6 story   | Confirmed             | README contains setup, run commands, architecture boundaries, copyright, and a dedicated Codex/GPT-5.6 section.                                                       |
+| Judge repository access and licensing  | Confirmed             | GitHub visibly reports the repository as Public. The direct submitted-branch URL is documented, and `LICENSE` grants narrow Build Week evaluation rights.             |
+| Primary `/feedback` Session ID entered | **Blocked**           | In the official Codex task where most core work happened, run `/feedback`; copy the returned alphanumeric ID directly to Additional info. Do not invent or commit it. |
+| Final demo questions reviewed          | Confirmed             | All 16 Medium deterministic questions, answers, explanations, distractors, and excerpts passed manual review; the recording is locked to that bank.                   |
+| Demo video accepted by YouTube         | **Blocked**           | Record from `DEMO_VIDEO_SCRIPT.md`, keep it under three minutes, upload Public or Unlisted, and test the URL in a signed-out/incognito window.                        |
+| Submission marked Submitted            | **Blocked**           | Complete all five Devpost steps, submit, then return to My projects and verify a green `Submitted` label—not Draft.                                                   |
 
 ## Do these now, in order
 
@@ -36,16 +36,15 @@ while it is untitled or has not been saved from Project overview.
    elevator pitch from the worksheet, and a thumbnail.
 2. Run `/feedback` in the primary Codex build task and paste the Session ID into
    Devpost Additional info.
-3. Share the private GitHub repository with both required judge email addresses.
-4. Fill the remaining Devpost fields from the worksheet, but rewrite the
+3. Fill the remaining Devpost fields from the worksheet, but rewrite the
    personal motivation and reflection in your own voice.
-5. Select the exact deterministic or controlled-live demo path. Manually verify
-   every visible question before recording.
-6. Record and upload the video. Do not show secrets, dashboards, private source
+4. Record the locked Medium Deterministic Demo path. If its content or
+   difficulty changes, repeat the complete visible-question review first.
+5. Record and upload the video. Do not show secrets, dashboards, private source
    material, browser notifications, or provider responses.
-7. Test the YouTube link and any optional deployed URL in an incognito window.
-8. Commit and push this submission documentation and README update.
-9. Submit by 7:00 am Sydney time if possible, then verify the green Submitted
+6. Test the YouTube link and any optional deployed URL in an incognito window.
+7. Commit and push this submission documentation and README update.
+8. Submit by 7:00 am Sydney time if possible, then verify the green Submitted
    status. Use the remaining time only for safe corrections.
 
 ## Judging evidence map

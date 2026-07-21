@@ -75,6 +75,17 @@ health, damage, scoring, stages, and rematches itself; model output cannot alter
 those mechanics. The credential-free fixture follows the same validated
 contract and remains the reliable judge fallback.
 
+### Copyright and judge access
+
+Copyright (c) 2026 Haley Tran. All rights reserved. The repository is public so
+Build Week judges can inspect and run the submitted branch, but it is not an
+open-source release. [`LICENSE`](LICENSE) grants OpenAI, Devpost, and appointed
+judges a narrow right to clone, build, run, and test the project for Build Week
+evaluation. It does not grant general permission to copy, modify, redistribute,
+sell, or create derivative works. Third-party material is identified in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and remains under its own
+terms.
+
 ### Current progress — 94%
 
 | Build Week slice              | Status      | Delivered outcome                                                                                                                          |
