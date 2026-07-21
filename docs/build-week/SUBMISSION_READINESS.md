@@ -4,10 +4,9 @@ Last verified: 22 July 2026, Sydney time.
 
 ## Current verdict
 
-**Registered and draft started; not yet ready to submit.** Eight of eleven
+**Registered and draft started; not yet ready to submit.** Nine of eleven
 submission evidence gates are confirmed. The remaining critical path is the
-`/feedback` Session ID, the demo video, and changing the Devpost project from
-Draft to Submitted.
+demo video and changing the Devpost project from Draft to Submitted.
 
 The Devpost screenshot confirms the submission exists and the Manage team step
 is complete. The official integration confirms the account is registered and
@@ -16,27 +15,27 @@ while it is untitled or has not been saved from Project overview.
 
 ## Evidence-backed checklist
 
-| Gate                                   | Status                | Evidence or exact next action                                                                                                                                         |
-| -------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Registered for OpenAI Build Week       | Confirmed             | Devpost registration and the visible submission draft.                                                                                                                |
-| Submission draft started               | Confirmed             | Devpost shows `Untitled`, `DRAFT`, and `1/5 steps done`. Save Project overview promptly so it is indexed.                                                             |
-| Team step complete                     | Confirmed with caveat | Devpost marks Manage team complete. If this is not a solo entry, verify every invite shows Accepted before the deadline.                                              |
-| Core project works                     | Confirmed             | Credential-free quest, protected live path, focused Quest tests, fixture evaluation, production build, and full repository verification passed on 22 July 2026.       |
-| Remote repository and branch exist     | Confirmed             | Public repository `HaleyyT/Cumulore`; branch `hackathon/openai-build-week-cumulore-quest` matches its remote.                                                         |
-| README setup and Codex/GPT-5.6 story   | Confirmed             | README contains setup, run commands, architecture boundaries, copyright, and a dedicated Codex/GPT-5.6 section.                                                       |
-| Judge repository access and licensing  | Confirmed             | GitHub visibly reports the repository as Public. The direct submitted-branch URL is documented, and `LICENSE` grants narrow Build Week evaluation rights.             |
-| Primary `/feedback` Session ID entered | **Blocked**           | In the official Codex task where most core work happened, run `/feedback`; copy the returned alphanumeric ID directly to Additional info. Do not invent or commit it. |
-| Final demo questions reviewed          | Confirmed             | All 16 Medium deterministic questions, answers, explanations, distractors, and excerpts passed manual review; the recording is locked to that bank.                   |
-| Demo video accepted by YouTube         | **Blocked**           | Record from `DEMO_VIDEO_SCRIPT.md`, keep it under three minutes, upload Public or Unlisted, and test the URL in a signed-out/incognito window.                        |
-| Submission marked Submitted            | **Blocked**           | Complete all five Devpost steps, submit, then return to My projects and verify a green `Submitted` label—not Draft.                                                   |
+| Gate                                   | Status                | Evidence or exact next action                                                                                                                                   |
+| -------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Registered for OpenAI Build Week       | Confirmed             | Devpost registration and the visible submission draft.                                                                                                          |
+| Submission draft started               | Confirmed             | Devpost shows `Untitled`, `DRAFT`, and `1/5 steps done`. Save Project overview promptly so it is indexed.                                                       |
+| Team step complete                     | Confirmed with caveat | Devpost marks Manage team complete. If this is not a solo entry, verify every invite shows Accepted before the deadline.                                        |
+| Core project works                     | Confirmed             | Credential-free quest, protected live path, focused Quest tests, fixture evaluation, production build, and full repository verification passed on 22 July 2026. |
+| Remote repository and branch exist     | Confirmed             | Public repository `HaleyyT/Cumulore`; branch `hackathon/openai-build-week-cumulore-quest` matches its remote.                                                   |
+| README setup and Codex/GPT-5.6 story   | Confirmed             | README contains setup, run commands, architecture boundaries, copyright, and a dedicated Codex/GPT-5.6 section.                                                 |
+| Judge repository access and licensing  | Confirmed             | GitHub visibly reports the repository as Public. The direct submitted-branch URL is documented, and `LICENSE` grants narrow Build Week evaluation rights.       |
+| Primary `/feedback` Session ID entered | Confirmed             | The user-provided Devpost form shows the primary Session ID entered. Its value is intentionally excluded from Git and documentation.                            |
+| Final demo questions reviewed          | Confirmed             | All 16 Medium deterministic questions, answers, explanations, distractors, and excerpts passed manual review; the recording is locked to that bank.             |
+| Demo video accepted by YouTube         | **Blocked**           | Record from `DEMO_VIDEO_SCRIPT.md`, keep it under three minutes, upload Public or Unlisted, and test the URL in a signed-out/incognito window.                  |
+| Submission marked Submitted            | **Blocked**           | Complete all five Devpost steps, submit, then return to My projects and verify a green `Submitted` label—not Draft.                                             |
 
 ## Do these now, in order
 
 1. Save Project overview with the user-chosen name **Cumulore Quest**, the
    elevator pitch from the worksheet, and a thumbnail.
-2. Run `/feedback` in the primary Codex build task and paste the Session ID into
-   Devpost Additional info.
-3. Fill the remaining Devpost fields from the worksheet, but rewrite the
+2. Keep the `/feedback` Session ID in Devpost Additional info; never copy it into
+   the repository or public story.
+3. Fill the remaining Devpost fields from the private working draft, but rewrite the
    personal motivation and reflection in your own voice.
 4. Record the locked Medium Deterministic Demo path. If its content or
    difficulty changes, repeat the complete visible-question review first.
