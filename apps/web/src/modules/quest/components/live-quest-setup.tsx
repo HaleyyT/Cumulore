@@ -115,7 +115,6 @@ export function LiveQuestSetup({
         return;
       }
       onQuestReady(quest);
-      setMessage("Your live quest is ready.");
     } catch (error) {
       setMessage(
         error instanceof Error && error.message === "REQUEST_ALREADY_COMPLETED"

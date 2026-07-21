@@ -261,6 +261,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   const shellRef = useRef<HTMLElement>(null);
   const battleTitleRef = useRef<HTMLHeadingElement>(null);
   const feedbackRef = useRef<HTMLElement>(null);
+  const questReadyNoticeRef = useRef<HTMLElement>(null);
   const previousStageRef = useRef<number | undefined>(undefined);
   const [difficulty, setDifficulty] = useReducer(
     (_: Difficulty, nextDifficulty: Difficulty) => nextDifficulty,
@@ -268,6 +269,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   );
   const [isLiveSetupOpen, setIsLiveSetupOpen] = useState(false);
   const [liveQuest, setLiveQuest] = useState<Quest>();
+  const [readyQuestTitle, setReadyQuestTitle] = useState<string>();
   const [runSeed, setRunSeed] = useState(0);
   const quest = liveQuest ?? scienceQuest(difficulty);
   const [battle, dispatch] = useReducer(
@@ -289,6 +291,36 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
     setRunSeed(createRunSeed());
     dispatch({ type: "reset" });
   }
+
+  function handleQuestReady(nextQuest: Quest) {
+    setLiveQuest(nextQuest);
+    setIsLiveSetupOpen(false);
+    setReadyQuestTitle(nextQuest.title);
+    setRematchAnswer(undefined);
+    setRematchIndex(undefined);
+    setRunSeed(createRunSeed());
+    dispatch({ type: "reset" });
+  }
+
+  function enterReadyQuest() {
+    const questSection = document.getElementById("quest");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    questSection?.scrollIntoView({
+      behavior: reducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+    setReadyQuestTitle(undefined);
+    window.requestAnimationFrame(() =>
+      battleTitleRef.current?.focus({ preventScroll: true }),
+    );
+  }
+
+  useEffect(() => {
+    if (!readyQuestTitle) return;
+    questReadyNoticeRef.current?.focus({ preventScroll: true });
+  }, [readyQuestTitle]);
 
   useEffect(() => {
     if (!shellRef.current) return undefined;
@@ -557,14 +589,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
               difficulty={difficulty}
               liveAvailable={liveAvailable}
               onOpenChange={setIsLiveSetupOpen}
-              onQuestReady={(nextQuest) => {
-                setLiveQuest(nextQuest);
-                setIsLiveSetupOpen(false);
-                setRematchAnswer(undefined);
-                setRematchIndex(undefined);
-                setRunSeed(createRunSeed());
-                dispatch({ type: "reset" });
-              }}
+              onQuestReady={handleQuestReady}
             />
           ) : null}
           <div className="hero-actions">
@@ -583,14 +608,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
               difficulty={difficulty}
               liveAvailable={liveAvailable}
               onOpenChange={setIsLiveSetupOpen}
-              onQuestReady={(nextQuest) => {
-                setLiveQuest(nextQuest);
-                setIsLiveSetupOpen(false);
-                setRematchAnswer(undefined);
-                setRematchIndex(undefined);
-                setRunSeed(createRunSeed());
-                dispatch({ type: "reset" });
-              }}
+              onQuestReady={handleQuestReady}
             />
           </div>
         ) : null}
@@ -610,6 +628,38 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
           <span className="art-caption">RECALL / 001</span>
         </div>
       </section>
+
+      {readyQuestTitle ? (
+        <aside
+          aria-atomic="true"
+          aria-live="assertive"
+          className="quest-ready-notice"
+          ref={questReadyNoticeRef}
+          tabIndex={-1}
+        >
+          <button
+            aria-label="Dismiss quest ready message"
+            className="quest-ready-dismiss"
+            type="button"
+            onClick={() => setReadyQuestTitle(undefined)}
+          >
+            ×
+          </button>
+          <span className="quest-ready-kicker">Live AI quest ready</span>
+          <strong>{readyQuestTitle}</strong>
+          <p>
+            Your source passed the evidence checks. Start now, or scroll to the
+            quest chamber below.
+          </p>
+          <button
+            className="button button-light"
+            type="button"
+            onClick={enterReadyQuest}
+          >
+            Start my AI quest <span aria-hidden="true">↓</span>
+          </button>
+        </aside>
+      ) : null}
 
       <section className="signal-strip" aria-label="Learning signal">
         <span>Learning is a system</span>

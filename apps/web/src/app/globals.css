@@ -180,6 +180,111 @@ button:disabled {
   color: var(--ink);
 }
 
+.quest-ready-notice {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 60;
+  display: grid;
+  gap: 0.65rem;
+  width: min(27rem, calc(100vw - 2rem));
+  padding: 1.35rem;
+  overflow: hidden;
+  border: 1px solid rgba(168, 255, 237, 0.58);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, rgba(168, 255, 237, 0.12), transparent 58%),
+    rgba(7, 12, 22, 0.96);
+  box-shadow:
+    0 1.5rem 4rem rgba(0, 0, 0, 0.55),
+    0 0 2.5rem rgba(168, 255, 237, 0.12);
+  color: var(--muted);
+  backdrop-filter: blur(18px);
+  animation: quest-ready-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.quest-ready-notice::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.22rem;
+  background: var(--aqua);
+  content: "";
+}
+
+.quest-ready-notice:focus-visible {
+  outline: 2px solid var(--aqua);
+  outline-offset: 0.25rem;
+}
+
+.quest-ready-notice strong {
+  max-width: 22rem;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
+.quest-ready-notice p {
+  max-width: 23rem;
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.quest-ready-notice .button {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.quest-ready-kicker {
+  color: var(--aqua);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.quest-ready-dismiss {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid rgba(168, 255, 237, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  place-items: center;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.quest-ready-dismiss:hover,
+.quest-ready-dismiss:focus-visible {
+  border-color: var(--aqua);
+  color: var(--aqua);
+  transform: rotate(8deg);
+}
+
+@keyframes quest-ready-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .live-setup {
   max-width: 34rem;
   margin-top: 1.25rem;
@@ -1720,6 +1825,12 @@ blockquote {
 
   .nav-status {
     margin-left: auto;
+  }
+
+  .quest-ready-notice {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
   }
 
   .hero {
