@@ -47,8 +47,35 @@ manual-review protocol are tracked in
 [`docs/build-week/evaluation-evidence.md`](docs/build-week/evaluation-evidence.md).
 Deployment configuration and safe smoke checks are in the
 [Vercel Live AI runbook](docs/build-week/vercel-live-ai.md).
+The time-boxed submission materials, video script, and judge handoff are indexed
+in the [Build Week submission pack](docs/build-week/README.md).
 
-### Current progress — 93%
+### How Codex and GPT-5.6 were used
+
+Codex was used throughout the Build Week branch as an engineering collaborator,
+not as a one-shot code generator. GPT-5.6 Codex sessions helped turn the
+hackathon concept into bounded implementation slices, review the generated
+contract and difficulty semantics, implement the fixture and protected live
+paths, add adversarial tests, diagnose deployment failures, and verify the
+release boundary. The primary session ID is intentionally not stored in the
+repository; it must be retrieved with `/feedback` and entered directly into the
+Devpost form.
+
+The human-owned decisions include the **Cumulore Quest** name, the Education
+track and learner problem, the `content teaches; code plays` boundary, the
+fixture-first public experience, and final acceptance of every slice. Codex
+accelerated code inspection, implementation, test design, and consistency
+review; each change was inspected and exercised before it was accepted.
+
+Live quest generation separately uses GPT-5.6 Terra through the OpenAI
+Responses API. The request is server-only, uses Structured Outputs and
+`store: false`, and is accepted only after deterministic schema, source,
+provenance, duplicate, and difficulty checks. The game engine calculates
+health, damage, scoring, stages, and rematches itself; model output cannot alter
+those mechanics. The credential-free fixture follows the same validated
+contract and remains the reliable judge fallback.
+
+### Current progress — 94%
 
 | Build Week slice              | Status      | Delivered outcome                                                                                                                          |
 | ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
