@@ -28,9 +28,11 @@ judge path.
 
 ## Repository
 
-- Repository: `https://github.com/HaleyyT/Cumulore` (private; judge access must
-  be granted before the deadline)
-- Build Week branch: `hackathon/openai-build-week-cumulore-quest`
+- Submitted repository branch:
+  `https://github.com/HaleyyT/Cumulore/tree/hackathon/openai-build-week-cumulore-quest`
+  (private; judge access must be granted before the deadline)
+- Build Week branch: `hackathon/openai-build-week-cumulore-quest`; do not judge
+  the default `main` branch as the hackathon submission.
 - Quest app: `apps/web/src/modules/quest/`
 - Generation route: `apps/web/src/app/api/quest/generate/route.ts`
 - Focused tests: `apps/web/tests/quest-*.test.ts` and

@@ -122,7 +122,7 @@ Recommended screenshots:
 | Submitter Type                     | `Individual`, unless actual accepted teammates contributed.                                                                     |
 | Country of Residence               | `Australia`, if that is the submitter's legal country of residence. Confirm rather than copying blindly.                        |
 | Category                           | `Education`                                                                                                                     |
-| Code repository                    | `https://github.com/HaleyyT/Cumulore`                                                                                           |
+| Code repository                    | `https://github.com/HaleyyT/Cumulore/tree/hackathon/openai-build-week-cumulore-quest`                                           |
 | Project URL for judges             | `https://cumulore.vercel.app` only after an incognito test proves judges can open it. Otherwise leave the optional field blank. |
 | `/feedback` Session ID             | `[run /feedback in the primary Codex build task and paste the returned ID]`                                                     |
 | Plugin/developer-tool instructions | Not applicable; Cumulore Quest is an Education app.                                                                             |
