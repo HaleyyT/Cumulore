@@ -685,7 +685,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
             <span className="stage-chip">{stage.focus}</span>
           </div>
           <h2>
-            <span className="aside-title-line">effort that sticks</span>
+            <span className="aside-title-line">knowledge that sticks</span>
             <span className="aside-title-line">effortlessly</span>
           </h2>
           <p>
