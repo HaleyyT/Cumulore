@@ -7,7 +7,7 @@ assert.deepEqual(readQuestRuntimeConfig({}), {
   apiKey: undefined,
   model: "gpt-5.6-terra",
   reasoningEffort: "low",
-  timeoutMs: 45000,
+  timeoutMs: 60000,
   sourceMaxChars: 10000,
   maxOutputTokens: 10000,
 });

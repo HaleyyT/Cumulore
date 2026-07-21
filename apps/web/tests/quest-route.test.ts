@@ -12,7 +12,7 @@ const requestId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 const validQuest = parseQuestGenerationV1(validQuestFixture);
 assert.equal(
   maxDuration,
-  120,
+  150,
   "the route deadline must cover an initial provider call and one repair",
 );
 const baseConfig: QuestRuntimeConfig = {

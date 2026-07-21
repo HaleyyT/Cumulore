@@ -11,6 +11,13 @@ assert.equal(
   safeGenerationFailure(new Error("request timeout")),
   "GENERATION_TIMEOUT",
 );
+const namedTimeout = new Error("Connection error");
+namedTimeout.name = "APIConnectionTimeoutError";
+assert.equal(safeGenerationFailure(namedTimeout), "GENERATION_TIMEOUT");
+assert.equal(
+  safeGenerationFailure({ code: "ETIMEDOUT" }),
+  "GENERATION_TIMEOUT",
+);
 assert.equal(
   safeGenerationFailure(new Error("GENERATION_INVALID")),
   "GENERATION_INVALID",

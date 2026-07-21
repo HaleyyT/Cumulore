@@ -23,7 +23,7 @@ export function readQuestRuntimeConfig(
   const apiKey = env.OPENAI_API_KEY?.trim();
   const model = env.OPENAI_QUEST_MODEL ?? "gpt-5.6-terra";
   const reasoningEffort = env.OPENAI_QUEST_REASONING_EFFORT ?? "low";
-  const timeoutMs = Number(env.OPENAI_QUEST_TIMEOUT_MS ?? 45000);
+  const timeoutMs = Number(env.OPENAI_QUEST_TIMEOUT_MS ?? 60000);
   const sourceMaxChars = Number(env.QUEST_SOURCE_MAX_CHARS ?? 10000);
   const maxOutputTokens = Number(env.QUEST_OUTPUT_MAX_TOKENS ?? 10000);
   if (liveEnabled && provider !== "openai")

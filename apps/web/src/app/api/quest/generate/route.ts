@@ -10,10 +10,10 @@ import type { QuestRuntimeConfig } from "../../../../modules/quest/runtime-confi
 
 export const runtime = "nodejs";
 // One initial provider call plus one bounded validation repair can each consume
-// the configured 45-second provider timeout. Keep the hosting deadline above
-// that 90-second worst case so Vercel returns our safe response instead of a
+// the configured 60-second provider timeout. Keep the hosting deadline above
+// that 120-second worst case so Vercel returns our safe response instead of a
 // platform-generated 504.
-export const maxDuration = 120;
+export const maxDuration = 150;
 
 const safeMessage: Readonly<Record<string, string>> = {
   INVALID_REQUEST: "Check the title, source text, difficulty, and consent.",

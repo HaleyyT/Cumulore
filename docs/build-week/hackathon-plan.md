@@ -413,8 +413,8 @@ OpenAI request defaults:
 - strict Structured Outputs via `text.format` and the repository JSON Schema;
 - `store: false`;
 - maximum output: 10,000 tokens;
-- provider-call timeout: 45 seconds;
-- hosting deadline: 120 seconds, covering one initial call and one repair;
+- provider-call timeout: 60 seconds;
+- hosting deadline: 150 seconds, covering one initial call and one repair;
 - SDK transport retries: zero;
 - no tools and no previous response chain.
 
@@ -591,7 +591,7 @@ Environment contract:
 | `OPENAI_API_KEY`                | absent; required only when live is enabled |
 | `OPENAI_QUEST_MODEL`            | `gpt-5.6-terra`                            |
 | `OPENAI_QUEST_REASONING_EFFORT` | `low`                                      |
-| `OPENAI_QUEST_TIMEOUT_MS`       | `45000`                                    |
+| `OPENAI_QUEST_TIMEOUT_MS`       | `60000`                                    |
 | `QUEST_SOURCE_MAX_CHARS`        | `10000`                                    |
 | `QUEST_OUTPUT_MAX_TOKENS`       | `10000`                                    |
 

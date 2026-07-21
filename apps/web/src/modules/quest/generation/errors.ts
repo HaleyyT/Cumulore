@@ -61,7 +61,19 @@ export function safeGenerationFailure(error: unknown): QuestGenerationFailure {
     if (typeof status === "number" && status >= 500)
       return "GENERATION_UNAVAILABLE";
   }
-  if (error instanceof Error && /timeout|abort/i.test(error.message))
+  if (
+    error instanceof Error &&
+    (/timeout|abort/i.test(error.message) || /timeout/i.test(error.name))
+  )
+    return "GENERATION_TIMEOUT";
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    ["ETIMEDOUT", "ECONNABORTED"].includes(
+      String((error as { code?: unknown }).code),
+    )
+  )
     return "GENERATION_TIMEOUT";
   if (error instanceof Error && error.message === "GENERATION_OUTPUT_LIMIT")
     return "GENERATION_OUTPUT_LIMIT";
