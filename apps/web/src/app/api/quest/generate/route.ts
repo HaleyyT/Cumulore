@@ -20,7 +20,7 @@ const safeMessage: Readonly<Record<string, string>> = {
   SOURCE_TOO_SHORT: "Use at least 100 characters of source material.",
   SOURCE_TOO_LARGE: "Use no more than 10,000 characters of source material.",
   LIVE_MODE_DISABLED:
-    "Live AI is not enabled for this deployment. Deterministic Demo is still available.",
+    "Live AI is not enabled for this deployment. The ready-made quest is still available.",
   OPENAI_AUTH_FAILED:
     "OpenAI rejected the deployment credential. Replace OPENAI_API_KEY with a valid project key, then redeploy.",
   OPENAI_ACCESS_DENIED:
@@ -30,14 +30,14 @@ const safeMessage: Readonly<Record<string, string>> = {
   OPENAI_QUOTA_EXHAUSTED:
     "The OpenAI project's available quota is exhausted. Check its billing and spending limit.",
   OPENAI_REQUEST_REJECTED:
-    "OpenAI rejected the quest request configuration. Use the documented model settings or Deterministic Demo.",
-  RATE_LIMITED: "Live AI is busy. Wait briefly or use Deterministic Demo.",
+    "OpenAI rejected the quest request configuration. Use the documented model settings or the ready-made quest.",
+  RATE_LIMITED: "Live AI is busy. Wait briefly or play the ready-made quest.",
   GENERATION_TIMEOUT:
-    "Quest generation took too long. Try a shorter source or use Deterministic Demo.",
+    "Quest generation took too long. Try a shorter source or play the ready-made quest.",
   GENERATION_INVALID:
-    "The generated quest did not pass its evidence checks. Try again or use Deterministic Demo.",
+    "The generated quest did not pass its evidence checks. Try again or play the ready-made quest.",
   GENERATION_UNAVAILABLE:
-    "Live generation is temporarily unavailable. Use Deterministic Demo.",
+    "Live generation is temporarily unavailable. Play the ready-made quest.",
 };
 
 const failure = (

@@ -56,7 +56,7 @@ assert.deepEqual(await disabledResponse.json(), {
   error: {
     code: "LIVE_MODE_DISABLED",
     message:
-      "Live AI is not enabled for this deployment. Deterministic Demo is still available.",
+      "Live AI is not enabled for this deployment. The ready-made quest is still available.",
   },
 });
 assert.equal(calls, 0, "disabled live mode must not reach the provider");
@@ -141,7 +141,7 @@ assert.deepEqual(await rateResponse.json(), {
   requestId,
   error: {
     code: "RATE_LIMITED",
-    message: "Live AI is busy. Wait briefly or use Deterministic Demo.",
+    message: "Live AI is busy. Wait briefly or play the ready-made quest.",
     retryAfterSeconds: 17,
   },
 });

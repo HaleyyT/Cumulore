@@ -519,7 +519,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
           <a href="#quest">Enter chamber</a>
         </div>
         <span className="nav-status">
-          <i /> {liveQuest ? "live run" : "demo run"}
+          <i /> {liveQuest ? "live AI quest" : "ready-made quest"}
         </span>
       </nav>
 
@@ -545,11 +545,11 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
             stick. Make the effort visible. Keep the signal.
           </p>
           <aside className="mode-disclosure" aria-label="Quest mode">
-            <strong>{liveQuest ? "Live AI" : "Deterministic Demo"}</strong>
+            <strong>{liveQuest ? "Live AI quest" : "Ready-made quest"}</strong>
             <span>
               {liveQuest
-                ? "This run was generated from your submitted material and validated before play."
-                : "This run uses built-in learning material. Live AI is off unless explicitly enabled by the server."}
+                ? "Generated from your material with Live AI and validated before play."
+                : "Play instantly with built-in learning material—no upload or generation wait. To create a personalised quest, choose Live AI below."}
             </span>
           </aside>
           {!isLiveSetupOpen ? (

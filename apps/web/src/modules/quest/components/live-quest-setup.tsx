@@ -16,9 +16,10 @@ type LiveQuestResponse = {
 
 function liveFailureMessage(error: NonNullable<LiveQuestResponse["error"]>) {
   if (error.code === "RATE_LIMITED" && error.retryAfterSeconds)
-    return `Live AI is at its request limit. Try again in about ${error.retryAfterSeconds} seconds, or use Deterministic Demo now.`;
+    return `Live AI is at its request limit. Try again in about ${error.retryAfterSeconds} seconds, or play the ready-made quest now.`;
   return (
-    error.message ?? "Live generation is unavailable. Use Deterministic Demo."
+    error.message ??
+    "Live generation is unavailable. Play the ready-made quest."
   );
 }
 
@@ -69,7 +70,7 @@ export function LiveQuestSetup({
   async function submit(form: HTMLFormElement) {
     if (!liveAvailable) {
       setMessage(
-        "Live AI is off for this deployment. Use Deterministic Demo instead.",
+        "Live AI is off for this deployment. Play the ready-made quest instead.",
       );
       return;
     }
@@ -96,7 +97,7 @@ export function LiveQuestSetup({
               message:
                 response.status === 413
                   ? "Your material is too large for live generation."
-                  : "Live generation returned an unreadable response. Try again or use Deterministic Demo.",
+                  : "Live generation returned an unreadable response. Try again or play the ready-made quest.",
             },
           };
         },
@@ -109,7 +110,7 @@ export function LiveQuestSetup({
       const quest = toRuntimeQuest(result.quest);
       if (!quest) {
         setMessage(
-          "Live generation returned an invalid quest. Try again or use Deterministic Demo.",
+          "Live generation returned an invalid quest. Try again or play the ready-made quest.",
         );
         return;
       }
@@ -119,7 +120,7 @@ export function LiveQuestSetup({
       setMessage(
         error instanceof Error && error.message === "REQUEST_ALREADY_COMPLETED"
           ? "This quest has already loaded. Start a new setup to generate another."
-          : "The network request did not complete. Check your connection, then try again or use Deterministic Demo.",
+          : "The network request did not complete. Check your connection, then try again or play the ready-made quest.",
       );
     } finally {
       setIsSubmitting(false);
@@ -136,7 +137,7 @@ export function LiveQuestSetup({
         <span className="live-summary-copy">
           <span className="live-summary-kicker">Input lane / live AI</span>
           <span className="live-summary-title">
-            Try Live AI with your own material
+            Create your own quest with Live AI
           </span>
         </span>
         <span
@@ -172,7 +173,8 @@ export function LiveQuestSetup({
           </div>
           {!liveAvailable ? (
             <p className="live-unavailable" role="status">
-              Live AI is offline here. Deterministic Demo remains available.
+              Live AI is offline here. The ready-made quest is available to play
+              now.
             </p>
           ) : null}
         </aside>
