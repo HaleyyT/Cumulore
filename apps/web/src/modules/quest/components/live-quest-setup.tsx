@@ -130,7 +130,13 @@ export function LiveQuestSetup({
     <details
       className="live-setup"
       open={defaultOpen || undefined}
-      onToggle={(event) => onOpenChange?.(event.currentTarget.open)}
+      onToggle={(event) => {
+        const isOpen = event.currentTarget.open;
+        // The collapsed instance is replaced by the expanded layout when it
+        // opens. Ignore its unmount-time close event so it cannot collapse the
+        // newly mounted form. The expanded instance still reports user closes.
+        if (isOpen || defaultOpen) onOpenChange?.(isOpen);
+      }}
     >
       <summary className="live-setup-summary">
         <span className="live-summary-copy">
