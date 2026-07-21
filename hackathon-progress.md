@@ -21,6 +21,9 @@ and receive source-grounded review notes after their quiz.
 The Live AI path now uses smaller source and response ceilings plus concise
 explanations, reducing avoidable model work while preserving the full validated
 16-question quest.
+Quest reliability now also includes run-stable shuffled answer positions, a
+true in-app new-run reset, and a progress meter that reaches 100% on early
+stage victories.
 The evaluation ledger records only safe aggregate evidence and the 45-question
 review procedure. Q5 still needs the controlled live run, manual review,
 deployment, and cost-gate evidence before public Live AI can be enabled.

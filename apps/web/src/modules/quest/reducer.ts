@@ -21,6 +21,8 @@ export const initialBattle = (): Battle => ({
   answered: {},
 });
 
+export const restartQuest = (): Battle => initialBattle();
+
 function bonusForStreak(streak: number, second: number, third: number): number {
   if (streak === 2) return second;
   return streak >= 3 ? third : 0;

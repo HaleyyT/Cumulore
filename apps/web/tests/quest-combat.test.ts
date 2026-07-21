@@ -6,6 +6,7 @@ import {
   initialBattle,
   next,
   QUEST_COMBAT,
+  restartQuest,
 } from "../src/modules/quest/reducer.js";
 
 const quest = scienceQuest("medium");
@@ -60,5 +61,10 @@ assert.equal(
   "three consecutive correct answers defeat the enemy",
 );
 assert.equal(winningBattle.score, 375, "streak bonuses are deterministic");
+assert.deepEqual(
+  restartQuest(),
+  initialBattle(),
+  "a new run resets score, health, streak, hearts, and answered questions",
+);
 
 console.log("Quest combat patterns passed.");

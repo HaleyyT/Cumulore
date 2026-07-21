@@ -23,12 +23,16 @@ function liveFailureMessage(error: NonNullable<LiveQuestResponse["error"]>) {
 }
 
 export function LiveQuestSetup({
+  defaultOpen = false,
   difficulty,
   liveAvailable,
+  onOpenChange,
   onQuestReady,
 }: {
+  defaultOpen?: boolean;
   difficulty: Difficulty;
   liveAvailable: boolean;
+  onOpenChange?: (open: boolean) => void;
   onQuestReady: (quest: Quest) => void;
 }) {
   const gate = useRef(new QuestSubmissionGate<LiveQuestResponse>());
@@ -123,9 +127,18 @@ export function LiveQuestSetup({
   }
 
   return (
-    <details className="live-setup">
-      <summary>
-        Try Live AI with your own material
+    <details
+      className="live-setup"
+      open={defaultOpen || undefined}
+      onToggle={(event) => onOpenChange?.(event.currentTarget.open)}
+    >
+      <summary className="live-setup-summary">
+        <span className="live-summary-copy">
+          <span className="live-summary-kicker">Input lane / live AI</span>
+          <span className="live-summary-title">
+            Try Live AI with your own material
+          </span>
+        </span>
         <span
           className={
             liveAvailable
@@ -135,89 +148,118 @@ export function LiveQuestSetup({
         >
           {liveAvailable ? "ready" : "offline"}
         </span>
+        <span className="live-setup-toggle" aria-hidden="true">
+          ↘
+        </span>
       </summary>
-      <p>
-        Live AI sends the material you provide to OpenAI to generate your quest.
-        Cumulore Quest does not persist it in this hackathon build. OpenAI may
-        process or retain data according to the applicable OpenAI policies.
-        Choose Deterministic Demo if you do not want to send material.
-      </p>
-      {!liveAvailable ? (
-        <p className="live-unavailable" role="status">
-          Live AI is off for this deployment, so your material cannot be sent.
-          Deterministic Demo remains fully available.
-        </p>
-      ) : null}
-      <p className="live-setup-helper">
-        Paste 100 to 10,000 characters, or load a plain-text file. Shorter,
-        focused material generates faster. The selected chamber intensity sets
-        the question difficulty for the whole quest.
-      </p>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          void submit(event.currentTarget);
-        }}
-      >
-        <label>
-          Source title
-          <input
-            ref={sourceTitleRef}
-            name="sourceTitle"
-            maxLength={120}
-            required
-          />
-        </label>
-        <label>
-          Load a plain-text file (optional)
-          <input
-            accept="text/plain,.txt"
-            aria-describedby="file-message"
-            type="file"
-            onChange={(event) => void loadTextFile(event.target.files?.[0])}
-          />
-        </label>
-        {fileMessage ? (
-          <p id="file-message" role="status">
-            {fileMessage}
+      <div className="live-setup-body">
+        <aside className="live-setup-intro">
+          <p className="live-setup-kicker">Source-grounded generation</p>
+          <h2>Bring one source into the chamber.</h2>
+          <p>
+            Give Cumulore a focused excerpt. It will return a validated quest
+            you can play immediately.
           </p>
-        ) : null}
-        <label>
-          Source text
-          <textarea
-            ref={sourceTextRef}
-            name="sourceText"
-            minLength={100}
-            maxLength={10000}
-            required
-          />
-        </label>
-        <label>
-          What should this help you learn? (optional)
-          <input
-            name="learningGoal"
-            maxLength={240}
-            placeholder="For example: practise reductions and distinguish NP from NP-hard"
-          />
-        </label>
-        <label className="consent">
-          <input name="consent" type="checkbox" value="true" required /> I
-          understand this material will be sent to OpenAI.
-        </label>
-        <button
-          aria-busy={isSubmitting}
-          className="button button-light"
-          disabled={isSubmitting || !liveAvailable}
-          type="submit"
+          <div className="live-boundary">
+            <span className="live-boundary-index">01</span>
+            <div>
+              <strong>Data boundary</strong>
+              <p>
+                Your material is sent to OpenAI for this run and is not
+                persisted by this hackathon build.
+              </p>
+            </div>
+          </div>
+          {!liveAvailable ? (
+            <p className="live-unavailable" role="status">
+              Live AI is offline here. Deterministic Demo remains available.
+            </p>
+          ) : null}
+        </aside>
+        <form
+          className="live-setup-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void submit(event.currentTarget);
+          }}
         >
-          {isSubmitting
-            ? "Mapping concepts and evidence. This can take a moment..."
-            : liveAvailable
-              ? "Generate live quest"
-              : "Live AI unavailable"}{" "}
-          <span aria-hidden="true">↗</span>
-        </button>
-      </form>
+          <div className="live-form-heading">
+            <div>
+              <span className="live-form-kicker">Source packet</span>
+              <strong>Shape the run</strong>
+            </div>
+            <span>100—10,000 characters</span>
+          </div>
+          <div className="live-field-grid">
+            <label>
+              Source title
+              <input
+                ref={sourceTitleRef}
+                name="sourceTitle"
+                maxLength={120}
+                placeholder="e.g. Week 02 — Dataset inspection"
+                required
+              />
+            </label>
+            <label>
+              Attach plain-text file
+              <input
+                accept="text/plain,.txt"
+                aria-describedby="file-message"
+                type="file"
+                onChange={(event) => void loadTextFile(event.target.files?.[0])}
+              />
+            </label>
+          </div>
+          {fileMessage ? (
+            <p id="file-message" className="live-form-status" role="status">
+              {fileMessage}
+            </p>
+          ) : null}
+          <label>
+            Source text
+            <textarea
+              ref={sourceTextRef}
+              name="sourceText"
+              minLength={100}
+              maxLength={10000}
+              placeholder="Paste the material you want to turn into a quest."
+              required
+            />
+          </label>
+          <label>
+            Learning goal <span>(optional)</span>
+            <input
+              name="learningGoal"
+              maxLength={240}
+              placeholder="What should this help you understand or practise?"
+            />
+          </label>
+          <div className="live-form-footer">
+            <label className="consent">
+              <input name="consent" type="checkbox" value="true" required />
+              <span>I understand this material will be sent to OpenAI.</span>
+            </label>
+            <button
+              aria-busy={isSubmitting}
+              className="button button-light"
+              disabled={isSubmitting || !liveAvailable}
+              type="submit"
+            >
+              {isSubmitting
+                ? "Mapping the source..."
+                : liveAvailable
+                  ? "Generate live quest"
+                  : "Live AI unavailable"}{" "}
+              <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <p className="live-form-helper">
+            Focused material generates faster. Chamber intensity sets the
+            question difficulty for the whole quest.
+          </p>
+        </form>
+      </div>
       {message ? (
         <p className="live-message" role="status" aria-live="polite">
           {message}

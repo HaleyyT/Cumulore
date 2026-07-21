@@ -6,12 +6,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { scienceQuest } from "../fixture";
 import { calculateMastery, orderRematch } from "../mastery";
+import { orderQuestionOptions } from "../option-order";
+import { calculateStageProgress } from "../progress";
 import { LiveQuestSetup } from "./live-quest-setup";
 import {
   answer,
   continueQuest,
   initialBattle,
   next,
+  restartQuest,
   retryStage,
 } from "../reducer";
 import type { Battle, Difficulty, Quest } from "../types";
@@ -37,12 +40,18 @@ function battleReducer(quest: ReturnType<typeof scienceQuest>) {
       case "continue":
         return continueQuest(quest, state);
       case "reset":
-        return initialBattle();
+        return restartQuest();
     }
   };
 }
 
 const signalWords = ["Recall", "spacing", "feedback", "transfer", "connection"];
+
+function createRunSeed(): number {
+  const values = new Uint32Array(1);
+  crypto.getRandomValues(values);
+  return values[0] ?? 0;
+}
 
 function LogoMark() {
   return (
@@ -257,7 +266,9 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
     (_: Difficulty, nextDifficulty: Difficulty) => nextDifficulty,
     "medium",
   );
+  const [isLiveSetupOpen, setIsLiveSetupOpen] = useState(false);
   const [liveQuest, setLiveQuest] = useState<Quest>();
+  const [runSeed, setRunSeed] = useState(0);
   const quest = liveQuest ?? scienceQuest(difficulty);
   const [battle, dispatch] = useReducer(
     battleReducer(quest),
@@ -267,6 +278,17 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   const [rematchIndex, setRematchIndex] = useState<number>();
   const [rematchAnswer, setRematchAnswer] = useState<string>();
   const stage = quest.stages[battle.stage];
+
+  useEffect(() => {
+    setRunSeed(createRunSeed());
+  }, []);
+
+  function startNewRun() {
+    setRematchAnswer(undefined);
+    setRematchIndex(undefined);
+    setRunSeed(createRunSeed());
+    dispatch({ type: "reset" });
+  }
 
   useEffect(() => {
     if (!shellRef.current) return undefined;
@@ -346,6 +368,14 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   }, []);
 
   useEffect(() => {
+    const refreshFrame = window.requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+
+    return () => window.cancelAnimationFrame(refreshFrame);
+  }, [isLiveSetupOpen]);
+
+  useEffect(() => {
     if (battle.feedback) {
       feedbackRef.current?.focus();
     } else if (
@@ -418,17 +448,19 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
               <div className="rematch-panel">
                 <h3>Weak-topic rematch</h3>
                 <p>{rematchQuestion.prompt}</p>
-                {rematchQuestion.options.map((option) => (
-                  <button
-                    className="answer-choice"
-                    disabled={Boolean(rematchAnswer)}
-                    key={option.id}
-                    type="button"
-                    onClick={() => setRematchAnswer(option.id)}
-                  >
-                    {option.text}
-                  </button>
-                ))}
+                {orderQuestionOptions(rematchQuestion, runSeed).map(
+                  (option) => (
+                    <button
+                      className="answer-choice"
+                      disabled={Boolean(rematchAnswer)}
+                      key={option.id}
+                      type="button"
+                      onClick={() => setRematchAnswer(option.id)}
+                    >
+                      {option.text}
+                    </button>
+                  ),
+                )}
                 {rematchAnswer ? (
                   <div role="status">
                     <p>
@@ -457,7 +489,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
           <button
             className="button button-primary"
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={startNewRun}
           >
             Play the loop again <span aria-hidden="true">↗</span>
           </button>
@@ -469,10 +501,11 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
   const question = stage.questions[battle.question];
   const canContinue =
     !battle.feedback && !battle.stageFailed && battle.health === 0;
-  const stageProgress = Math.round(
-    (battle.question / Math.max(stage.questions.length, 1)) * 100,
-  );
+  const stageProgress = calculateStageProgress(stage, battle);
   const correctAnswer = battle.selected === question?.correctId;
+  const questionOptions = question
+    ? orderQuestionOptions(question, runSeed)
+    : [];
 
   return (
     <main ref={shellRef} className="app-shell" id="top">
@@ -490,7 +523,10 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
         </span>
       </nav>
 
-      <section className="hero" aria-labelledby="hero-title">
+      <section
+        className={"hero" + (isLiveSetupOpen ? " hero-live-open" : "")}
+        aria-labelledby="hero-title"
+      >
         <div className="hero-copy-wrap">
           <p className="hero-kicker">
             <span className="live-dot" /> {quest.title} / live chamber
@@ -516,16 +552,21 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
                 : "This run uses built-in learning material. Live AI is off unless explicitly enabled by the server."}
             </span>
           </aside>
-          <LiveQuestSetup
-            difficulty={difficulty}
-            liveAvailable={liveAvailable}
-            onQuestReady={(nextQuest) => {
-              setLiveQuest(nextQuest);
-              setRematchAnswer(undefined);
-              setRematchIndex(undefined);
-              dispatch({ type: "reset" });
-            }}
-          />
+          {!isLiveSetupOpen ? (
+            <LiveQuestSetup
+              difficulty={difficulty}
+              liveAvailable={liveAvailable}
+              onOpenChange={setIsLiveSetupOpen}
+              onQuestReady={(nextQuest) => {
+                setLiveQuest(nextQuest);
+                setIsLiveSetupOpen(false);
+                setRematchAnswer(undefined);
+                setRematchIndex(undefined);
+                setRunSeed(createRunSeed());
+                dispatch({ type: "reset" });
+              }}
+            />
+          ) : null}
           <div className="hero-actions">
             <a className="button button-primary" href="#quest">
               Enter the chamber <span aria-hidden="true">↗</span>
@@ -535,6 +576,24 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
             </a>
           </div>
         </div>
+        {isLiveSetupOpen ? (
+          <div className="hero-live-cell">
+            <LiveQuestSetup
+              defaultOpen
+              difficulty={difficulty}
+              liveAvailable={liveAvailable}
+              onOpenChange={setIsLiveSetupOpen}
+              onQuestReady={(nextQuest) => {
+                setLiveQuest(nextQuest);
+                setIsLiveSetupOpen(false);
+                setRematchAnswer(undefined);
+                setRematchIndex(undefined);
+                setRunSeed(createRunSeed());
+                dispatch({ type: "reset" });
+              }}
+            />
+          </div>
+        ) : null}
         <div className="hero-art" aria-hidden="true">
           <GalaxyField />
           <div className="art-grid" />
@@ -730,7 +789,7 @@ export function QuestShell({ liveAvailable }: { liveAvailable: boolean }) {
             <div className="answer-panel">
               <p className="question-prompt">{question.prompt}</p>
               <div aria-label="Answer options" className="answer-options">
-                {question.options.map((option, index) => (
+                {questionOptions.map((option, index) => (
                   <button
                     className="answer-choice"
                     key={option.id}
