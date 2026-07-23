@@ -32,6 +32,42 @@ async function runStep(
   });
 }
 
+async function runExpectedFailure(
+  label: string,
+  command: string,
+  args: string[],
+  environment: NodeJS.ProcessEnv,
+  expectedOutput: string,
+): Promise<void> {
+  console.log(`\n[isolated integration] ${label}`);
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(command, args, {
+      cwd: process.cwd(),
+      env: environment,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let output = "";
+    child.stdout.on("data", (chunk: Buffer) => {
+      output += chunk.toString();
+    });
+    child.stderr.on("data", (chunk: Buffer) => {
+      output += chunk.toString();
+    });
+    child.once("error", reject);
+    child.once("exit", (code, signal) => {
+      if (code !== 0 && signal === null && output.includes(expectedOutput)) {
+        resolve();
+        return;
+      }
+      reject(
+        new Error(
+          `${label} did not reject the invalid state as expected${signal ? ` (${signal})` : ""}`,
+        ),
+      );
+    });
+  });
+}
+
 console.log(`[isolated integration] starting ${POSTGRES_IMAGE}`);
 const postgres = await new PostgreSqlContainer(POSTGRES_IMAGE)
   .withDatabase("cumulore")
@@ -108,6 +144,25 @@ try {
     environment,
   );
   await runStep("worker smoke mode", "pnpm", ["worker:smoke"], environment);
+
+  const checksumClient = new Client({
+    connectionString: upgradeUrl.toString(),
+  });
+  await checksumClient.connect();
+  try {
+    await checksumClient.query(
+      "UPDATE schema_migrations SET checksum = repeat('0', 64) WHERE name = '001_identity_tenancy.sql'",
+    );
+  } finally {
+    await checksumClient.end();
+  }
+  await runExpectedFailure(
+    "migration checksum rejection",
+    "pnpm",
+    ["db:migrate"],
+    { ...environment, DATABASE_URL: upgradeUrl.toString() },
+    "Applied migration checksum mismatch: 001_identity_tenancy.sql",
+  );
   console.log("\n[isolated integration] all checks passed");
 } finally {
   await postgres.stop();
