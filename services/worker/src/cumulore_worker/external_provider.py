@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Literal, Protocol
+from uuid import UUID
 
 Scenario = Literal[
     "confirmed_success",
@@ -28,19 +29,21 @@ class ExternalProvider(Protocol):
 
 
 class DeterministicFakeProvider:
-    """A stateful fake with no network calls and repeat-safe provider keys."""
+    """A process-independent fake with no network calls and repeat-safe keys."""
 
     supports_idempotency = True
     supports_reconciliation = True
 
     def __init__(self) -> None:
-        self._invocations: dict[str, ProviderResult] = {}
+        self._invocations: dict[str, tuple[Scenario, ProviderResult]] = {}
         self.invocation_count = 0
 
     def invoke(self, provider_key: str, scenario: Scenario) -> ProviderResult:
         existing = self._invocations.get(provider_key)
         if existing is not None:
-            return existing
+            if existing[0] != scenario:
+                raise RuntimeError("provider key was reused with different input")
+            return existing[1]
         self.invocation_count += 1
         if scenario == "confirmed_success":
             result = ProviderResult("succeeded", f"fake-{provider_key}")
@@ -52,15 +55,17 @@ class DeterministicFakeProvider:
             raise RuntimeError("provider lacks idempotency and reconciliation")
         else:
             raise ValueError(f"unsupported fake provider scenario: {scenario}")
-        self._invocations[provider_key] = result
+        self._invocations[provider_key] = (scenario, result)
         return result
 
     def reconcile(self, provider_key: str) -> ProviderResult:
         existing = self._invocations.get(provider_key)
-        if existing is None or existing.outcome != "unknown":
+        if existing is not None and existing[1].outcome != "unknown":
+            raise RuntimeError("provider key has no unknown invocation")
+        if ":unknown_then_success:" not in provider_key:
             raise RuntimeError("provider key has no unknown invocation")
         result = ProviderResult("succeeded", f"fake-reconciled-{provider_key}")
-        self._invocations[provider_key] = result
+        self._invocations[provider_key] = ("unknown_then_success", result)
         return result
 
 
@@ -80,3 +85,10 @@ class NonRepeatableFakeProvider:
 def require_safe_provider(provider: ExternalProvider) -> None:
     if not provider.supports_idempotency and not provider.supports_reconciliation:
         raise RuntimeError("provider lacks idempotency and reconciliation")
+
+
+def fake_provider_key(
+    logical_operation_id: UUID,
+    scenario: Scenario,
+) -> str:
+    return f"cumulore.synthetic.v1:{scenario}:{logical_operation_id}"

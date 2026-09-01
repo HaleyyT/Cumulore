@@ -8,7 +8,8 @@ Use Node.js 22.22.2+, pnpm 11.7.0+, Python 3.13+, and Docker Compose v2. From a 
 pnpm install --frozen-lockfile
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev]"
+python -m pip install --require-hashes -r requirements-dev.lock
+python -m pip install --no-deps --no-build-isolation .
 cp .env.example .env.local
 pnpm verify
 docker compose up -d
@@ -54,9 +55,9 @@ Ajv in TypeScript and `jsonschema` in Python. Contracts are in
 `packages/schemas/contracts`; fixtures are in `packages/schemas/fixtures`;
 incompatible changes need a new versioned filename.
 
-Milestone 1C database functions are applied by migrations and exercised only
-through integration tests until the worker runtime arrives in Slice 1C.5. The
-web-side synthetic producer accepts an existing actor transaction, so the
+Milestone 1C database functions are applied by migrations and exercised by the
+Slice 1C.5 worker runtime and integration tests. The web-side synthetic
+producer accepts an existing actor transaction, so the
 synthetic operation and validated outbox event commit or roll back together.
 Only `cumulore_worker` may execute the bounded cross-workspace dispatch and
 claim functions; neither function performs handler work or external calls.
@@ -69,13 +70,17 @@ dependency.
 Slice 1C.5 exposes `dispatcher`, `executor`, `maintenance`, and `all` worker
 roles through `python -m cumulore_worker ...`; `--once` is the deterministic
 single-role mode. `pnpm worker:smoke` creates a synthetic operation, dispatches
-and executes it through separately started roles, then verifies the terminal
-attempt and idempotent database effect. The runtime uses separate PostgreSQL
-transactions for claiming and work, validates the migration-owned handler
-registry before polling, renews 60-second leases every 20 seconds, and permits
-45 seconds for graceful shutdown. Maintenance performs bounded reclaim and
-retention cleanup. Unsupported synthetic provider scenarios are dead-lettered
-with a safe error code until a reviewed provider execution slice exists.
+and executes database-effect, confirmed external success,
+unknown-then-reconciled success, retryable failure, and non-retryable failure
+through separately started roles. The runtime uses separate PostgreSQL
+transactions for claim, provider preparation, invocation, result persistence,
+and fenced completion; no transaction remains open during invocation. It
+validates the migration-owned handler registry, renews 60-second leases every
+20 seconds, and permits 45 seconds for graceful shutdown. Maintenance performs
+bounded reclaim, stale external-operation recovery, cross-workspace
+reconciliation through a narrow migration-owned function, and retention
+cleanup. The provider remains a deterministic, process-independent fake with
+no network or production-provider dependency.
 
 Milestone 2A provides workspace-scoped PDF/TXT/pasted-text upload sessions with
 immutable quarantine keys, finalize events, exact hash duplicate detection,
