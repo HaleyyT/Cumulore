@@ -125,7 +125,7 @@ Local and CI use `IDENTITY_PROVIDER=fake`, which requires no network access. Set
 | Ruff 0.14.3 / mypy 1.18.2 / pytest 9.0.3 / types-jsonschema 4.25.1.20251009 | MIT                   | Active      | Python linting, type checking, tests, and JSON Schema type stubs.                                                                                        |
 | PostgreSQL pgvector image / MinIO image                                     | PostgreSQL / AGPL-3.0 | Active      | Local-only database/vector and S3-compatible interfaces.                                                                                                 |
 | pg 8.22.0 / @types/pg 8.20.0                                                | MIT                   | Active      | PostgreSQL transactions, migrations, and typed tenancy repositories.                                                                                     |
-| Next 16.2.10 / React 19.2.7                                                 | MIT                   | Active      | Supported server runtime for the public authentication boundary and credential-free production build.                                                    |
+| Next 16.2.11 / React 19.2.7                                                 | MIT                   | Active      | Supported server runtime for the public authentication boundary and credential-free production build.                                                    |
 | @auth0/nextjs-auth0 4.25.0                                                  | MIT                   | Active      | Official Auth0-supported Next.js integration behind Cumulore's lazy, fail-closed adapter.                                                                |
 | @testcontainers/postgresql 12.0.4                                           | MIT                   | Active      | Development-only lifecycle for an isolated pgvector database shared by local and CI integration commands; Compose alone cannot supply per-run isolation. |
 
@@ -135,6 +135,10 @@ are development-only. Testcontainers' optional transitive native build scripts
 are disabled because local Docker transport uses the JavaScript path. Pinned
 versions make local and CI tooling repeatable; review updates for license and
 maintenance status.
+
+`pnpm-workspace.yaml` pins security-fixed transitive `fast-uri` and
+`sharp@0.35.4` releases until their upstream direct ranges no longer admit the
+vulnerable versions.
 
 ## Logging conventions
 
