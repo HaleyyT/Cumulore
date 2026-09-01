@@ -136,9 +136,9 @@ are disabled because local Docker transport uses the JavaScript path. Pinned
 versions make local and CI tooling repeatable; review updates for license and
 maintenance status.
 
-`pnpm-workspace.yaml` pins security-fixed transitive `fast-uri` and
-`sharp@0.35.4` releases until their upstream direct ranges no longer admit the
-vulnerable versions.
+`pnpm-workspace.yaml` pins security-fixed transitive `brace-expansion`,
+`fast-uri`, `js-yaml`, `sharp@0.35.4`, and `undici` releases until their
+upstream direct ranges no longer admit the vulnerable versions.
 
 ## Logging conventions
 
