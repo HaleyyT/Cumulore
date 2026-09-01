@@ -10,4 +10,10 @@ allowBuilds:
   ssh2: false
 
 overrides:
+  "brace-expansion@<2.0.0": "1.1.18"
+  "brace-expansion@>=2.0.0": "2.1.4"
+  fast-uri: "3.1.5"
+  js-yaml: "4.3.1"
   postcss: ">=8.5.19"
+  sharp: "0.35.4"
+  undici: "8.9.0"
